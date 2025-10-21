@@ -10,7 +10,6 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Top20RulesDialog } from "./Top20RulesDialog";
 import { getRoundLabel } from "@/lib/roundHelpers";
-import CycleTimeline from "./CycleTimeline";
 
 export default function RealTournamentBracket() {
   const { positions: top20Positions, isLoading: loadingPositions } = useTop20Positions();
@@ -224,9 +223,6 @@ export default function RealTournamentBracket() {
 
   return (
     <div className="space-y-8">
-      {/* Timeline de Ciclos */}
-      <CycleTimeline matches={top20Matches} top20Positions={top20Positions || []} />
-
       {/* TOP 20 Current Standings */}
       <Card className="bg-background border-border shadow-card">
         <CardHeader>
