@@ -56,6 +56,42 @@ export type Database = {
           },
         ]
       }
+      event_standings: {
+        Row: {
+          created_at: string
+          event_id: string
+          final_position: number
+          id: string
+          losses: number | null
+          pilot_id: string
+          total_points: number | null
+          updated_at: string
+          wins: number | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          final_position: number
+          id?: string
+          losses?: number | null
+          pilot_id: string
+          total_points?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          final_position?: number
+          id?: string
+          losses?: number | null
+          pilot_id?: string
+          total_points?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           bracket_type: string | null
@@ -365,6 +401,10 @@ export type Database = {
       }
       swap_top20_positions: {
         Args: { p_positions: number[] }
+        Returns: undefined
+      }
+      update_event_standings_for_match: {
+        Args: { p_match_id: string }
         Returns: undefined
       }
     }

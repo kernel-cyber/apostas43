@@ -2,11 +2,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Trophy, TrendingUp } from 'lucide-react';
 import { usePilotRankings } from '@/hooks/usePilotRankings';
+import { useEventStandings } from '@/hooks/useEventStandings';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export default function PilotRankingTable() {
-  const { rankings, isLoading } = usePilotRankings();
+interface PilotRankingTableProps {
+  eventId?: string | null;
+}
+
+export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
+  const { rankings: generalRankings, isLoading: generalLoading } = usePilotRankings();
+  const { data: eventStandings, isLoading: eventLoading } = useEventStandings(eventId || null);
+  
+  const isLoading = eventId ? eventLoading : generalLoading;
+  const pilots = eventId 
+    ? eventStandings?.map(standing => ({
+        id: standing.pilot?.id || standing.pilot_id,
+        name: standing.pilot?.name || 'Unknown',
+        car_name: standing.pilot?.car_name || 'N/A',
+        image_url: standing.pilot?.image_url,
+        team: standing.pilot?.team,
+        points: standing.total_points,
+        wins: standing.wins,
+        losses: standing.losses,
+        win_rate: standing.wins + standing.losses > 0 
+          ? Math.round((standing.wins / (standing.wins + standing.losses)) * 100) 
+          : 0,
+        current_position: standing.final_position
+      })) || []
+    : generalRankings;
 
   const RankingList = ({ pilots, isLoading, showPosition = false }: any) => {
     if (isLoading) {
@@ -107,14 +130,14 @@ export default function PilotRankingTable() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-racing-yellow" />
-          Ranking de Pilotos - TOP 20
+          {eventId ? 'Ranking por Evento' : 'Ranking Geral de Pilotos'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <RankingList 
-          pilots={rankings} 
+          pilots={pilots} 
           isLoading={isLoading}
-          showPosition={true}
+          showPosition={!eventId}
         />
       </CardContent>
     </Card>
