@@ -106,7 +106,7 @@ export default function RealTournamentBracket() {
           {/* Pilot 1 */}
           <div className={`
             flex items-center gap-3 p-3 rounded-lg
-            ${match.winner_id === match.pilot1_id ? 'bg-gradient-winner text-black' : 'bg-background'}
+            ${match.winner_id === match.pilot1_id ? 'bg-green-600/90 text-white' : 'bg-muted/50'}
           `}>
             {/* Ícone ataque/defesa */}
             <div className="flex-shrink-0">
@@ -135,14 +135,14 @@ export default function RealTournamentBracket() {
             
             {/* Info do piloto */}
             <div className="flex-1 min-w-0">
-              <p className={`font-bold truncate ${match.winner_id === match.pilot1_id ? 'text-black' : 'text-white'}`}>
+              <p className="font-bold truncate text-white">
                 {match.pilot1?.name || 'TBD'}
               </p>
-              <p className={`text-sm truncate ${match.winner_id === match.pilot1_id ? 'text-black/70' : 'text-racing-yellow'}`}>
+              <p className="text-sm truncate text-racing-yellow">
                 🚗 {match.pilot1?.car_name || "N/A"}
               </p>
               {match.pilot1?.team && (
-                <p className={`text-xs truncate ${match.winner_id === match.pilot1_id ? 'text-black/60' : 'text-blue-400'}`}>
+                <p className="text-xs truncate text-blue-400">
                   🏁 {match.pilot1.team}
                 </p>
               )}
@@ -152,7 +152,7 @@ export default function RealTournamentBracket() {
             <div className="flex items-center gap-2 flex-shrink-0">
               {match.winner_id === match.pilot1_id && <Crown className="w-5 h-5 text-neonYellow" />}
               {isFinished && (
-                <span className="font-bold">
+                <span className="font-bold text-white">
                   {match.winner_id === match.pilot1_id ? 'W' : 'L'}
                 </span>
               )}
@@ -165,7 +165,7 @@ export default function RealTournamentBracket() {
           {/* Pilot 2 */}
           <div className={`
             flex items-center gap-3 p-3 rounded-lg
-            ${match.winner_id === match.pilot2_id ? 'bg-gradient-winner text-black' : 'bg-background'}
+            ${match.winner_id === match.pilot2_id ? 'bg-green-600/90 text-white' : 'bg-muted/50'}
           `}>
             {/* Ícone ataque/defesa */}
             <div className="flex-shrink-0">
@@ -194,14 +194,14 @@ export default function RealTournamentBracket() {
             
             {/* Info do piloto */}
             <div className="flex-1 min-w-0">
-              <p className={`font-bold truncate ${match.winner_id === match.pilot2_id ? 'text-black' : 'text-white'}`}>
+              <p className="font-bold truncate text-white">
                 {match.pilot2?.name || 'TBD'}
               </p>
-              <p className={`text-sm truncate ${match.winner_id === match.pilot2_id ? 'text-black/70' : 'text-racing-yellow'}`}>
+              <p className="text-sm truncate text-racing-yellow">
                 🚗 {match.pilot2?.car_name || "N/A"}
               </p>
               {match.pilot2?.team && (
-                <p className={`text-xs truncate ${match.winner_id === match.pilot2_id ? 'text-black/60' : 'text-blue-400'}`}>
+                <p className="text-xs truncate text-blue-400">
                   🏁 {match.pilot2.team}
                 </p>
               )}
@@ -211,7 +211,7 @@ export default function RealTournamentBracket() {
             <div className="flex items-center gap-2 flex-shrink-0">
               {match.winner_id === match.pilot2_id && <Crown className="w-5 h-5 text-neonYellow" />}
               {isFinished && (
-                <span className="font-bold">
+                <span className="font-bold text-white">
                   {match.winner_id === match.pilot2_id ? 'W' : 'L'}
                 </span>
               )}
