@@ -102,116 +102,105 @@ export default function RealTournamentBracket() {
         </div>
         
         {/* Pilots */}
-        <div className="p-4 space-y-3">
+        <div className="p-3 space-y-2">
           {/* Pilot 1 */}
           <div className={`
-            flex items-center gap-3 p-3 rounded-lg
+            flex items-center gap-2 p-2 rounded
             ${match.winner_id === match.pilot1_id ? 'bg-green-600/90 text-white' : 'bg-muted/50'}
           `}>
             {/* Ícone ataque/defesa */}
             <div className="flex-shrink-0">
               {pilot1IsAttacking ? (
-                <span title="Ataca" className="text-red-500 text-xl">⚔️</span>
+                <span title="Ataca" className="text-red-500">⚔️</span>
               ) : pilot2IsAttacking ? (
-                <span title="Defende" className="text-blue-500 text-xl">🛡️</span>
-              ) : <div className="w-5"></div>}
+                <span title="Defende" className="text-blue-500">🛡️</span>
+              ) : null}
             </div>
             
             {/* Posição */}
             {showPositions && pilot1Position && (
-              <Badge variant="outline" className="text-neonGreen border-neonGreen flex-shrink-0">
-                #{pilot1Position}
-              </Badge>
+              <span className="text-xs text-neonGreen font-bold flex-shrink-0">#{pilot1Position}</span>
             )}
             
             {/* Foto do piloto */}
             {match.pilot1?.image_url && (
-              <img
-                src={match.pilot1.image_url}
-                alt={match.pilot1.name}
-                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-              />
+              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                <img src={match.pilot1.image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
+              </div>
             )}
             
             {/* Info do piloto */}
             <div className="flex-1 min-w-0">
-              <p className="font-bold truncate text-white">
+              <p className="font-bold truncate text-white text-sm">
                 {match.pilot1?.name || 'TBD'}
               </p>
-              <p className="text-sm truncate text-racing-yellow">
+              <p className="text-xs truncate text-racing-yellow">
                 🚗 {match.pilot1?.car_name || "N/A"}
               </p>
               {match.pilot1?.team && (
-                <p className="text-xs truncate text-blue-400">
+                <p className="text-[10px] truncate text-blue-400">
                   🏁 {match.pilot1.team}
                 </p>
               )}
             </div>
             
             {/* Status */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {match.winner_id === match.pilot1_id && <Crown className="w-5 h-5 text-neonYellow" />}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {match.winner_id === match.pilot1_id && <Crown className="w-3 h-3 text-neonYellow" />}
               {isFinished && (
-                <span className="font-bold text-white">
+                <span className="font-bold text-xs text-white">
                   {match.winner_id === match.pilot1_id ? 'W' : 'L'}
                 </span>
               )}
             </div>
           </div>
           
-          {/* VS */}
-          <div className="text-center text-racing-red font-bold text-lg">VS</div>
-          
           {/* Pilot 2 */}
           <div className={`
-            flex items-center gap-3 p-3 rounded-lg
+            flex items-center gap-2 p-2 rounded
             ${match.winner_id === match.pilot2_id ? 'bg-green-600/90 text-white' : 'bg-muted/50'}
           `}>
             {/* Ícone ataque/defesa */}
             <div className="flex-shrink-0">
               {pilot2IsAttacking ? (
-                <span title="Ataca" className="text-red-500 text-xl">⚔️</span>
+                <span title="Ataca" className="text-red-500">⚔️</span>
               ) : pilot1IsAttacking ? (
-                <span title="Defende" className="text-blue-500 text-xl">🛡️</span>
-              ) : <div className="w-5"></div>}
+                <span title="Defende" className="text-blue-500">🛡️</span>
+              ) : null}
             </div>
             
             {/* Posição */}
             {showPositions && pilot2Position && (
-              <Badge variant="outline" className="text-neonGreen border-neonGreen flex-shrink-0">
-                #{pilot2Position}
-              </Badge>
+              <span className="text-xs text-neonGreen font-bold flex-shrink-0">#{pilot2Position}</span>
             )}
             
             {/* Foto do piloto */}
             {match.pilot2?.image_url && (
-              <img
-                src={match.pilot2.image_url}
-                alt={match.pilot2.name}
-                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-              />
+              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                <img src={match.pilot2.image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
+              </div>
             )}
             
             {/* Info do piloto */}
             <div className="flex-1 min-w-0">
-              <p className="font-bold truncate text-white">
+              <p className="font-bold truncate text-white text-sm">
                 {match.pilot2?.name || 'TBD'}
               </p>
-              <p className="text-sm truncate text-racing-yellow">
+              <p className="text-xs truncate text-racing-yellow">
                 🚗 {match.pilot2?.car_name || "N/A"}
               </p>
               {match.pilot2?.team && (
-                <p className="text-xs truncate text-blue-400">
+                <p className="text-[10px] truncate text-blue-400">
                   🏁 {match.pilot2.team}
                 </p>
               )}
             </div>
             
             {/* Status */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {match.winner_id === match.pilot2_id && <Crown className="w-5 h-5 text-neonYellow" />}
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {match.winner_id === match.pilot2_id && <Crown className="w-3 h-3 text-neonYellow" />}
               {isFinished && (
-                <span className="font-bold text-white">
+                <span className="font-bold text-xs text-white">
                   {match.winner_id === match.pilot2_id ? 'W' : 'L'}
                 </span>
               )}
