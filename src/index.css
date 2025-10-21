@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Premium Racing Theme */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 120 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 45 100% 55%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 85% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 18%;
+    --input: 0 0% 10%;
+    --ring: 120 100% 50%;
+    --radius: 0.5rem;
+    
+    /* Premium Racing Colors */
+    --neon-green: 120 100% 50%;
+    --neon-yellow: 45 100% 55%; 
+    --racing-gray: 0 0% 25%;
+    --track-dark: 0 0% 4%;
+    --winner-gold: 45 100% 65%;
+    
+    /* Gradients & Shadows */
+    --gradient-winner: linear-gradient(135deg, hsl(45 100% 65%), hsl(120 100% 50%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 8% / 0.9), hsl(0 0% 4% / 0.9));
+    --gradient-glass: linear-gradient(145deg, hsl(0 0% 15% / 0.1), hsl(0 0% 25% / 0.05));
+    --shadow-neon: 0 0 30px hsl(120 100% 50% / 0.4);
+    --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.4), inset 0 1px 0 hsl(0 0% 100% / 0.1);
+  }
+
+  .dark {
+    --background: 0 0% 1%;
+    --card: 0 0% 6%;
+    --border: 0 0% 15%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--gradient-track);
+    background-attachment: fixed;
+  }
+
+  /* Premium Racing Animations */
+  @keyframes winner-pulse {
+    0%, 100% { 
+      box-shadow: var(--shadow-gold);
+      transform: scale(1);
+    }
+    50% { 
+      box-shadow: var(--shadow-neon);
+      transform: scale(1.02);
+    }
+  }
+
+  @keyframes card-enter {
+    0% { 
+      opacity: 0; 
+      transform: translateY(30px) scale(0.95) rotateX(10deg); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0) scale(1) rotateX(0deg); 
+    }
+  }
+
+  @keyframes neon-glow {
+    0%, 100% { 
+      text-shadow: 0 0 20px hsl(120 100% 50%), 0 0 40px hsl(120 100% 50% / 0.5); 
+    }
+    50% { 
+      text-shadow: 0 0 30px hsl(120 100% 50%), 0 0 50px hsl(120 100% 50% / 0.8), 0 0 70px hsl(45 100% 55% / 0.3); 
+    }
+  }
+
+  @keyframes gold-shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes countdown-pulse {
+    0%, 100% { 
+      transform: scale(1); 
+      color: hsl(var(--neon-yellow));
+    }
+    50% { 
+      transform: scale(1.1); 
+      color: hsl(var(--neon-green));
+    }
+  }
+
+  /* Glass morphism effect */
+  .glass-card {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(0 0% 100% / 0.1);
+    box-shadow: var(--shadow-glass);
+  }
+
+  /* Premium utility classes */
+  .winner-pulse {
+    animation: winner-pulse 3s ease-in-out infinite;
+  }
+
+  .card-enter {
+    animation: card-enter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .neon-text {
+    animation: neon-glow 4s ease-in-out infinite;
+  }
+
+  .gold-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gold-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, hsl(45 100% 65% / 0.3), transparent);
+    animation: gold-shimmer 3s infinite;
+  }
+
+  .countdown-text {
+    animation: countdown-pulse 1s ease-in-out infinite;
+  }
+
+  /* Enhanced grid layouts */
+  .race-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .premium-gradient-text {
+    background: var(--gradient-winner);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Track lines effect */
+  .track-lines {
+    position: relative;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          hsl(0 0% 100% / 0.03) 2px,
+          hsl(0 0% 100% / 0.03) 4px
+        );
+      pointer-events: none;
+    }
+  }
+}
