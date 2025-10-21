@@ -178,6 +178,10 @@ const Index = () => {
                 <span className="hidden sm:inline">PERFIL
               </span>
               </Button>
+              <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/my-bets')}>
+                <Target className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">MINHAS APOSTAS</span>
+              </Button>
               {isAdmin && <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/admin')}>
                   <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
                   <span className="hidden sm:inline">ADMIN</span>
