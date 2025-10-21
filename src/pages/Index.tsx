@@ -198,16 +198,7 @@ const Index = () => {
         <div className="relative container mx-auto px-2 sm:px-4 py-12 sm:py-16 md:py-20 text-center">
           {/* Event Status Bar */}
           <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="glass-card px-3 sm:px-6 py-2 sm:py-3 rounded-full">
-              <div className="flex items-center space-x-2 sm:space-x-4 text-xs sm:text-sm">
-                <div className="flex items-center space-x-1 sm:space-x-2">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-neonGreen animate-pulse" />
-                  <span className="text-neonGreen font-semibold text-xs sm:text-sm">AO VIVO</span>
-                </div>
-                <div className="w-px h-3 sm:h-4 bg-border" />
-                <OnlineUsers />
-              </div>
-            </div>
+            
           </div>
 
           {/* Main Title */}
@@ -215,7 +206,7 @@ const Index = () => {
             <div className="space-y-2">
               <Badge variant="outline" className="border-accent text-accent mb-2 sm:mb-4 px-3 sm:px-6 py-1 sm:py-2 text-sm sm:text-lg gold-shimmer">
                 <Flame className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
-                <span className="text-xs sm:text-base">NO PREP RACING BRASIL</span>
+                <span className="text-xs sm:text-base">NO PREP RACING</span>
               </Badge>
           {/* #12: Label corrigido */}
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2 sm:mb-4">
