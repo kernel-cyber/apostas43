@@ -14,6 +14,8 @@ interface BettingPanelProps {
   pilot2Id: string;
   pilot1Name: string;
   pilot2Name: string;
+  pilot1ImageUrl?: string;
+  pilot2ImageUrl?: string;
   userPoints: number;
   userId: string;
   onBetSuccess: () => void;
@@ -24,7 +26,9 @@ export const BettingPanel = ({
   pilot1Id, 
   pilot2Id, 
   pilot1Name, 
-  pilot2Name, 
+  pilot2Name,
+  pilot1ImageUrl,
+  pilot2ImageUrl,
   userPoints, 
   userId,
   onBetSuccess 
@@ -150,10 +154,17 @@ export const BettingPanel = ({
             onClick={() => setSelectedPilot(pilot1Id)}
             className={`h-auto py-3 ${selectedPilot === pilot1Id ? "bg-gradient-winner" : ""}`}
           >
-            <div className="text-center w-full">
-              <div className="font-semibold text-sm md:text-base truncate">{pilot1Name}</div>
-              <div className="text-xs opacity-80">
-                Odds: {odds?.pilot1_odds.toFixed(2)}x
+            <div className="flex items-center justify-center gap-2 w-full">
+              {pilot1ImageUrl && (
+                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                  <img src={pilot1ImageUrl} alt={pilot1Name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="text-center flex-1">
+                <div className="font-semibold text-sm md:text-base truncate">{pilot1Name}</div>
+                <div className="text-xs opacity-80">
+                  Odds: {odds?.pilot1_odds.toFixed(2)}x
+                </div>
               </div>
             </div>
           </Button>
@@ -162,10 +173,17 @@ export const BettingPanel = ({
             onClick={() => setSelectedPilot(pilot2Id)}
             className={`h-auto py-3 ${selectedPilot === pilot2Id ? "bg-gradient-winner" : ""}`}
           >
-            <div className="text-center w-full">
-              <div className="font-semibold text-sm md:text-base truncate">{pilot2Name}</div>
-              <div className="text-xs opacity-80">
-                Odds: {odds?.pilot2_odds.toFixed(2)}x
+            <div className="flex items-center justify-center gap-2 w-full">
+              {pilot2ImageUrl && (
+                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                  <img src={pilot2ImageUrl} alt={pilot2Name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="text-center flex-1">
+                <div className="font-semibold text-sm md:text-base truncate">{pilot2Name}</div>
+                <div className="text-xs opacity-80">
+                  Odds: {odds?.pilot2_odds.toFixed(2)}x
+                </div>
               </div>
             </div>
           </Button>

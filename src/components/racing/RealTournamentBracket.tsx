@@ -132,7 +132,7 @@ export default function RealTournamentBracket() {
             
             {/* Foto do piloto */}
             {match.pilot1?.image_url && (
-              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
                 <img src={match.pilot1.image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
               </div>
             )}
@@ -184,7 +184,7 @@ export default function RealTournamentBracket() {
             
             {/* Foto do piloto */}
             {match.pilot2?.image_url && (
-              <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
                 <img src={match.pilot2.image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
               </div>
             )}
@@ -265,7 +265,7 @@ export default function RealTournamentBracket() {
                     <div>
                       {/* #4: Foto do piloto */}
                       {position.pilot.image_url && (
-                        <div className="w-full h-16 rounded overflow-hidden mb-2">
+                        <div className="w-full h-20 rounded overflow-hidden mb-2">
                           <img
                             src={position.pilot.image_url}
                             alt={position.pilot.name}

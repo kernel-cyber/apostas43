@@ -20,6 +20,8 @@ interface RaceCardProps {
     pilot2: Pilot;
     pilot1Team?: string;
     pilot2Team?: string;
+    pilot1ImageUrl?: string;
+    pilot2ImageUrl?: string;
     round: string;
     status: "live" | "upcoming" | "finished";
     bets: { pilot1: number; pilot2: number };
@@ -55,18 +57,31 @@ export const RaceCard = ({ match }: RaceCardProps) => {
     }
   };
 
-  const PilotCard = ({ pilot, side, isWinner, team }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean; team?: string }) => (
+  const PilotCard = ({ pilot, side, isWinner, team, imageUrl }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean; team?: string; imageUrl?: string }) => (
     <div className={`
       relative flex-1 p-6 rounded-lg transition-all duration-500
       ${isWinner ? 'bg-gradient-winner shadow-neon winner-pulse' : 'bg-gradient-card'}
       ${side === "left" ? "text-left" : "text-right"}
     `}>
       <div className="flex flex-col space-y-3">
-        <div className={`flex items-center ${side === "right" ? "flex-row-reverse" : ""} space-x-3`}>
-          <div className="w-12 h-12 rounded-full bg-racingGray flex items-center justify-center">
+        <div className={`flex items-center ${side === "right" ? "flex-row-reverse" : ""} gap-2`}>
+          {/* Foto do piloto */}
+          {imageUrl && (
+            <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+              <img 
+                src={imageUrl} 
+                alt={pilot.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          
+          {/* Círculo de posição */}
+          <div className="w-12 h-12 rounded-full bg-racingGray flex items-center justify-center flex-shrink-0">
             <span className="text-lg font-bold text-neonGreen">#{pilot.position}</span>
           </div>
-          {/* #15: Cores padronizadas */}
+          
+          {/* Info do piloto */}
           <div className={side === "right" ? "text-right" : ""}>
             <h3 className="text-lg font-bold text-white">{pilot.name}</h3>
             <p className="text-sm text-racing-yellow">🚗 {pilot.car}</p>
@@ -133,6 +148,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               side="left" 
               isWinner={winner === 1}
               team={match.pilot1Team}
+              imageUrl={match.pilot1ImageUrl}
             />
             
             {/* VS Section - #13: Emojis */}
@@ -158,6 +174,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               side="right" 
               isWinner={winner === 2}
               team={match.pilot2Team}
+              imageUrl={match.pilot2ImageUrl}
             />
           </div>
 
