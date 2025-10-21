@@ -70,26 +70,26 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
       <div className="space-y-3 sm:space-y-4">
         {/* Avatar & Position - #4: Exibir foto real */}
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse space-x-reverse" : ""} space-x-3 sm:space-x-4`}>
-          <div className="relative">
+          <div className="flex flex-col items-center gap-1">
             <div className="text-3xl sm:text-4xl">{pilot.avatar}</div>
             {side === "left" && pilot1.position < pilot2.position && (
-              <Badge className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[8px] px-1 py-0">
-                DEFENDE
+              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+                🛡️ DEFENDE
               </Badge>
             )}
             {side === "left" && pilot1.position > pilot2.position && (
-              <Badge className="absolute -bottom-1 -right-1 bg-red-500 text-white text-[8px] px-1 py-0">
-                ATACA
+              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+                ⚔️ ATACA
               </Badge>
             )}
             {side === "right" && pilot2.position < pilot1.position && (
-              <Badge className="absolute -bottom-1 -right-1 bg-blue-500 text-white text-[8px] px-1 py-0">
-                DEFENDE
+              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+                🛡️ DEFENDE
               </Badge>
             )}
             {side === "right" && pilot2.position > pilot1.position && (
-              <Badge className="absolute -bottom-1 -right-1 bg-red-500 text-white text-[8px] px-1 py-0">
-                ATACA
+              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+                ⚔️ ATACA
               </Badge>
             )}
           </div>
