@@ -89,13 +89,21 @@ export default function BracketGenerator({ eventId }: BracketGeneratorProps) {
     try {
       setIsGenerating(true);
 
-      // Update event with bracket type
+      // 1. Capturar posições iniciais do TOP 20 para o evento
+      const { error: captureError } = await (supabase as any)
+        .rpc('capture_initial_positions', {
+          p_event_id: eventId
+        });
+
+      if (captureError) throw captureError;
+
+      // 2. Update event with bracket type
       await (supabase as any)
         .from('events')
         .update({ bracket_type: bracketType })
         .eq('id', eventId);
 
-      // Create all matches
+      // 3. Create all matches
       const matchesToCreate = preview.map(match => ({
         event_id: eventId,
         pilot1_id: match.pilot1_id,

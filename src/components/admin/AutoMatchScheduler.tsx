@@ -124,6 +124,15 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         throw new Error('Data e hora são obrigatórios');
       }
 
+      // 1. Capturar posições iniciais do TOP 20 para o evento
+      const { error: captureError } = await (supabase as any)
+        .rpc('capture_initial_positions', {
+          p_event_id: eventId
+        });
+
+      if (captureError) throw captureError;
+
+      // 2. Criar matches agendados
       const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
       
       // Extrair apenas 'odd' ou 'even' do bracketType

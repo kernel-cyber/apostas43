@@ -439,6 +439,10 @@ export type Database = {
         Args: { p_match_id: string }
         Returns: Json
       }
+      capture_initial_positions: {
+        Args: { p_event_id: string }
+        Returns: undefined
+      }
       finalize_event_rankings: {
         Args: { p_event_id: string }
         Returns: undefined
