@@ -1,12 +1,14 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useEvents } from '@/hooks/useEvents';
-import { Trash2, Calendar, Users } from 'lucide-react';
+import { Trash2, Calendar, Users, Edit } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import EditEventModal from './EditEventModal';
 
 export default function EventList() {
   const { events, isLoading, deleteEvent } = useEvents();
@@ -42,6 +44,8 @@ export default function EventList() {
 }
 
 function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, name: string) => void }) {
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  
   const { data: matchCount } = useQuery({
     queryKey: ['match-count', event.id],
     queryFn: async () => {
@@ -57,6 +61,12 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
   const eventTypeColor = event.event_type === 'shark_tank' ? 'bg-racing-red' : 'bg-racing-blue';
 
   return (
+    <>
+      <EditEventModal 
+        event={event} 
+        open={editModalOpen} 
+        onOpenChange={setEditModalOpen} 
+      />
     <Card className="bg-racing-dark border-racing-green/10 hover:border-racing-green/30 transition-colors">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between">
@@ -89,16 +99,28 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
           {matchCount || 0} matches cadastrados
         </div>
 
-        <Button
-          variant="destructive"
-          size="sm"
-          className="w-full mt-2"
-          onClick={() => onDelete(event.id, event.name)}
-        >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Deletar Evento
-        </Button>
+        <div className="flex gap-2 mt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1"
+            onClick={() => setEditModalOpen(true)}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </Button>
+          <Button
+            variant="destructive"
+            size="sm"
+            className="flex-1"
+            onClick={() => onDelete(event.id, event.name)}
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Deletar
+          </Button>
+        </div>
       </CardContent>
     </Card>
+    </>
   );
 }
