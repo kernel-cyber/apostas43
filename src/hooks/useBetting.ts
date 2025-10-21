@@ -113,9 +113,20 @@ export const useBetting = (matchId: string | null) => {
       const result = data as { success: boolean; error?: string; remaining_points?: number };
 
       if (!result.success) {
+        // Traduzir erros específicos para português
+        let errorMessage = result.error || 'Ocorreu um erro desconhecido. Tente novamente.';
+        
+        if (result.error?.includes('locked')) {
+          errorMessage = '🔒 Apostas fechadas neste momento. Aguarde o próximo match!';
+        } else if (result.error?.includes('Insufficient points')) {
+          errorMessage = '💰 Pontos insuficientes. Aposte um valor menor!';
+        } else if (result.error?.includes('not open for betting')) {
+          errorMessage = '⏰ Este match não está aceitando apostas no momento.';
+        }
+        
         notify.error(
-          'Erro ao Realizar Aposta',
-          result.error || 'Ocorreu um erro desconhecido. Tente novamente.'
+          'Não foi possível realizar a aposta',
+          errorMessage
         );
         return result;
       }

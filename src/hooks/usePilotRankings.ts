@@ -5,6 +5,7 @@ export interface PilotRanking {
   id: string;
   name: string;
   car_name: string;
+  team?: string | null;
   image_url: string | null;
   wins: number;
   losses: number;
@@ -24,7 +25,7 @@ export const usePilotRankings = () => {
         .from('top20_positions')
         .select(`
           position,
-          pilot:pilots(id, name, car_name, image_url, wins, losses, total_races, points, position)
+          pilot:pilots(id, name, car_name, team, image_url, wins, losses, total_races, points, position)
         `)
         .not('pilot_id', 'is', null)
         .order('position', { ascending: true });

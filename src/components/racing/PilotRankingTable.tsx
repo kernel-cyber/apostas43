@@ -62,20 +62,20 @@ export default function PilotRankingTable() {
                 {/* Pilot Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="font-bold text-foreground truncate">
+                    <p className="font-bold text-white truncate">
                       {pilot.name}
                     </p>
                     {showPosition && pilot.current_position && (
-                      <Badge variant="outline" className="text-racing-yellow">
-                        P{pilot.current_position}
+                      <Badge variant="outline" className="text-neonGreen">
+                        #{pilot.current_position}
                       </Badge>
                     )}
                   </div>
                   <p className="text-xs text-racing-yellow truncate">
-                    {pilot.car_name}
+                    🚗 {pilot.car_name}
                   </p>
                   {pilot.team && (
-                    <p className="text-[10px] text-muted-foreground truncate">
+                    <p className="text-[10px] text-blue-400 truncate">
                       🏁 {pilot.team}
                     </p>
                   )}
