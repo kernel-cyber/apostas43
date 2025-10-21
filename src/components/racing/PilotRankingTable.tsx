@@ -1,10 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Shield, Swords, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { Trophy, Shield, Swords } from 'lucide-react';
 import { usePilotRankings } from '@/hooks/usePilotRankings';
 import { useEventStandings } from '@/hooks/useEventStandings';
 import { useEventPilotStats } from '@/hooks/useEventPilotStats';
-import { useEventPositionChange } from '@/hooks/useEventPositionChange';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PilotRankingTableProps {
@@ -86,38 +85,11 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
                         <p className="font-bold text-white truncate">
                           {pilot.name}
                         </p>
-                        {showPosition && pilot.current_position && (() => {
-                          const { data: posChange } = useEventPositionChange(eventId, pilot.id);
-                          const change = posChange?.change || 0;
-                          
-                          return (
-                            <Badge 
-                              variant="outline" 
-                              className={`flex items-center gap-1 ${
-                                change > 0 ? 'text-green-500 border-green-500' :
-                                change < 0 ? 'text-red-500 border-red-500' :
-                                'text-muted-foreground'
-                              }`}
-                            >
-                              {change > 0 ? (
-                                <>
-                                  <ArrowUp className="h-3 w-3" />
-                                  +{change}
-                                </>
-                              ) : change < 0 ? (
-                                <>
-                                  <ArrowDown className="h-3 w-3" />
-                                  {change}
-                                </>
-                              ) : (
-                                <>
-                                  <Minus className="h-3 w-3" />
-                                  0
-                                </>
-                              )}
-                            </Badge>
-                          );
-                        })()}
+                        {showPosition && pilot.current_position && (
+                          <Badge variant="outline" className="text-neonGreen border-neonGreen">
+                            #{pilot.current_position}
+                          </Badge>
+                        )}
                       </div>
                   <p className="text-xs text-racing-yellow truncate">
                     🚗 {pilot.car_name}
