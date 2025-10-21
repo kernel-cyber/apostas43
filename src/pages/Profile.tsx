@@ -410,7 +410,7 @@ export default function Profile() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Dialog>
+                <Dialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="outline" className="w-full">
                       Alterar Senha
@@ -422,7 +422,17 @@ export default function Profile() {
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div>
-                        <Label htmlFor="new-password">Nova Senha</Label>
+                        <Label htmlFor="current-password">Senha Atual *</Label>
+                        <Input
+                          id="current-password"
+                          type="password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          placeholder="Digite sua senha atual"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="new-password">Nova Senha *</Label>
                         <Input
                           id="new-password"
                           type="password"
@@ -432,17 +442,17 @@ export default function Profile() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                        <Label htmlFor="confirm-password">Confirmar Nova Senha *</Label>
                         <Input
                           id="confirm-password"
                           type="password"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder="Digite novamente"
+                          placeholder="Digite a nova senha novamente"
                         />
                       </div>
-                      <Button onClick={updatePassword} disabled={updating} className="w-full">
-                        Atualizar Senha
+                      <Button onClick={updatePassword} disabled={updatingPassword} className="w-full">
+                        {updatingPassword ? 'Atualizando...' : 'Atualizar Senha'}
                       </Button>
                     </div>
                   </DialogContent>

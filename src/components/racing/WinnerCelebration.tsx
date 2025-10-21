@@ -1,4 +1,4 @@
-import { Trophy, X, Zap } from 'lucide-react';
+import { Trophy, X, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface Winner {
@@ -18,103 +18,112 @@ export default function WinnerCelebration({ winner, show, onComplete }: WinnerCe
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Overlay with gradient */}
-      <div 
-        className="absolute inset-0 bg-gradient-to-br from-black/95 via-primary/20 to-black/95 backdrop-blur-md animate-fade-in"
-        onClick={onComplete}
-      />
-      
-      {/* Confetti particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(50)].map((_, i) => (
+    <>
+      {/* Confetti Overlay */}
+      <div className="fixed inset-0 z-40 overflow-hidden pointer-events-none">
+        {[...Array(30)].map((_, i) => (
           <div
             key={i}
-            className="absolute animate-confetti"
+            className="absolute w-1.5 h-1.5 rounded-full animate-fall"
             style={{
               left: `${Math.random() * 100}%`,
-              top: `-10%`,
-              width: i % 3 === 0 ? '12px' : '8px',
-              height: i % 3 === 0 ? '12px' : '8px',
-              background: [
-                'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-foreground)))',
-                'linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-foreground)))',
-                'hsl(var(--chart-1))',
-                'hsl(var(--chart-2))',
-                'hsl(var(--chart-3))'
-              ][i % 5],
-              borderRadius: i % 2 === 0 ? '50%' : '2px',
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 3}s`,
-              opacity: 0.8
+              top: `-${Math.random() * 10}%`,
+              background: `hsl(${Math.random() * 60 + 30}, 90%, 60%)`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${2 + Math.random() * 2}s`
             }}
           />
         ))}
       </div>
-      
-      {/* Winner announcement card */}
-      <div className="relative z-10 max-w-2xl w-full animate-winner-scale">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute -top-4 -right-4 z-20 bg-background/80 backdrop-blur-sm hover:bg-background border border-border shadow-lg rounded-full"
-          onClick={onComplete}
-        >
-          <X className="h-5 w-5" />
-        </Button>
-        
-        {/* Main content */}
-        <div className="relative bg-gradient-to-br from-background via-accent/5 to-background border-2 border-primary shadow-2xl shadow-primary/50 rounded-2xl overflow-hidden">
-          {/* Animated border glow */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-accent to-primary opacity-20 animate-pulse" />
-          
-          <div className="relative p-8 md:p-12 space-y-6">
-            {/* Trophy icon with glow */}
-            <div className="relative mx-auto w-32 h-32 flex items-center justify-center">
-              <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-              <div className="relative bg-gradient-to-br from-primary to-accent p-6 rounded-full shadow-xl">
-                <Trophy className="w-20 h-20 text-primary-foreground drop-shadow-lg animate-bounce" />
-              </div>
-              {/* Lightning bolts */}
-              <Zap className="absolute -left-4 top-4 w-8 h-8 text-accent animate-pulse" style={{ animationDelay: '0.5s' }} />
-              <Zap className="absolute -right-4 top-4 w-8 h-8 text-accent animate-pulse" style={{ animationDelay: '1s' }} />
-            </div>
-            
-            {/* Winner title */}
-            <div className="space-y-3 text-center">
-              <h2 className="text-5xl md:text-6xl font-black uppercase tracking-wider bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-pulse">
-                VENCEDOR!
-              </h2>
-              <div className="h-1 w-32 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto rounded-full" />
-            </div>
-            
-            {/* Winner details */}
-            <div className="space-y-4 text-center">
-              {winner.avatar && (
-                <div className="text-7xl drop-shadow-lg animate-bounce">{winner.avatar}</div>
-              )}
-              <div className="space-y-2">
-                <h3 className="text-3xl md:text-4xl font-bold text-foreground">{winner.name}</h3>
-                <p className="text-lg md:text-xl text-accent font-semibold">{winner.car}</p>
-              </div>
-              
-              {winner.position > 0 && (
-                <div className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 border border-primary/20 rounded-full">
-                  <Trophy className="w-5 h-5 text-primary" />
-                  <span className="text-lg font-bold text-foreground">Posição #{winner.position}</span>
+
+      {/* Winner Banner - Modern Top Banner Design */}
+      <div 
+        className="fixed top-0 left-0 right-0 z-50 animate-slide-in-top"
+        style={{ 
+          animation: 'slideInFromTop 0.5s ease-out, fadeOut 0.5s ease-out 4.5s forwards',
+          willChange: 'transform, opacity'
+        }}
+      >
+        <div className="bg-gradient-to-r from-yellow-500/95 via-orange-500/95 to-yellow-500/95 backdrop-blur-md border-b-4 border-yellow-600 shadow-2xl">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 flex-1">
+                {/* Trophy Icon with Glow */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-yellow-300/50 blur-xl rounded-full animate-pulse" />
+                  <Trophy className="w-12 h-12 text-yellow-900 relative z-10 animate-bounce" />
                 </div>
-              )}
-            </div>
-            
-            {/* Celebration text */}
-            <div className="pt-4">
-              <p className="text-xl md:text-2xl font-bold text-center bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                🎉 Parabéns pela vitória! 🎉
-              </p>
+
+                {/* Winner Info */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Award className="w-5 h-5 text-yellow-900" />
+                    <h3 className="text-lg font-bold text-yellow-900">
+                      CAMPEÃO DO MATCH!
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{winner.avatar}</span>
+                    <div>
+                      <p className="text-2xl font-black text-gray-900">
+                        {winner.name}
+                      </p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {winner.car} • Posição #{winner.position}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Close Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-yellow-900 hover:bg-yellow-600/30 shrink-0"
+                onClick={onComplete}
+              >
+                <X className="w-5 h-5" />
+              </Button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      <style>{`
+        @keyframes slideInFromTop {
+          from {
+            transform: translateY(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes fadeOut {
+          to {
+            opacity: 0;
+            transform: translateY(-20px);
+          }
+        }
+        
+        @keyframes fall {
+          to {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+        
+        .animate-fall {
+          animation: fall linear infinite;
+        }
+        
+        .animate-slide-in-top {
+          animation: slideInFromTop 0.5s ease-out;
+        }
+      `}</style>
+    </>
   );
 }
