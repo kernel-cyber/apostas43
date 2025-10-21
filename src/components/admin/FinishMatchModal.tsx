@@ -27,7 +27,7 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border">
+      <DialogContent className="bg-[#0a0a0a] border-racing-yellow/20 shadow-xl">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-foreground">
             🏆 Declarar Vencedor
@@ -39,7 +39,7 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
 
         <div className="space-y-4 mt-4">
           <Button
-            className="w-full h-auto py-6 bg-primary/90 hover:bg-primary border-2 border-primary transition-all"
+            className="w-full h-auto py-6 bg-secondary/80 hover:bg-secondary border-2 border-racing-yellow/40 hover:border-racing-yellow transition-all"
             onClick={() => handleSelectWinner(match.pilot1.id)}
             disabled={finishMatch.isPending}
           >
@@ -62,7 +62,7 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
           <div className="text-center text-racing-yellow font-bold text-lg">VS</div>
 
           <Button
-            className="w-full h-auto py-6 bg-primary/90 hover:bg-primary border-2 border-primary transition-all"
+            className="w-full h-auto py-6 bg-secondary/80 hover:bg-secondary border-2 border-racing-yellow/40 hover:border-racing-yellow transition-all"
             onClick={() => handleSelectWinner(match.pilot2.id)}
             disabled={finishMatch.isPending}
           >
