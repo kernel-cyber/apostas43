@@ -350,7 +350,7 @@ const Index = () => {
                     const minPosA = Math.min(a.pilot1?.position || 999, a.pilot2?.position || 999);
                     const minPosB = Math.min(b.pilot1?.position || 999, b.pilot2?.position || 999);
                     return minPosA - minPosB;
-                  }).map((match, index) => <Card key={match.id} className={`glass-card hover:shadow-neon transition-all duration-300 ${index === 0 ? 'animate-pulse-border-green' : ''}`}>
+                  }).map((match, index) => <Card key={match.id} className={`glass-card hover:shadow-neon transition-all duration-300 ${index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}`}>
                           <CardContent className="p-3 sm:p-4">
                             <div className="flex items-center justify-between mb-3">
                               <Badge variant="outline" className="text-[10px] sm:text-xs">
