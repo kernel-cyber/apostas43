@@ -9,6 +9,7 @@ interface Pilot {
   position: number | null;
   wins: number;
   losses: number;
+  team?: string;
 }
 
 interface Match {
@@ -18,6 +19,8 @@ interface Match {
   event_id: string;
   match_status: string;
   round_number: number;
+  bracket_type?: string;
+  scheduled_time?: string;
 }
 
 interface MatchWithPilots extends Match {
@@ -40,8 +43,8 @@ export const useActiveMatches = () => {
           .from('matches' as any)
           .select(`
             *,
-            pilot1:pilots!matches_pilot1_id_fkey(*),
-            pilot2:pilots!matches_pilot2_id_fkey(*),
+            pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
+            pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
             event:events(*)
           `)
           .eq('match_status', 'in_progress')
@@ -56,8 +59,8 @@ export const useActiveMatches = () => {
           .from('matches' as any)
           .select(`
             *,
-            pilot1:pilots!matches_pilot1_id_fkey(*),
-            pilot2:pilots!matches_pilot2_id_fkey(*),
+            pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
+            pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
             event:events(*)
           `)
           .eq('match_status', 'upcoming')
@@ -114,8 +117,8 @@ export const useActiveMatches = () => {
               .from('matches' as any)
               .select(`
                 *,
-                pilot1:pilots!matches_pilot1_id_fkey(*),
-                pilot2:pilots!matches_pilot2_id_fkey(*),
+                pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
+                pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
                 event:events(*)
               `)
               .eq('match_status', 'in_progress')

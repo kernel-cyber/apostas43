@@ -21,7 +21,7 @@ import { LiveEventCard } from "@/components/racing/LiveEventCard";
 import WinnerCelebration from "@/components/racing/WinnerCelebration";
 import { OnlineUsers } from "@/components/OnlineUsers";
 import { 
-  Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings
+  Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings, Play, ListOrdered, User
 } from "lucide-react";
 import trackBg from "@/assets/racing-track-bg.jpg";
 
@@ -104,7 +104,11 @@ const Index = () => {
       recentForm: pilot2Form.length > 0 ? pilot2Form : ["?", "?", "?", "?", "?"]
     },
     event: liveMatch.event?.name || "ÁREA 43",
-    round: `Rodada #${liveMatch.round_number}`,
+    round: liveMatch.bracket_type === 'odd' 
+      ? `Rodada Ímpar #${liveMatch.round_number}` 
+      : liveMatch.bracket_type === 'even'
+      ? `Rodada Par #${liveMatch.round_number}`
+      : `Rodada #${liveMatch.round_number}`,
     status: "live" as const,
     bets: { 
       pilot1: liveOdds?.pilot1_percentage || 50, 
@@ -161,7 +165,7 @@ const Index = () => {
                 className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"
                 onClick={() => navigate('/profile')}
               >
-                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                <User className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="hidden sm:inline">Perfil</span>
               </Button>
               {isAdmin && (
@@ -221,13 +225,13 @@ const Index = () => {
                 <Flame className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                 <span className="text-xs sm:text-base">NO PREP RACING BRASIL</span>
               </Badge>
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2 sm:mb-4">
-                <span className="premium-gradient-text neon-text">ÁREA</span>
-                <span className="block text-accent">43</span>
-              </h1>
-              <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-                A mais intensa plataforma de drag racing do Brasil
-              </p>
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2 sm:mb-4">
+            <span className="premium-gradient-text neon-text">43</span>
+            <span className="block text-accent">ÁREA</span>
+          </h1>
+          <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
+            Plataforma oficial de apostas do campeonato de drag racing mais emocionante do Brasil
+          </p>
             </div>
 
             {/* Live Stats */}
@@ -255,25 +259,25 @@ const Index = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
               {[
-                { id: "live", label: "AO VIVO", icon: Target, badge: "LIVE", shortLabel: "LIVE" },
-                { id: "lista43", label: "LISTA 43", icon: Crown, badge: "TOP 20", shortLabel: "LISTA" },
-                { id: "ranking", label: "RANKINGS", icon: Medal, badge: null, shortLabel: "RANK" },
-              ].map(({ id, label, icon: Icon, badge, shortLabel }) => (
+                { id: "live", label: "AO VIVO", icon: Play, badge: "LIVE", shortLabel: "LIVE", color: "text-neonGreen" },
+                { id: "lista43", label: "LISTA 43", icon: ListOrdered, badge: "TOP 20", shortLabel: "LISTA", color: "text-racing-yellow" },
+                { id: "ranking", label: "RANKINGS", icon: TrendingUp, badge: null, shortLabel: "RANK", color: "text-accent" },
+              ].map(({ id, label, icon: Icon, badge, shortLabel, color }) => (
                 <TabsTrigger 
                   key={id} 
                   value={id}
                   className="flex-col space-y-1 py-3 px-2 sm:py-4 sm:px-6 data-[state=active]:bg-primary/10 data-[state=active]:text-primary border-b-2 border-transparent data-[state=active]:border-primary transition-all duration-300"
                 >
-                  <div className="flex flex-col sm:flex-row items-center sm:space-x-2 space-y-1 sm:space-y-0">
-                    <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="font-semibold text-[10px] sm:text-base hidden sm:inline">{label}</span>
-                    <span className="font-semibold text-[10px] sm:hidden">{shortLabel}</span>
-                    {badge && (
-                      <Badge variant="outline" className="text-[8px] sm:text-xs px-1 sm:px-2 py-0 sm:py-0.5">
-                        {badge}
-                      </Badge>
-                    )}
-                  </div>
+                <div className="flex flex-col sm:flex-row items-center sm:space-x-2 space-y-1 sm:space-y-0">
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${color}`} />
+                  <span className="font-semibold text-[10px] sm:text-base hidden sm:inline">{label}</span>
+                  <span className="font-semibold text-[10px] sm:hidden">{shortLabel}</span>
+                  {badge && (
+                    <Badge variant="outline" className="text-[8px] sm:text-xs px-1 sm:px-2 py-0 sm:py-0.5">
+                      {badge}
+                    </Badge>
+                  )}
+                </div>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -322,12 +326,28 @@ const Index = () => {
                   <div className="space-y-4">
                     <h3 className="text-xl sm:text-2xl font-bold text-center">Próximas Rodadas</h3>
                     <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                      {upcomingMatches.map((match) => (
+                      {upcomingMatches
+                        .sort((a, b) => {
+                          // Ordenar por scheduled_time (mais próximo primeiro)
+                          if (a.scheduled_time && b.scheduled_time) {
+                            return new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime();
+                          }
+                          // Fallback: ordenar por maior posição dos pilotos
+                          const maxPosA = Math.max(a.pilot1?.position || 0, a.pilot2?.position || 0);
+                          const maxPosB = Math.max(b.pilot1?.position || 0, b.pilot2?.position || 0);
+                          return maxPosB - maxPosA;
+                        })
+                        .map((match) => (
                         <Card key={match.id} className="glass-card hover:shadow-neon transition-all duration-300">
                           <CardContent className="p-3 sm:p-4">
                             <div className="flex items-center justify-between mb-3">
                               <Badge variant="outline" className="text-[10px] sm:text-xs">
-                                {match.event?.name || "EVENTO"}
+                                {match.bracket_type === 'odd' 
+                                  ? `Rodada Ímpar #${match.round_number}` 
+                                  : match.bracket_type === 'even'
+                                  ? `Rodada Par #${match.round_number}`
+                                  : `Rodada #${match.round_number}`
+                                } - {match.event?.name || "EVENTO"}
                               </Badge>
                               <div className="flex items-center space-x-1 sm:space-x-2 text-[10px] sm:text-xs text-muted-foreground">
                                 <Star className="w-3 h-3" />
@@ -339,11 +359,17 @@ const Index = () => {
                                 <div className="text-right">
                                   <div className="font-semibold text-xs sm:text-sm truncate">{match.pilot1?.name || "TBD"}</div>
                                   <div className="text-[10px] sm:text-xs text-accent">#{match.pilot1?.position || "?"}</div>
+                                  {match.pilot1?.team && (
+                                    <div className="text-[9px] text-muted-foreground truncate">🏁 {match.pilot1.team}</div>
+                                  )}
                                 </div>
                                 <div className="text-[10px] sm:text-xs text-muted-foreground">VS</div>
                                 <div className="text-left">
                                   <div className="font-semibold text-xs sm:text-sm truncate">{match.pilot2?.name || "TBD"}</div>
                                   <div className="text-[10px] sm:text-xs text-accent">#{match.pilot2?.position || "?"}</div>
+                                  {match.pilot2?.team && (
+                                    <div className="text-[9px] text-muted-foreground truncate">🏁 {match.pilot2.team}</div>
+                                  )}
                                 </div>
                               </div>
                             </div>

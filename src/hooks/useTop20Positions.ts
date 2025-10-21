@@ -15,6 +15,7 @@ export interface Top20Position {
     name: string;
     car_name: string;
     image_url: string | null;
+    team?: string | null;
   } | null;
 }
 
@@ -29,7 +30,7 @@ export const useTop20Positions = () => {
         .from('top20_positions')
         .select(`
           *,
-          pilot:pilots(id, name, car_name, image_url)
+          pilot:pilots(id, name, car_name, image_url, team)
         `)
         .order('position', { ascending: true });
       

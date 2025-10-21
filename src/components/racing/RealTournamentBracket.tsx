@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Top20RulesDialog } from "./Top20RulesDialog";
 
 export default function RealTournamentBracket() {
   const { positions: top20Positions, isLoading: loadingPositions } = useTop20Positions();
@@ -44,10 +45,28 @@ export default function RealTournamentBracket() {
     match.event?.event_type === 'top_20'
   ) || [];
 
-  // Separar por status
-  const upcomingMatches = top20Matches.filter((m: any) => m.match_status === 'upcoming');
+  // Separar por status com ORDENAÇÃO
+  const upcomingMatches = top20Matches
+    .filter((m: any) => m.match_status === 'upcoming')
+    .sort((a: any, b: any) => {
+      // Ordenar por scheduled_time (mais próximo primeiro)
+      if (a.scheduled_time && b.scheduled_time) {
+        return new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime();
+      }
+      // Fallback: ordenar por maior posição
+      const maxPosA = Math.max(a.pilot1?.position || 0, a.pilot2?.position || 0);
+      const maxPosB = Math.max(b.pilot1?.position || 0, b.pilot2?.position || 0);
+      return maxPosB - maxPosA;
+    });
+  
   const liveMatches = top20Matches.filter((m: any) => m.match_status === 'in_progress');
-  const finishedMatches = top20Matches.filter((m: any) => m.match_status === 'finished');
+  
+  const finishedMatches = top20Matches
+    .filter((m: any) => m.match_status === 'finished')
+    .sort((a: any, b: any) => {
+      // Ordenar por updated_at DECRESCENTE (mais recente primeiro)
+      return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+    });
 
   const MatchCard = ({ match, showPositions = false }: any) => {
     if (!match) return null;
@@ -135,9 +154,12 @@ export default function RealTournamentBracket() {
       {/* TOP 20 Current Standings */}
       <Card className="bg-background border-border shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-accent">
-            <Target className="w-5 w-5" />
-            <span>TOP 20 - Sistema de Liga</span>
+          <CardTitle className="flex items-center justify-between space-x-2 text-accent">
+            <div className="flex items-center space-x-2">
+              <Target className="w-5 h-5" />
+              <span>TOP 20 - Sistema de Liga</span>
+            </div>
+            <Top20RulesDialog />
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Classificação atual. Rodadas alternadas entre posições ímpares e pares.
@@ -166,6 +188,11 @@ export default function RealTournamentBracket() {
                       <p className="text-xs text-racing-yellow truncate">
                         {position.pilot.car_name}
                       </p>
+                      {position.pilot.team && (
+                        <p className="text-[10px] text-muted-foreground truncate">
+                          🏁 {position.pilot.team}
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <p className="text-xs text-muted-foreground">Vazio</p>
