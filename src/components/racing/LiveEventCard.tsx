@@ -123,16 +123,6 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
           </Badge>
           <h2 className="text-2xl font-bold">{round}</h2>
         </div>
-
-        {/* Live Status */}
-        <div className="flex justify-center">
-          <div className="glass-card px-4 sm:px-6 py-3 rounded-full">
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-neonGreen animate-pulse" />
-              <span className="text-neonGreen font-bold">AO VIVO</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Main Battle Card */}
