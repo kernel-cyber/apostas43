@@ -93,7 +93,11 @@ export default function RealTournamentBracket() {
       `}>
         {/* Match Header */}
         <div className={`px-3 py-1 border-b text-xs text-center flex items-center justify-center gap-2 ${
-          isLive ? 'bg-racing-yellow text-black' : 'bg-trackDark border-border'
+          isLive 
+            ? 'bg-racing-yellow text-black' 
+            : match.bracket_type === 'odd' 
+              ? 'bg-blue-600/80 text-white border-blue-500/50' 
+              : 'bg-red-600/80 text-white border-red-500/50'
         }`}>
           {isLive && <Play className="w-3 h-3 animate-pulse" />}
           <span>{getRoundLabel(match.cycle_position, match.round_number).emoji}</span>
