@@ -62,11 +62,25 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
   const eventTypeColor = event.event_type === 'shark_tank' ? 'bg-racing-red' : 'bg-racing-blue';
 
   const handleEndEvent = async () => {
-    if (!confirm(`Tem certeza que deseja encerrar o evento "${event.name}"?`)) return;
-    await updateEvent.mutateAsync({
-      id: event.id,
-      is_active: false,
-    });
+    if (!confirm(`Tem certeza que deseja encerrar o evento "${event.name}"?\n\nIsso irá salvar o ranking TOP 20 atual como resultado final desta edição.`)) return;
+    
+    try {
+      // Chamar a função que salva o ranking final e marca o evento como inativo
+      const { error } = await supabase.rpc('finalize_event_rankings', {
+        p_event_id: event.id
+      });
+      
+      if (error) throw error;
+      
+      // Invalidar query para atualizar a lista
+      updateEvent.mutateAsync({
+        id: event.id,
+        is_active: false,
+      });
+    } catch (error) {
+      console.error('Erro ao encerrar evento:', error);
+      alert('Erro ao encerrar evento. Tente novamente.');
+    }
   };
 
   return (

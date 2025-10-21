@@ -372,6 +372,10 @@ export type Database = {
         Args: { p_match_id: string }
         Returns: Json
       }
+      finalize_event_rankings: {
+        Args: { p_event_id: string }
+        Returns: undefined
+      }
       generate_top20_matches: {
         Args: { p_bracket_type: string; p_event_id: string }
         Returns: {
