@@ -18,8 +18,12 @@ export default function MatchList() {
     await deleteMatch.mutateAsync(id);
   };
 
-  const handleStartMatch = async (id: string) => {
-    await updateMatchStatus.mutateAsync({ id, status: 'in_progress' });
+  const handleStartMatch = async (id: string, lockBetting: boolean = true) => {
+    await updateMatchStatus.mutateAsync({ 
+      id, 
+      status: 'in_progress',
+      betting_locked: lockBetting 
+    });
   };
 
   const handleOpenFinishModal = (match: any) => {
@@ -163,11 +167,23 @@ function MatchCard({ match, onDelete, onStart, onFinish }: any) {
             <Button
               size="sm"
               className="flex-1"
-              onClick={() => onStart(match.id)}
+              onClick={() => {
+                if (confirm('Deseja bloquear as apostas ao iniciar o match?')) {
+                  onStart(match.id, true);
+                } else {
+                  onStart(match.id, false);
+                }
+              }}
             >
               <Play className="h-4 w-4 mr-2" />
               Iniciar
             </Button>
+          )}
+          
+          {match.betting_locked && (
+            <Badge variant="destructive" className="text-xs">
+              Apostas Bloqueadas
+            </Badge>
           )}
 
           {match.match_status === 'in_progress' && (

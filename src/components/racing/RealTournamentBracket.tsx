@@ -1,30 +1,75 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Target, Crown, AlertCircle } from "lucide-react";
+import { Trophy, Target, Crown, AlertCircle, Play } from "lucide-react";
 import { useTop20Positions } from "@/hooks/useTop20Positions";
 import { useMatches } from "@/hooks/useMatches";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function RealTournamentBracket() {
   const { positions: top20Positions, isLoading: loadingPositions } = useTop20Positions();
   const { matches, isLoading: loadingMatches } = useMatches();
+  const queryClient = useQueryClient();
 
-  // Filtrar apenas matches TOP 20 finalizados
+  // Realtime subscription for updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('top20-updates')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'matches'
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ['matches'] });
+        queryClient.invalidateQueries({ queryKey: ['top20-positions'] });
+      })
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'top20_positions'
+      }, () => {
+        queryClient.invalidateQueries({ queryKey: ['top20-positions'] });
+      })
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+  // Filtrar matches TOP 20 (todos os status)
   const top20Matches = matches?.filter((match: any) => 
-    match.event?.event_type === 'top_20' && match.match_status === 'finished'
+    match.event?.event_type === 'top_20'
   ) || [];
+
+  // Separar por status
+  const upcomingMatches = top20Matches.filter((m: any) => m.match_status === 'upcoming');
+  const liveMatches = top20Matches.filter((m: any) => m.match_status === 'in_progress');
+  const finishedMatches = top20Matches.filter((m: any) => m.match_status === 'finished');
 
   const MatchCard = ({ match, showPositions = false }: any) => {
     if (!match) return null;
 
     const pilot1Position = top20Positions?.find(p => p.pilot_id === match.pilot1_id)?.position;
     const pilot2Position = top20Positions?.find(p => p.pilot_id === match.pilot2_id)?.position;
+    
+    const isLive = match.match_status === 'in_progress';
+    const isFinished = match.match_status === 'finished';
 
     return (
-      <div className="relative bg-gradient-card border border-border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon">
+      <div className={`
+        relative bg-gradient-card border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon
+        ${isLive ? 'border-racing-yellow animate-pulse' : 'border-border'}
+      `}>
         {/* Match Header */}
-        <div className="px-3 py-1 bg-trackDark border-b border-border text-xs text-center">
+        <div className={`px-3 py-1 border-b text-xs text-center flex items-center justify-center gap-2 ${
+          isLive ? 'bg-racing-yellow text-black' : 'bg-trackDark border-border'
+        }`}>
+          {isLive && <Play className="w-3 h-3 animate-pulse" />}
           Rodada {match.round_number}
+          {isLive && <span className="font-bold">AO VIVO</span>}
         </div>
         
         {/* Pilots */}
@@ -152,18 +197,56 @@ export default function RealTournamentBracket() {
         </CardContent>
       </Card>
 
-      {/* Recent Matches */}
-      {top20Matches.length > 0 && (
-        <Card className="bg-background border-border shadow-card">
+      {/* Live Matches */}
+      {liveMatches.length > 0 && (
+        <Card className="bg-background border-racing-yellow shadow-neon">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Trophy className="w-5 h-5 text-racing-yellow" />
-              <span>Matches Realizados</span>
+              <Play className="w-5 h-5 text-racing-yellow animate-pulse" />
+              <span>Matches Ao Vivo</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {top20Matches.slice(0, 6).map((match: any) => (
+              {liveMatches.map((match: any) => (
+                <MatchCard key={match.id} match={match} showPositions={true} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Upcoming Matches */}
+      {upcomingMatches.length > 0 && (
+        <Card className="bg-background border-border shadow-card">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Target className="w-5 h-5 text-accent" />
+              <span>Próximas Rodadas</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {upcomingMatches.map((match: any) => (
+                <MatchCard key={match.id} match={match} showPositions={true} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Finished Matches */}
+      {finishedMatches.length > 0 && (
+        <Card className="bg-background border-border shadow-card">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Trophy className="w-5 h-5 text-racing-green" />
+              <span>Matches Finalizados</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {finishedMatches.slice(0, 6).map((match: any) => (
                 <MatchCard key={match.id} match={match} showPositions={true} />
               ))}
             </div>
@@ -176,7 +259,7 @@ export default function RealTournamentBracket() {
           <CardContent className="py-12 text-center">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-muted-foreground">
-              Nenhum match TOP 20 realizado ainda.
+              Nenhum match TOP 20 criado ainda.
             </p>
           </CardContent>
         </Card>

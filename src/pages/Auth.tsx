@@ -75,7 +75,7 @@ export default function Auth() {
               <span className="premium-gradient-text">ÁREA 43</span>
             </CardTitle>
             <CardDescription className="text-muted-foreground text-base">
-              Entre para apostar e acompanhar as corridas
+              Entre para apostar e acompanhar as rodadas
             </CardDescription>
           </div>
         </CardHeader>

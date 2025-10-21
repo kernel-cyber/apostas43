@@ -75,10 +75,15 @@ export const useMatches = (eventId?: string) => {
   });
 
   const updateMatchStatus = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: Match['match_status'] }) => {
+    mutationFn: async ({ id, status, betting_locked }: { id: string; status: Match['match_status']; betting_locked?: boolean }) => {
+      const updateData: any = { match_status: status };
+      if (betting_locked !== undefined) {
+        updateData.betting_locked = betting_locked;
+      }
+      
       const { data, error } = await (supabase as any)
         .from('matches')
-        .update({ match_status: status })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();

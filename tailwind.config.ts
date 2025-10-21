@@ -92,6 +92,22 @@ export default {
             height: "0",
           },
         },
+        "confetti": {
+          "0%": { transform: "translateY(-100vh) rotate(0deg)", opacity: "1" },
+          "100%": { transform: "translateY(100vh) rotate(720deg)", opacity: "0" }
+        },
+        "winner-scale": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" }
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" }
+        },
+        "slide-in-top": {
+          "0%": { transform: "translateY(-20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -100,6 +116,10 @@ export default {
         "card-enter": "card-enter 0.6s ease-out",
         "neon-glow": "neon-glow 3s ease-in-out infinite",
         "race-countdown": "race-countdown 1s ease-out",
+        "confetti": "confetti 4s ease-out forwards",
+        "winner-scale": "winner-scale 2s ease-in-out infinite",
+        "fade-in": "fade-in 0.3s ease-out",
+        "slide-in-top": "slide-in-top 0.5s ease-out",
       },
       backgroundImage: {
         "gradient-racing": "var(--gradient-racing)",

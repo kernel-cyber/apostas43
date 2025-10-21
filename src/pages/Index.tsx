@@ -7,6 +7,7 @@ import { useActiveMatches } from "@/hooks/useActiveMatches";
 import { useMatchNotifications } from "@/hooks/useMatchNotifications";
 import { useBetting } from "@/hooks/useBetting";
 import { useRecentForm } from "@/hooks/useRecentForm";
+import { useWinnerNotification } from "@/hooks/useWinnerNotification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ import { RaceCard } from "@/components/racing/RaceCard";
 import RealTournamentBracket from "@/components/racing/RealTournamentBracket";
 import Leaderboard from "@/components/racing/Leaderboard";
 import { LiveEventCard } from "@/components/racing/LiveEventCard";
+import WinnerCelebration from "@/components/racing/WinnerCelebration";
 import { OnlineUsers } from "@/components/OnlineUsers";
 import { 
   Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings
@@ -28,6 +30,11 @@ const Index = () => {
   const { liveMatch, upcomingMatches, loading: matchesLoading } = useActiveMatches();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("live");
+  
+  // Winner notification system
+  const { lastWinner, showCelebration, setShowCelebration } = useWinnerNotification();
+  const [previousMatchId, setPreviousMatchId] = useState<string | null>(null);
+  const [isNewMatch, setIsNewMatch] = useState(false);
   
   // Get betting odds for live match
   const { odds: liveOdds } = useBetting(liveMatch?.id || null);
@@ -44,6 +51,17 @@ const Index = () => {
       navigate('/auth');
     }
   }, [user, loading, navigate]);
+
+  // Detect new match for animation
+  useEffect(() => {
+    if (liveMatch?.id && liveMatch.id !== previousMatchId) {
+      setIsNewMatch(true);
+      setPreviousMatchId(liveMatch.id);
+      
+      // Reset animation flag
+      setTimeout(() => setIsNewMatch(false), 1500);
+    }
+  }, [liveMatch?.id, previousMatchId]);
 
   // Create race object with dynamic data
   const mockRace = liveMatch ? {
@@ -87,14 +105,6 @@ const Index = () => {
     }
   } : null;
 
-  const topPilots = [
-    { position: 1, name: "Roberto 'King' Machado", car: "Supra 2JZ-GTE", points: 2580, wins: 24, losses: 1, streak: 8, trend: "stable" as const, avatar: "👑" },
-    { position: 2, name: "Marina 'Beast' Santos", car: "STI EJ25T", points: 2420, wins: 22, losses: 3, streak: 5, trend: "up" as const, avatar: "🦁" },
-    { position: 3, name: "Diego 'Rocket' Oliveira", car: "Civic K20A", points: 2180, wins: 19, losses: 6, streak: 3, trend: "up" as const, avatar: "🚀" },
-    { position: 4, name: "Felipe 'Ghost' Costa", car: "Golf R32 VR6", points: 1950, wins: 17, losses: 8, streak: 2, trend: "down" as const, avatar: "👻" },
-    { position: 5, name: "Carla 'Phoenix' Mendes", car: "Lancer EVO IX", points: 1820, wins: 16, losses: 9, streak: 1, trend: "stable" as const, avatar: "🔥" },
-  ];
-
   const handleBetSuccess = () => {
     // Points will auto-update via realtime subscription
   };
@@ -112,6 +122,15 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background track-lines overflow-x-hidden">
+      {/* Winner Celebration */}
+      {showCelebration && lastWinner && (
+        <WinnerCelebration 
+          winner={lastWinner}
+          show={showCelebration}
+          onComplete={() => setShowCelebration(false)}
+        />
+      )}
+      
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-50 glass-card backdrop-blur-xl border-b border-border/50">
         <div className="container mx-auto px-2 sm:px-4 py-3">
@@ -246,11 +265,12 @@ const Index = () => {
                     userPoints={points}
                     userId={user.id}
                     onBetSuccess={handleBetSuccess}
+                    isNew={isNewMatch}
                   />
                 ) : (
                   <Card className="glass-card p-8 text-center">
                     <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-xl font-bold mb-2">Nenhuma corrida ao vivo</h3>
+                    <h3 className="text-xl font-bold mb-2">Nenhuma rodada ao vivo</h3>
                     <p className="text-muted-foreground">Aguarde o próximo evento começar!</p>
                   </Card>
                 )}
@@ -258,7 +278,7 @@ const Index = () => {
                 {/* Upcoming Races */}
                 {upcomingMatches.length > 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-xl sm:text-2xl font-bold text-center">Próximas Corridas</h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-center">Próximas Rodadas</h3>
                     <div className="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                       {upcomingMatches.map((match) => (
                         <Card key={match.id} className="glass-card hover:shadow-neon transition-all duration-300">

@@ -39,9 +39,10 @@ interface LiveEventCardProps {
   userPoints: number;
   userId: string;
   onBetSuccess: () => void;
+  isNew?: boolean;
 }
 
-export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess }: LiveEventCardProps) => {
+export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = false }: LiveEventCardProps) => {
   const { pilot1, pilot2, pilot1Id, pilot2Id, event, round, status, bets, totalPool, totalBets, odds } = race;
 
   const FormIndicator = ({ form }: { form: string[] }) => (
@@ -107,7 +108,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess }: LiveEv
   );
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className={`max-w-6xl mx-auto space-y-6 ${isNew ? 'animate-slide-in-top' : ''}`}>
       {/* Event Header */}
       <div className="text-center space-y-4">
         <div className="space-y-2">
