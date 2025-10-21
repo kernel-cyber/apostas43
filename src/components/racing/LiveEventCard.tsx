@@ -15,6 +15,7 @@ interface PilotData {
   wins: number;
   losses: number;
   avatar: string;
+  imageUrl?: string;
   winRate: number;
   bestTime: string;
   recentForm: string[];
@@ -97,14 +98,27 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
           )}
         </div>
 
+        {/* Foto do Piloto */}
+        {pilot.imageUrl && (
+          <div className="flex justify-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-primary/30">
+              <img 
+                src={pilot.imageUrl} 
+                alt={pilot.name} 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Informações do Piloto - Centralizadas */}
         <div className="text-center space-y-1">
-          <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 text-neonGreen">
-            #{pilot.position} • {pilot.winRate}% WR
-          </Badge>
           <h3 className="text-base sm:text-xl font-bold text-white">{pilot.name}</h3>
           <p className="text-xs sm:text-sm text-racing-yellow">{pilot.car}</p>
           {team && <p className="text-xs text-blue-400">Equipe: {team}</p>}
+          <Badge variant="outline" className="text-[10px] sm:text-xs mt-1 text-neonGreen">
+            #{pilot.position} • {pilot.winRate}% WR
+          </Badge>
         </div>
 
         {/* Stats Grid */}
