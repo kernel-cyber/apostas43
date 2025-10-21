@@ -13,7 +13,7 @@ export default function MatchList() {
   const { matches, isLoading, updateMatchStatus, deleteMatch } = useMatches();
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('upcoming'); // Filtro padrão: apenas upcoming
+  const [statusFilter, setStatusFilter] = useState<string>('all'); // Mostrar todos por padrão
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar este match?')) return;
@@ -56,16 +56,31 @@ export default function MatchList() {
     return <div className="text-center text-racing-gray">Carregando matches...</div>;
   }
 
-  // Filtrar matches por status
-  const filteredMatches = matches?.filter((match: any) => {
+  // Filtrar e ordenar matches por status - in_progress primeiro, depois upcoming por scheduled_time
+  const filteredMatches = (matches?.filter((match: any) => {
     if (statusFilter === 'all') return true;
     return match.match_status === statusFilter;
-  }) || [];
+  }) || []).sort((a: any, b: any) => {
+    // Prioridade: in_progress > upcoming > finished
+    const statusOrder: any = { 
+      'in_progress': 0, 
+      'upcoming': 1, 
+      'finished': 2 
+    };
+    
+    const statusDiff = statusOrder[a.match_status] - statusOrder[b.match_status];
+    if (statusDiff !== 0) return statusDiff;
+    
+    // Se mesmo status, ordenar por scheduled_time
+    if (a.scheduled_time && b.scheduled_time) {
+      return new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime();
+    }
+    
+    return 0;
+  });
 
-  // Encontrar o próximo match (primeiro upcoming ou in_progress)
-  const nextMatch = matches?.find((m: any) => 
-    m.match_status === 'in_progress' || m.match_status === 'upcoming'
-  );
+  // Encontrar o próximo match (segundo da lista se houver)
+  const nextMatch = filteredMatches.length > 1 ? filteredMatches[1] : null;
 
   if (!matches || matches.length === 0) {
     return (
@@ -79,18 +94,8 @@ export default function MatchList() {
     );
   }
 
-  // Group filtered matches by event
-  const matchesByEvent = filteredMatches.reduce((acc: any, match: any) => {
-    const eventId = match.event.id;
-    if (!acc[eventId]) {
-      acc[eventId] = {
-        event: match.event,
-        matches: [],
-      };
-    }
-    acc[eventId].matches.push(match);
-    return acc;
-  }, {});
+  // Não agrupar por evento, manter ordem sequencial
+  const matchesList = filteredMatches;
 
   return (
     <>
@@ -105,40 +110,33 @@ export default function MatchList() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="upcoming">Para Iniciar</SelectItem>
-            <SelectItem value="in_progress">Ao Vivo</SelectItem>
-            <SelectItem value="finished">Finalizados</SelectItem>
             <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="in_progress">Ao Vivo</SelectItem>
+            <SelectItem value="upcoming">Para Iniciar</SelectItem>
+            <SelectItem value="finished">Finalizados</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      <div className="space-y-6">
-        {filteredMatches.length === 0 ? (
+      <div className="space-y-4">
+        {matchesList.length === 0 ? (
           <div className="text-center py-8 text-racing-gray">
             Nenhum match encontrado com este filtro.
           </div>
         ) : (
-          Object.values(matchesByEvent).map((group: any) => (
-          <div key={group.event.id}>
-            <h3 className="text-xl font-bold text-white mb-4 font-racing">
-              {group.event.name}
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {group.matches.map((match: any) => (
-                <MatchCard
-                  key={match.id}
-                  match={match}
-                  onDelete={handleDelete}
-                  onStart={handleStartMatch}
-                  onFinish={handleOpenFinishModal}
-                  onToggleBetting={handleToggleBetting}
-                  isNext={match.id === nextMatch?.id}
-                />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {matchesList.map((match: any, index: number) => (
+              <MatchCard
+                key={match.id}
+                match={match}
+                onDelete={handleDelete}
+                onStart={handleStartMatch}
+                onFinish={handleOpenFinishModal}
+                onToggleBetting={handleToggleBetting}
+                isNext={index === 1}
+              />
+            ))}
           </div>
-        ))
         )}
       </div>
 
