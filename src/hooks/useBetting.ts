@@ -90,9 +90,13 @@ export const useBetting = (matchId: string | null) => {
         }
       )
       .subscribe();
+    
+    // Fallback polling para apostas de outros usuários
+    const intervalId = setInterval(fetchOdds, 1500);
       
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(intervalId);
     };
   }, [matchId]);
 

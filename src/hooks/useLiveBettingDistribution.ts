@@ -13,35 +13,22 @@ export const useLiveBettingDistribution = (matchId: string, pilot1Id: string, pi
   });
 
   const fetchDistribution = async () => {
+    if (!matchId) return;
     try {
-      const { data: betsData, error } = await supabase
-        .from('bets')
-        .select('pilot_id, amount')
-        .eq('match_id', matchId);
+      const { data, error } = await supabase.rpc('calculate_match_odds', { 
+        p_match_id: matchId 
+      });
 
       if (error) throw error;
 
-      if (!betsData || betsData.length === 0) {
-        setDistribution({ pilot1Percentage: 0, pilot2Percentage: 0 });
-        return;
-      }
+      if (data && typeof data === 'object') {
+        const result = data as any;
+        const p1 = Number(result.pilot1_percentage ?? 0);
+        const p2 = Number(result.pilot2_percentage ?? 0);
 
-      const pilot1Total = betsData
-        .filter(bet => bet.pilot_id === pilot1Id)
-        .reduce((sum, bet) => sum + bet.amount, 0);
-
-      const pilot2Total = betsData
-        .filter(bet => bet.pilot_id === pilot2Id)
-        .reduce((sum, bet) => sum + bet.amount, 0);
-
-      const totalPool = pilot1Total + pilot2Total;
-
-      if (totalPool === 0) {
-        setDistribution({ pilot1Percentage: 0, pilot2Percentage: 0 });
-      } else {
         setDistribution({
-          pilot1Percentage: (pilot1Total / totalPool) * 100,
-          pilot2Percentage: (pilot2Total / totalPool) * 100
+          pilot1Percentage: Math.round(p1 * 10) / 10,
+          pilot2Percentage: Math.round(p2 * 10) / 10
         });
       }
     } catch (error) {
@@ -68,8 +55,12 @@ export const useLiveBettingDistribution = (matchId: string, pilot1Id: string, pi
       )
       .subscribe();
 
+    // Fallback polling para apostas de outros usuários
+    const intervalId = setInterval(fetchDistribution, 1500);
+
     return () => {
       supabase.removeChannel(channel);
+      clearInterval(intervalId);
     };
   }, [matchId, pilot1Id, pilot2Id]);
 
