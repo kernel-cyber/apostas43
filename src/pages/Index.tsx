@@ -155,9 +155,10 @@ const Index = () => {
             <div className="flex items-center gap-2 sm:gap-3">
               {/* #17: Logo correto igual à tela de login + ícone melhor */}
               <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-primary animate-pulse" />
-              <span className="font-bold text-base sm:text-lg">
-                <span className="premium-gradient-text">ÁREA 43</span>
-              </span>
+              <div className="flex items-center gap-1">
+                <span className="font-bold text-base sm:text-lg premium-gradient-text">ÁREA</span>
+                <span className="font-bold text-base sm:text-lg text-racing-yellow neon-text">43</span>
+              </div>
             </div>
             
             <div className="flex items-center gap-2 sm:gap-3">
@@ -264,7 +265,7 @@ const Index = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
               {[
-                { id: "live", label: "Rodadas ao Vivo", icon: Play, badge: "AO VIVO", shortLabel: "Rodadas", color: "text-neonGreen" },
+                { id: "live", label: "Rodadas", icon: Play, badge: "AO VIVO", shortLabel: "Rodadas", color: "text-neonGreen" },
                 { id: "lista43", label: "LISTA 43", icon: ListOrdered, badge: "TOP 20", shortLabel: "LISTA", color: "text-racing-yellow" },
                 { id: "ranking", label: "RANKINGS", icon: TrendingUp, badge: null, shortLabel: "RANK", color: "text-accent" },
               ].map(({ id, label, icon: Icon, badge, shortLabel, color }) => (
@@ -342,8 +343,8 @@ const Index = () => {
                           const maxPosB = Math.max(b.pilot1?.position || 0, b.pilot2?.position || 0);
                           return maxPosB - maxPosA;
                         })
-                        .map((match) => (
-                        <Card key={match.id} className="glass-card hover:shadow-neon transition-all duration-300">
+                        .map((match, index) => (
+                        <Card key={match.id} className={`glass-card hover:shadow-neon transition-all duration-300 ${index === 0 ? 'animate-pulse-border-green' : ''}`}>
                           <CardContent className="p-3 sm:p-4">
                             <div className="flex items-center justify-between mb-3">
                               <Badge variant="outline" className="text-[10px] sm:text-xs">

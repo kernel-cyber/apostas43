@@ -261,24 +261,6 @@ export default function RealTournamentBracket() {
         </CardContent>
       </Card>
 
-      {/* Live Matches */}
-      {liveMatches.length > 0 && (
-        <Card className="bg-background border-racing-yellow shadow-neon">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Play className="w-5 h-5 text-racing-yellow animate-pulse" />
-              <span>Matches Ao Vivo</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {liveMatches.map((match: any) => (
-                <MatchCard key={match.id} match={match} showPositions={true} />
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Upcoming Matches */}
       {upcomingMatches.length > 0 && (
@@ -291,8 +273,10 @@ export default function RealTournamentBracket() {
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingMatches.map((match: any) => (
-                <MatchCard key={match.id} match={match} showPositions={true} />
+              {upcomingMatches.map((match: any, index: number) => (
+                <div key={match.id} className={index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}>
+                  <MatchCard match={match} showPositions={true} />
+                </div>
               ))}
             </div>
           </CardContent>
