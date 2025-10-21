@@ -330,7 +330,7 @@ const Index = () => {
                     </Card> : mockRace ? <LiveEventCard race={mockRace} userPoints={points} userId={user.id} onBetSuccess={handleBetSuccess} isNew={isNewMatch} /> : null : <Card className="glass-card p-8 text-center">
                     <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                     <h3 className="text-xl font-bold mb-2">Nenhuma rodada ao vivo</h3>
-                    <p className="text-muted-foreground">Aguarde o próximo evento começar!</p>
+                    <p className="text-muted-foreground">Aguarde a próxima rodada começar!</p>
                   </Card>}
                 
                 {/* Upcoming Races */}
