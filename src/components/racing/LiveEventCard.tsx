@@ -104,13 +104,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
             </Badge>
             {/* #15: Cores padronizadas */}
             <h3 className="text-base sm:text-xl font-bold text-white truncate">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-racing-yellow truncate">
-              {side === "left" && pilot1.position < pilot2.position && "🛡️"}
-              {side === "left" && pilot1.position > pilot2.position && "⚔️"}
-              {side === "right" && pilot2.position < pilot1.position && "🛡️"}
-              {side === "right" && pilot2.position > pilot1.position && "⚔️"}
-              {" "}{pilot.car}
-            </p>
+            <p className="text-xs sm:text-sm text-racing-yellow truncate">🚗 {pilot.car}</p>
             {team && <p className="text-xs text-blue-400 truncate">🏁 {team}</p>}
           </div>
         </div>
