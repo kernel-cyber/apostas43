@@ -77,6 +77,10 @@ export default function RealTournamentBracket() {
     const isLive = match.match_status === 'in_progress';
     const isFinished = match.match_status === 'finished';
 
+    // #16: Determinar ataque/defesa
+    const pilot1IsAttacking = pilot1Position && pilot2Position && pilot1Position > pilot2Position;
+    const pilot2IsAttacking = pilot1Position && pilot2Position && pilot2Position > pilot1Position;
+
     return (
       <div className={`
         relative bg-gradient-card border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon
@@ -103,10 +107,28 @@ export default function RealTournamentBracket() {
             ${match.winner_id === match.pilot1_id ? 'bg-gradient-winner text-black font-bold' : 'bg-background'}
           `}>
             <div className="flex items-center space-x-2">
+              {/* #16: Ícone ataque/defesa */}
+              {pilot1IsAttacking ? (
+                <span title="Ataca" className="text-red-500">⚔️</span>
+              ) : pilot2IsAttacking ? (
+                <span title="Defende" className="text-blue-500">🛡️</span>
+              ) : null}
               {showPositions && pilot1Position && (
-                <span className="text-xs opacity-60">#{pilot1Position}</span>
+                <span className="text-xs text-neonGreen font-bold">#{pilot1Position}</span>
               )}
-              <span className="truncate">{match.pilot1?.name || 'TBD'}</span>
+              {/* #4: Foto do piloto */}
+              {match.pilot1?.image_url && (
+                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                  <img src={match.pilot1.image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              {/* #7: Cores padronizadas */}
+              <div className="flex flex-col">
+                <span className="truncate text-white font-semibold">{match.pilot1?.name || 'TBD'}</span>
+                {match.pilot1?.team && (
+                  <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot1.team}</span>
+                )}
+              </div>
             </div>
             <div className="flex items-center space-x-1">
               {match.winner_id === match.pilot1_id && <Crown className="w-3 h-3 text-neonYellow" />}
@@ -122,10 +144,28 @@ export default function RealTournamentBracket() {
             ${match.winner_id === match.pilot2_id ? 'bg-gradient-winner text-black font-bold' : 'bg-background'}
           `}>
             <div className="flex items-center space-x-2">
+              {/* #16: Ícone ataque/defesa */}
+              {pilot2IsAttacking ? (
+                <span title="Ataca" className="text-red-500">⚔️</span>
+              ) : pilot1IsAttacking ? (
+                <span title="Defende" className="text-blue-500">🛡️</span>
+              ) : null}
               {showPositions && pilot2Position && (
-                <span className="text-xs opacity-60">#{pilot2Position}</span>
+                <span className="text-xs text-neonGreen font-bold">#{pilot2Position}</span>
               )}
-              <span className="truncate">{match.pilot2?.name || 'TBD'}</span>
+              {/* #4: Foto do piloto */}
+              {match.pilot2?.image_url && (
+                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                  <img src={match.pilot2.image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
+                </div>
+              )}
+              {/* #7: Cores padronizadas */}
+              <div className="flex flex-col">
+                <span className="truncate text-white font-semibold">{match.pilot2?.name || 'TBD'}</span>
+                {match.pilot2?.team && (
+                  <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot2.team}</span>
+                )}
+              </div>
             </div>
             <div className="flex items-center space-x-1">
               {match.winner_id === match.pilot2_id && <Crown className="w-3 h-3 text-neonYellow" />}
@@ -164,6 +204,7 @@ export default function RealTournamentBracket() {
           <p className="text-sm text-muted-foreground">
             Classificação atual. Rodadas alternadas entre posições ímpares e pares.
           </p>
+          {/* #9: Botão "?" melhorado - removendo texto redundante das regras */}
         </CardHeader>
         <CardContent>
           {/* Current TOP 20 */}
@@ -182,14 +223,25 @@ export default function RealTournamentBracket() {
                   
                   {position.pilot ? (
                     <div>
-                      <p className="font-bold text-foreground text-sm truncate">
+                      {/* #4: Foto do piloto */}
+                      {position.pilot.image_url && (
+                        <div className="w-full h-16 rounded overflow-hidden mb-2">
+                          <img
+                            src={position.pilot.image_url}
+                            alt={position.pilot.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      {/* #7: Cores padronizadas */}
+                      <p className="font-bold text-white text-sm truncate">
                         {position.pilot.name}
                       </p>
                       <p className="text-xs text-racing-yellow truncate">
-                        {position.pilot.car_name}
+                        🚗 {position.pilot.car_name}
                       </p>
                       {position.pilot.team && (
-                        <p className="text-[10px] text-muted-foreground truncate">
+                        <p className="text-[10px] text-blue-400 truncate">
                           🏁 {position.pilot.team}
                         </p>
                       )}
@@ -206,25 +258,6 @@ export default function RealTournamentBracket() {
               <p>TOP 20 não inicializado ainda.</p>
             </div>
           )}
-
-          {/* Liga Rules */}
-          <div className="mt-6 p-4 bg-trackDark rounded-lg border border-border">
-            <h4 className="font-semibold text-sm mb-2 text-neonGreen">Sistema de Liga TOP 20:</h4>
-            <div className="grid md:grid-cols-2 gap-4 text-xs text-muted-foreground">
-              <div>
-                <div className="font-semibold text-neonYellow mb-1">Rodada Ímpar:</div>
-                <div>19x18, 17x16, 15x14, 13x12</div>
-                <div>11x10, 9x8, 7x6, 5x4, 3x2</div>
-                <div className="text-[10px] mt-1 text-muted-foreground">1º não corre</div>
-              </div>
-              <div>
-                <div className="font-semibold text-neonYellow mb-1">Rodada Par:</div>
-                <div>20x19, 18x17, 16x15, 14x13</div>
-                <div>12x11, 10x9, 8x7, 6x5, 4x3, 2x1</div>
-                <div className="text-[10px] mt-1 text-muted-foreground">Todos correm</div>
-              </div>
-            </div>
-          </div>
         </CardContent>
       </Card>
 

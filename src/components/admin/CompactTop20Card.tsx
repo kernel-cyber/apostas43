@@ -10,6 +10,7 @@ interface CompactTop20CardProps {
     name: string;
     car_name: string;
     image_url?: string | null;
+    team?: string | null;
   } | null;
   consecutive_absences: number;
   last_match_date?: string | null;
@@ -63,17 +64,23 @@ export default function CompactTop20Card({
           <div className="flex-1 min-w-0">
             {pilot ? (
               <>
-                <p className="font-bold text-foreground text-sm truncate">
-                  {pilot.name}
-                </p>
-                <p className="text-xs text-racing-yellow truncate">
-                  {pilot.car_name}
-                </p>
-                {last_match_date && (
-                  <p className="text-xs text-muted-foreground truncate">
-                    {format(new Date(last_match_date), 'dd/MM/yy', { locale: ptBR })}
+                  {/* #7: Cores padronizadas no admin */}
+                  <p className="font-bold text-white text-sm truncate">
+                    {pilot.name}
                   </p>
-                )}
+                  <p className="text-xs text-racing-yellow truncate">
+                    🚗 {pilot.car_name}
+                  </p>
+                  {pilot.team && (
+                    <p className="text-[10px] text-blue-400 truncate">
+                      🏁 {pilot.team}
+                    </p>
+                  )}
+                  {last_match_date && (
+                    <p className="text-xs text-muted-foreground truncate">
+                      {format(new Date(last_match_date), 'dd/MM/yy', { locale: ptBR })}
+                    </p>
+                  )}
               </>
             ) : (
               <p className="text-sm text-muted-foreground">Posição vazia</p>

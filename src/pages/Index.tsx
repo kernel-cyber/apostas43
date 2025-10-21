@@ -153,12 +153,16 @@ const Index = () => {
         <div className="container mx-auto px-2 sm:px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary animate-pulse" />
-              <span className="font-bold text-base sm:text-lg">43 ÁREA</span>
+              {/* #17: Logo correto igual à tela de login + ícone melhor */}
+              <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-primary animate-pulse" />
+              <span className="font-bold text-base sm:text-lg">
+                <span className="premium-gradient-text">ÁREA 43</span>
+              </span>
             </div>
             
             <div className="flex items-center gap-2 sm:gap-3">
               <OnlineUsers />
+              {/* #5: Foto de perfil no header */}
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -225,9 +229,10 @@ const Index = () => {
                 <Flame className="w-3 h-3 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
                 <span className="text-xs sm:text-base">NO PREP RACING BRASIL</span>
               </Badge>
+          {/* #12: Label corrigido */}
           <h1 className="text-4xl sm:text-6xl md:text-8xl font-black mb-2 sm:mb-4">
-            <span className="premium-gradient-text neon-text">43</span>
-            <span className="block text-accent">ÁREA</span>
+            <span className="premium-gradient-text neon-text">ÁREA</span>
+            <span className="block text-accent">43</span>
           </h1>
           <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
             Plataforma oficial de apostas do campeonato de drag racing mais emocionante do Brasil
@@ -259,7 +264,7 @@ const Index = () => {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
               {[
-                { id: "live", label: "AO VIVO", icon: Play, badge: "LIVE", shortLabel: "LIVE", color: "text-neonGreen" },
+                { id: "live", label: "Rodadas ao Vivo", icon: Play, badge: "AO VIVO", shortLabel: "Rodadas", color: "text-neonGreen" },
                 { id: "lista43", label: "LISTA 43", icon: ListOrdered, badge: "TOP 20", shortLabel: "LISTA", color: "text-racing-yellow" },
                 { id: "ranking", label: "RANKINGS", icon: TrendingUp, badge: null, shortLabel: "RANK", color: "text-accent" },
               ].map(({ id, label, icon: Icon, badge, shortLabel, color }) => (

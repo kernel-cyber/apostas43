@@ -84,50 +84,50 @@ export default function MyBets() {
           </Button>
         </div>
 
-        {/* Stats Cards - Mobile Optimized */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
+        {/* #2: Mobile otimizado - cards menores */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-4">
           <Card className="bg-card border-border">
-            <CardHeader className="pb-2 p-3 sm:p-4">
-              <CardTitle className="text-xs sm:text-sm text-muted-foreground">Total</CardTitle>
+            <CardHeader className="pb-1 p-2 sm:p-4">
+              <CardTitle className="text-[10px] sm:text-sm text-muted-foreground">Total</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xl sm:text-3xl font-bold text-foreground">{stats.totalBets}</p>
+            <CardContent className="p-2 sm:p-4 pt-0">
+              <p className="text-lg sm:text-3xl font-bold text-foreground">{stats.totalBets}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card border-border">
-            <CardHeader className="pb-2 p-3 sm:p-4">
-              <CardTitle className="text-xs sm:text-sm text-muted-foreground">Apostado</CardTitle>
+            <CardHeader className="pb-1 p-2 sm:p-4">
+              <CardTitle className="text-[10px] sm:text-sm text-muted-foreground">Apostado</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xl sm:text-3xl font-bold text-racing-yellow">{stats.totalWagered}</p>
+            <CardContent className="p-2 sm:p-4 pt-0">
+              <p className="text-lg sm:text-3xl font-bold text-racing-yellow">{stats.totalWagered}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card border-border">
-            <CardHeader className="pb-2 p-3 sm:p-4">
-              <CardTitle className="text-xs sm:text-sm text-muted-foreground">Vitórias</CardTitle>
+            <CardHeader className="pb-1 p-2 sm:p-4">
+              <CardTitle className="text-[10px] sm:text-sm text-muted-foreground">Vitórias</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xl sm:text-3xl font-bold text-racing-green">{stats.wins}</p>
+            <CardContent className="p-2 sm:p-4 pt-0">
+              <p className="text-lg sm:text-3xl font-bold text-racing-green">{stats.wins}</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card border-border">
-            <CardHeader className="pb-2 p-3 sm:p-4">
-              <CardTitle className="text-xs sm:text-sm text-muted-foreground">Win Rate</CardTitle>
+            <CardHeader className="pb-1 p-2 sm:p-4">
+              <CardTitle className="text-[10px] sm:text-sm text-muted-foreground">Win Rate</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <p className="text-xl sm:text-3xl font-bold text-foreground">{winRate}%</p>
+            <CardContent className="p-2 sm:p-4 pt-0">
+              <p className="text-lg sm:text-3xl font-bold text-foreground">{winRate}%</p>
             </CardContent>
           </Card>
 
           <Card className="bg-card border-border">
-            <CardHeader className="pb-2 p-3 sm:p-4">
-              <CardTitle className="text-xs sm:text-sm text-muted-foreground">ROI</CardTitle>
+            <CardHeader className="pb-1 p-2 sm:p-4">
+              <CardTitle className="text-[10px] sm:text-sm text-muted-foreground">ROI</CardTitle>
             </CardHeader>
-            <CardContent className="p-3 sm:p-4 pt-0">
-              <p className={`text-xl sm:text-3xl font-bold ${parseFloat(roi) > 0 ? 'text-green-500' : 'text-red-500'}`}>
+            <CardContent className="p-2 sm:p-4 pt-0">
+              <p className={`text-lg sm:text-3xl font-bold ${parseFloat(roi) > 0 ? 'text-green-500' : 'text-red-500'}`}>
                 {parseFloat(roi) > 0 ? '+' : ''}{roi}%
               </p>
             </CardContent>

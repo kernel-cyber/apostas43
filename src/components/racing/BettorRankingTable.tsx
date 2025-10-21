@@ -51,7 +51,8 @@ export default function BettorRankingTable() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Award className="h-5 w-5 text-racing-yellow" />
-          Ranking de Apostadores
+          {/* #1: Clarificar que é de todos os tempos */}
+          Ranking de Apostadores - Histórico Geral
         </CardTitle>
       </CardHeader>
       <CardContent>
