@@ -11,6 +11,7 @@ interface Pilot {
   wins: number;
   losses: number;
   team?: string;
+  imageUrl?: string;
 }
 
 interface RaceCardProps {
@@ -20,8 +21,6 @@ interface RaceCardProps {
     pilot2: Pilot;
     pilot1Team?: string;
     pilot2Team?: string;
-    pilot1ImageUrl?: string;
-    pilot2ImageUrl?: string;
     round: string;
     status: "live" | "upcoming" | "finished";
     bets: { pilot1: number; pilot2: number };
@@ -57,7 +56,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
     }
   };
 
-  const PilotCard = ({ pilot, side, isWinner, team, imageUrl }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean; team?: string; imageUrl?: string }) => (
+  const PilotCard = ({ pilot, side, isWinner, team }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean; team?: string }) => (
     <div className={`
       relative flex-1 p-6 rounded-lg transition-all duration-500
       ${isWinner ? 'bg-gradient-winner shadow-neon winner-pulse' : 'bg-gradient-card'}
@@ -66,10 +65,10 @@ export const RaceCard = ({ match }: RaceCardProps) => {
       <div className="flex flex-col space-y-3">
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse" : ""} gap-2`}>
           {/* Foto do piloto */}
-          {imageUrl && (
+          {pilot.imageUrl && (
             <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
               <img 
-                src={imageUrl} 
+                src={pilot.imageUrl} 
                 alt={pilot.name} 
                 className="w-full h-full object-cover"
               />
@@ -148,7 +147,6 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               side="left" 
               isWinner={winner === 1}
               team={match.pilot1Team}
-              imageUrl={match.pilot1ImageUrl}
             />
             
             {/* VS Section - #13: Emojis */}
@@ -174,7 +172,6 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               side="right" 
               isWinner={winner === 2}
               team={match.pilot2Team}
-              imageUrl={match.pilot2ImageUrl}
             />
           </div>
 

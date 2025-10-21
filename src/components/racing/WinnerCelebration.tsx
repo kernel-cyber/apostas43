@@ -6,6 +6,7 @@ interface Winner {
   car: string;
   position: number;
   avatar: string;
+  imageUrl?: string;
 }
 
 interface WinnerCelebrationProps {
@@ -62,17 +63,27 @@ export default function WinnerCelebration({ winner, show, onComplete }: WinnerCe
                       CAMPEÃO DO MATCH!
                     </h3>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{winner.avatar}</span>
-                    <div>
-                      <p className="text-2xl font-black text-gray-900">
-                        {winner.name}
-                      </p>
-                      <p className="text-sm font-semibold text-gray-800">
-                        {winner.car} • Posição #{winner.position}
-                      </p>
-                    </div>
-                  </div>
+          <div className="flex items-center gap-3">
+            {winner.imageUrl ? (
+              <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-yellow-900 flex-shrink-0">
+                <img 
+                  src={winner.imageUrl} 
+                  alt={winner.name} 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <span className="text-3xl">{winner.avatar}</span>
+            )}
+            <div>
+              <p className="text-2xl font-black text-gray-900">
+                {winner.name}
+              </p>
+              <p className="text-sm font-semibold text-gray-800">
+                {winner.car} • Posição #{winner.position}
+              </p>
+            </div>
+          </div>
                 </div>
               </div>
 

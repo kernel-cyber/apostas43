@@ -111,6 +111,7 @@ const Index = () => {
       wins: liveMatch.pilot1?.wins || 0,
       losses: liveMatch.pilot1?.losses || 0,
       avatar: "🏎️",
+      imageUrl: (liveMatch.pilot1 as any)?.image_url,
       winRate: liveMatch.pilot1 && (liveMatch.pilot1 as any).total_races ? Math.round(liveMatch.pilot1.wins / (liveMatch.pilot1 as any).total_races * 100) : 0,
       bestTime: (liveMatch.pilot1 as any)?.best_time || "N/A",
       recentForm: pilot1Form.length > 0 ? pilot1Form : ["?", "?", "?", "?", "?"]
@@ -122,6 +123,7 @@ const Index = () => {
       wins: liveMatch.pilot2?.wins || 0,
       losses: liveMatch.pilot2?.losses || 0,
       avatar: "⚡",
+      imageUrl: (liveMatch.pilot2 as any)?.image_url,
       winRate: liveMatch.pilot2 && (liveMatch.pilot2 as any).total_races ? Math.round(liveMatch.pilot2.wins / (liveMatch.pilot2 as any).total_races * 100) : 0,
       bestTime: (liveMatch.pilot2 as any)?.best_time || "N/A",
       recentForm: pilot2Form.length > 0 ? pilot2Form : ["?", "?", "?", "?", "?"]

@@ -265,13 +265,13 @@ export default function RealTournamentBracket() {
                     <div>
                       {/* #4: Foto do piloto */}
                       {position.pilot.image_url && (
-                        <div className="w-full h-20 rounded overflow-hidden mb-2">
-                          <img
-                            src={position.pilot.image_url}
-                            alt={position.pilot.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                    <div className="w-full h-20 rounded overflow-hidden mb-2 bg-muted/30">
+                      <img
+                        src={position.pilot.image_url}
+                        alt={position.pilot.name}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
                       )}
                       {/* #7: Cores padronizadas */}
                       <p className="font-bold text-white text-sm truncate">

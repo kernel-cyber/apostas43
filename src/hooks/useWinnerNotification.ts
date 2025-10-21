@@ -6,6 +6,7 @@ interface Winner {
   car: string;
   position: number;
   avatar: string;
+  imageUrl?: string;
 }
 
 export const useWinnerNotification = () => {
@@ -36,7 +37,8 @@ export const useWinnerNotification = () => {
               name: winner.name,
               car: winner.car_name,
               position: winner.current_position || 0,
-              avatar: winner.image_url || '🏆'
+              avatar: '🏆',
+              imageUrl: winner.image_url
             });
             setShowCelebration(true);
             

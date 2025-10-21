@@ -40,12 +40,12 @@ export const useActiveMatches = () => {
       try {
         const { data: liveData } = await supabase
           .from('matches' as any)
-          .select(`
-            *,
-            pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
-            pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
-            event:events(*)
-          `)
+      .select(`
+        *,
+        pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+        pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+        event:events(*)
+      `)
           .eq('match_status', 'in_progress')
           .maybeSingle();
 
@@ -53,12 +53,12 @@ export const useActiveMatches = () => {
 
         const { data: upcomingData } = await supabase
           .from('matches' as any)
-          .select(`
-            *,
-            pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
-            pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
-            event:events(*)
-          `)
+        .select(`
+          *,
+          pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+          pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+          event:events(*)
+        `)
           .eq('match_status', 'upcoming')
           .limit(5);
 
@@ -111,12 +111,12 @@ export const useActiveMatches = () => {
         try {
                const { data: liveData } = await supabase
                 .from('matches' as any)
-                .select(`
-                  *,
-                  pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
-                  pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
-                  event:events(*)
-                `)
+          .select(`
+            *,
+            pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+            pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team, image_url),
+            event:events(*)
+          `)
                 .eq('match_status', 'in_progress')
                 .maybeSingle();
 
