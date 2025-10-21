@@ -74,22 +74,22 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
             <div className="text-3xl sm:text-4xl">{pilot.avatar}</div>
             {side === "left" && pilot1.position < pilot2.position && (
               <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                🛡️ DEFENDE
+                DEFENDE
               </Badge>
             )}
             {side === "left" && pilot1.position > pilot2.position && (
               <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ⚔️ ATACA
+                ATACA
               </Badge>
             )}
             {side === "right" && pilot2.position < pilot1.position && (
               <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                🛡️ DEFENDE
+                DEFENDE
               </Badge>
             )}
             {side === "right" && pilot2.position > pilot1.position && (
               <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ⚔️ ATACA
+                ATACA
               </Badge>
             )}
           </div>
@@ -99,7 +99,13 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
             </Badge>
             {/* #15: Cores padronizadas */}
             <h3 className="text-base sm:text-xl font-bold text-white truncate">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-racing-yellow truncate">🚗 {pilot.car}</p>
+            <p className="text-xs sm:text-sm text-racing-yellow truncate">
+              {side === "left" && pilot1.position < pilot2.position && "🛡️"}
+              {side === "left" && pilot1.position > pilot2.position && "⚔️"}
+              {side === "right" && pilot2.position < pilot1.position && "🛡️"}
+              {side === "right" && pilot2.position > pilot1.position && "⚔️"}
+              {" "}{pilot.car}
+            </p>
             {team && <p className="text-xs text-blue-400 truncate">🏁 {team}</p>}
           </div>
         </div>
@@ -174,7 +180,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-sm text-muted-foreground">⚡ Posição em disputa</div>
+                    <div className="text-sm text-muted-foreground">Posição em disputa</div>
                     <div className="text-lg font-bold premium-gradient-text">
                       #{Math.min(pilot1.position, pilot2.position)}
                     </div>
