@@ -6,30 +6,21 @@ import { useEventStandings } from '@/hooks/useEventStandings';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PilotRankingTableProps {
-  eventId?: string | null;
+  eventId: string;
 }
 
 export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
-  const { rankings: generalRankings, isLoading: generalLoading } = usePilotRankings();
-  const { data: eventStandings, isLoading: eventLoading } = useEventStandings(eventId || null);
+  const { data: eventStandings, isLoading } = useEventStandings(eventId);
   
-  const isLoading = eventId ? eventLoading : generalLoading;
-  const pilots = eventId 
-    ? eventStandings?.map(standing => ({
-        id: standing.pilot?.id || standing.pilot_id,
-        name: standing.pilot?.name || 'Unknown',
-        car_name: standing.pilot?.car_name || 'N/A',
-        image_url: standing.pilot?.image_url,
-        team: standing.pilot?.team,
-        points: standing.total_points,
-        wins: standing.wins,
-        losses: standing.losses,
-        win_rate: standing.wins + standing.losses > 0 
-          ? Math.round((standing.wins / (standing.wins + standing.losses)) * 100) 
-          : 0,
-        current_position: standing.final_position
-      })) || []
-    : generalRankings;
+  const pilots = eventStandings?.map(standing => ({
+    id: standing.pilot?.id || standing.pilot_id,
+    name: standing.pilot?.name || 'Unknown',
+    car_name: standing.pilot?.car_name || 'N/A',
+    image_url: standing.pilot?.image_url,
+    team: standing.pilot?.team,
+    points: standing.total_points,
+    current_position: standing.final_position
+  })) || [];
 
   const RankingList = ({ pilots, isLoading, showPosition = false }: any) => {
     if (isLoading) {
@@ -106,15 +97,12 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
 
                 {/* Stats */}
                 <div className="flex-shrink-0 text-right">
-                  <div className="flex items-center gap-1 mb-1">
+                  <div className="flex items-center gap-1">
                     <TrendingUp className="h-4 w-4 text-racing-green" />
-                    <span className="text-sm font-bold">{pilot.points}</span>
+                    <span className="text-lg font-bold">{pilot.points}</span>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {pilot.wins}V / {pilot.losses}D
-                    {pilot.win_rate > 0 && (
-                      <span className="ml-1">({pilot.win_rate}%)</span>
-                    )}
+                    pontos
                   </div>
                 </div>
               </div>
@@ -130,14 +118,14 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-racing-yellow" />
-          {eventId ? 'Ranking por Evento' : 'Ranking Geral de Pilotos'}
+          Ranking por Edição
         </CardTitle>
       </CardHeader>
       <CardContent>
         <RankingList 
           pilots={pilots} 
           isLoading={isLoading}
-          showPosition={!eventId}
+          showPosition={true}
         />
       </CardContent>
     </Card>

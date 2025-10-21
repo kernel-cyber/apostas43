@@ -7,8 +7,11 @@ import PilotRankingTable from './PilotRankingTable';
 import { useEvents } from '@/hooks/useEvents';
 
 export default function Leaderboard() {
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const { events, isLoading: eventsLoading } = useEvents();
+  
+  // Always select the last event as default
+  const lastEvent = events && events.length > 0 ? events[events.length - 1] : null;
+  const [selectedEventId, setSelectedEventId] = useState<string>(lastEvent?.id || '');
   
   return (
     <Tabs defaultValue="bettors" className="w-full">
@@ -31,12 +34,11 @@ export default function Leaderboard() {
         {/* Event Selector */}
         <div className="flex items-center gap-3">
           <Calendar className="h-5 w-5 text-racing-yellow" />
-          <Select value={selectedEventId || 'all'} onValueChange={(value) => setSelectedEventId(value === 'all' ? null : value)}>
+          <Select value={selectedEventId} onValueChange={setSelectedEventId}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Selecione uma edição" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">📊 Ranking Geral (Todos)</SelectItem>
               {events?.map((event) => (
                 <SelectItem key={event.id} value={event.id}>
                   🏁 {event.name}
@@ -46,7 +48,7 @@ export default function Leaderboard() {
           </Select>
         </div>
         
-        <PilotRankingTable eventId={selectedEventId} />
+        {selectedEventId && <PilotRankingTable eventId={selectedEventId} />}
       </TabsContent>
     </Tabs>
   );
