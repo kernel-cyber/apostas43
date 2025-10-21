@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Shield, Swords } from 'lucide-react';
+import { Trophy, Shield, Swords, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { usePilotRankings } from '@/hooks/usePilotRankings';
 import { useEventStandings } from '@/hooks/useEventStandings';
 import { useEventPilotStats } from '@/hooks/useEventPilotStats';
+import { useEventPositionChange } from '@/hooks/useEventPositionChange';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface PilotRankingTableProps {
@@ -50,47 +51,74 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
             const { data: stats } = useEventPilotStats(eventId, pilot.id);
             
             return (
-              <Card key={pilot.id} className="bg-muted border-border">
+          <Card key={pilot.id} className="bg-muted border-border">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-4">
-                {/* Ranking Position */}
-                <div className="flex-shrink-0 w-10 text-center">
-                  {index < 3 ? (
-                    <Trophy className={`h-6 w-6 mx-auto ${
-                      index === 0 ? 'text-yellow-500' :
-                      index === 1 ? 'text-gray-400' :
-                      'text-amber-700'
-                    }`} />
-                  ) : (
-                    <span className="text-lg font-bold text-muted-foreground">
-                      {index + 1}
-                    </span>
-                  )}
-                </div>
+                    {/* Ranking Position */}
+                    <div className="flex-shrink-0 w-10 text-center">
+                      {index < 3 ? (
+                        <Trophy className={`h-6 w-6 mx-auto ${
+                          index === 0 ? 'text-yellow-500' :
+                          index === 1 ? 'text-gray-400' :
+                          'text-amber-700'
+                        }`} />
+                      ) : (
+                        <span className="text-lg font-bold text-muted-foreground">
+                          {index + 1}
+                        </span>
+                      )}
+                    </div>
 
-                {/* Pilot Image */}
-                {pilot.image_url && (
-                  <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0">
-                    <img
-                      src={pilot.image_url}
-                      alt={pilot.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-
-                {/* Pilot Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-bold text-white truncate">
-                      {pilot.name}
-                    </p>
-                    {showPosition && pilot.current_position && (
-                      <Badge variant="outline" className="text-neonGreen">
-                        #{pilot.current_position}
-                      </Badge>
+                    {/* Pilot Image */}
+                    {pilot.image_url && (
+                      <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0">
+                        <img
+                          src={pilot.image_url}
+                          alt={pilot.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
                     )}
-                  </div>
+
+                    {/* Pilot Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-bold text-white truncate">
+                          {pilot.name}
+                        </p>
+                        {showPosition && pilot.current_position && (() => {
+                          const { data: posChange } = useEventPositionChange(eventId, pilot.id);
+                          const change = posChange?.change || 0;
+                          
+                          return (
+                            <Badge 
+                              variant="outline" 
+                              className={`flex items-center gap-1 ${
+                                change > 0 ? 'text-green-500 border-green-500' :
+                                change < 0 ? 'text-red-500 border-red-500' :
+                                'text-muted-foreground'
+                              }`}
+                            >
+                              {change > 0 ? (
+                                <>
+                                  <ArrowUp className="h-3 w-3" />
+                                  +{change}
+                                </>
+                              ) : change < 0 ? (
+                                <>
+                                  <ArrowDown className="h-3 w-3" />
+                                  {change}
+                                </>
+                              ) : (
+                                <>
+                                  <Minus className="h-3 w-3" />
+                                  0
+                                </>
+                              )}
+                            </Badge>
+                          );
+                        })()}
+                      </div>
                   <p className="text-xs text-racing-yellow truncate">
                     🚗 {pilot.car_name}
                   </p>
