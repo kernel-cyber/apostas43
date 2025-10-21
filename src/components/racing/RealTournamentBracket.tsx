@@ -4,6 +4,7 @@ import { Trophy, Target, Crown, AlertCircle, Play } from "lucide-react";
 import { useTop20Positions } from "@/hooks/useTop20Positions";
 import { useMatches } from "@/hooks/useMatches";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -277,13 +278,40 @@ export default function RealTournamentBracket() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingMatches.map((match: any, index: number) => (
-                <div key={match.id} className={index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}>
-                  <MatchCard match={match} showPositions={true} />
+            <Tabs defaultValue="odd" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="odd">Rodada Ímpar</TabsTrigger>
+                <TabsTrigger value="even">Rodada Par</TabsTrigger>
+              </TabsList>
+              <TabsContent value="odd" className="mt-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {upcomingMatches
+                    .filter((match: any) => match.bracket_type === 'odd')
+                    .map((match: any, index: number) => (
+                      <div key={match.id} className={index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}>
+                        <MatchCard match={match} showPositions={true} />
+                      </div>
+                    ))}
                 </div>
-              ))}
-            </div>
+                {upcomingMatches.filter((match: any) => match.bracket_type === 'odd').length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">Nenhuma rodada ímpar agendada</p>
+                )}
+              </TabsContent>
+              <TabsContent value="even" className="mt-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {upcomingMatches
+                    .filter((match: any) => match.bracket_type === 'even')
+                    .map((match: any, index: number) => (
+                      <div key={match.id} className={index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}>
+                        <MatchCard match={match} showPositions={true} />
+                      </div>
+                    ))}
+                </div>
+                {upcomingMatches.filter((match: any) => match.bracket_type === 'even').length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">Nenhuma rodada par agendada</p>
+                )}
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       )}
