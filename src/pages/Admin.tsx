@@ -45,6 +45,7 @@ export default function Admin() {
     name: '',
     car_name: '',
     car_model: '',
+    team: '',
     position: ''
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -116,6 +117,7 @@ export default function Admin() {
         name: formData.name,
         car_name: formData.car_name,
         car_model: formData.car_model || null,
+        team: formData.team || null,
         position: formData.position ? parseInt(formData.position) : null
       }])
       .select()
@@ -148,7 +150,7 @@ export default function Admin() {
       description: `${formData.name} foi adicionado com sucesso.`
     });
 
-    setFormData({ name: '', car_name: '', car_model: '', position: '' });
+    setFormData({ name: '', car_name: '', car_model: '', team: '', position: '' });
     setSelectedImage(null);
     setIsLoading(false);
     fetchPilots();
@@ -282,6 +284,17 @@ export default function Admin() {
                     </div>
 
                     <div className="space-y-2">
+                      <Label htmlFor="team">Equipe *</Label>
+                      <Input
+                        id="team"
+                        value={formData.team}
+                        onChange={(e) => setFormData({ ...formData, team: e.target.value })}
+                        required
+                        className="bg-racing-dark/50"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="position">Posição (1-20)</Label>
                       <Input
                         id="position"
@@ -351,6 +364,9 @@ export default function Admin() {
                           <p className="text-sm text-racing-yellow">{pilot.car_name}</p>
                           {pilot.car_model && (
                             <p className="text-xs text-racing-gray">{pilot.car_model}</p>
+                          )}
+                          {(pilot as any).team && (
+                            <p className="text-xs text-blue-400">{(pilot as any).team}</p>
                           )}
                           {pilot.position && (
                             <p className="text-sm text-racing-green">Posição: #{pilot.position}</p>

@@ -174,6 +174,7 @@ export type Database = {
           name: string
           points: number | null
           position: number | null
+          team: string | null
           total_races: number | null
           updated_at: string
           wins: number | null
@@ -191,6 +192,7 @@ export type Database = {
           name: string
           points?: number | null
           position?: number | null
+          team?: string | null
           total_races?: number | null
           updated_at?: string
           wins?: number | null
@@ -208,6 +210,7 @@ export type Database = {
           name?: string
           points?: number | null
           position?: number | null
+          team?: string | null
           total_races?: number | null
           updated_at?: string
           wins?: number | null

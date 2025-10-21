@@ -27,6 +27,7 @@ export default function EditPilotModal({ open, onOpenChange, pilot, onSuccess }:
     name: pilot?.name || '',
     car_name: pilot?.car_name || '',
     car_model: pilot?.car_model || '',
+    team: pilot?.team || '',
     position: pilot?.position || '',
   });
 
@@ -40,6 +41,7 @@ export default function EditPilotModal({ open, onOpenChange, pilot, onSuccess }:
         name: formData.name,
         car_name: formData.car_name,
         car_model: formData.car_model || null,
+        team: formData.team || null,
         position: formData.position ? parseInt(formData.position) : null,
       })
       .eq('id', pilot.id);
@@ -100,6 +102,16 @@ export default function EditPilotModal({ open, onOpenChange, pilot, onSuccess }:
               id="edit_car_model"
               value={formData.car_model}
               onChange={(e) => setFormData({ ...formData, car_model: e.target.value })}
+              className="bg-racing-dark/50"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit_team">Equipe</Label>
+            <Input
+              id="edit_team"
+              value={formData.team}
+              onChange={(e) => setFormData({ ...formData, team: e.target.value })}
               className="bg-racing-dark/50"
             />
           </div>
