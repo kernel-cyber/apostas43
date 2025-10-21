@@ -84,7 +84,10 @@ export const useActiveMatches = () => {
           table: 'matches'
         },
         () => {
-          fetchMatches();
+          // Timeout de segurança para garantir que match finalizado suma
+          setTimeout(() => {
+            fetchMatches();
+          }, 500);
           // Invalidate related queries
           queryClient.invalidateQueries({ queryKey: ['matches'] });
           queryClient.invalidateQueries({ queryKey: ['active-matches'] });
@@ -96,6 +99,13 @@ export const useActiveMatches = () => {
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
+
+  // Limpar liveMatch se estiver finalizado
+  useEffect(() => {
+    if (liveMatch && liveMatch.match_status === 'finished') {
+      setLiveMatch(null);
+    }
+  }, [liveMatch]);
 
   return { liveMatch, upcomingMatches, loading };
 };

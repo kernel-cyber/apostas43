@@ -27,13 +27,11 @@ export const useMatches = (eventId?: string) => {
         .from('matches')
         .select(`
           *,
-          pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, image_url),
-          pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, image_url),
+          pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, image_url, current_position),
+          pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, image_url, current_position),
           winner:pilots!matches_winner_id_fkey(id, name),
           event:events(id, name, event_type)
-        `)
-        .order('round_number', { ascending: true })
-        .order('scheduled_time', { ascending: true, nullsFirst: false });
+        `);
       
       if (eventId) {
         query = query.eq('event_id', eventId) as any;
@@ -42,7 +40,28 @@ export const useMatches = (eventId?: string) => {
       const { data, error } = await query;
       
       if (error) throw error;
-      return data as any;
+      
+      // Ordenar matches por maior posição primeiro (20x19, 18x17, etc)
+      const sortedData = (data as any[]).sort((a, b) => {
+        const maxPosA = Math.max(a.pilot1?.current_position || 0, a.pilot2?.current_position || 0);
+        const maxPosB = Math.max(b.pilot1?.current_position || 0, b.pilot2?.current_position || 0);
+        
+        // Ordenar por maior posição (descendente)
+        if (maxPosB !== maxPosA) {
+          return maxPosB - maxPosA;
+        }
+        
+        // Se mesma posição máxima, ordenar por round e horário
+        if (a.round_number !== b.round_number) {
+          return a.round_number - b.round_number;
+        }
+        
+        const timeA = a.scheduled_time ? new Date(a.scheduled_time).getTime() : 0;
+        const timeB = b.scheduled_time ? new Date(b.scheduled_time).getTime() : 0;
+        return timeA - timeB;
+      });
+      
+      return sortedData as any;
     },
     enabled: eventId !== undefined || eventId === undefined,
   });

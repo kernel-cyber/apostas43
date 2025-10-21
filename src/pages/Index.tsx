@@ -9,6 +9,7 @@ import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useBetting } from "@/hooks/useBetting";
 import { useRecentForm } from "@/hooks/useRecentForm";
 import { useWinnerNotification } from "@/hooks/useWinnerNotification";
+import { useBetResults } from "@/hooks/useBetResults";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,8 +48,11 @@ const Index = () => {
   // Enable real-time match notifications
   useMatchNotifications();
   
+  // Hook para detectar resultados de apostas
+  useBetResults(user?.id);
+  
   // Sound effects
-  const { playMatchStart, playMatchFinish } = useSoundEffects();
+  const { playMatchStart } = useSoundEffects();
 
   useEffect(() => {
     if (!loading && !user) {

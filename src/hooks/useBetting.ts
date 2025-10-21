@@ -114,16 +114,16 @@ export const useBetting = (matchId: string | null) => {
 
       if (!result.success) {
         toast({
-          title: 'Erro ao apostar',
-          description: result.error || 'Erro desconhecido',
+          title: 'Erro ao Realizar Aposta',
+          description: result.error || 'Ocorreu um erro desconhecido. Tente novamente.',
           variant: 'destructive',
         });
         return result;
       }
 
       toast({
-        title: 'Aposta realizada!',
-        description: `${amount} pontos apostados com sucesso`,
+        title: '✅ Aposta Realizada com Sucesso!',
+        description: `Você apostou ${amount} pontos. Boa sorte!`,
       });
 
       fetchOdds();

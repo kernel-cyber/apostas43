@@ -19,10 +19,13 @@ export default function Profile() {
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [newEmail, setNewEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [updatingPassword, setUpdatingPassword] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -199,8 +202,8 @@ export default function Profile() {
       setNewEmail('');
     } catch (error: any) {
       toast({
-        title: "Erro ao atualizar email",
-        description: error.message,
+        title: "Erro ao Atualizar Email",
+        description: error.message || "Ocorreu um erro ao atualizar seu email",
         variant: "destructive",
       });
     } finally {
@@ -209,10 +212,19 @@ export default function Profile() {
   };
 
   const updatePassword = async () => {
+    if (!currentPassword) {
+      toast({
+        title: "Senha Atual Obrigatória",
+        description: "Por favor, digite sua senha atual para confirmar a alteração",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!newPassword || newPassword.length < 6) {
       toast({
-        title: "Senha inválida",
-        description: "A senha deve ter no mínimo 6 caracteres.",
+        title: "Senha Inválida",
+        description: "A nova senha deve ter pelo menos 6 caracteres",
         variant: "destructive",
       });
       return;
@@ -220,15 +232,30 @@ export default function Profile() {
 
     if (newPassword !== confirmPassword) {
       toast({
-        title: "Senhas não conferem",
-        description: "As senhas digitadas não são iguais.",
+        title: "As Senhas Não Coincidem",
+        description: "A nova senha e a confirmação devem ser iguais",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      setUpdating(true);
+      setUpdatingPassword(true);
+      
+      // Primeiro, validar senha atual
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email!,
+        password: currentPassword,
+      });
+
+      if (signInError) {
+        toast({
+          title: "Senha Atual Incorreta",
+          description: "A senha atual que você digitou está incorreta",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const { error } = await supabase.auth.updateUser({
         password: newPassword
@@ -237,20 +264,22 @@ export default function Profile() {
       if (error) throw error;
 
       toast({
-        title: "Senha atualizada!",
-        description: "Sua senha foi alterada com sucesso.",
+        title: "✅ Senha Atualizada com Sucesso!",
+        description: "Sua senha foi alterada. Use a nova senha no próximo login.",
       });
       
+      setPasswordDialogOpen(false);
+      setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
       toast({
-        title: "Erro ao atualizar senha",
-        description: error.message,
+        title: "Erro ao Atualizar Senha",
+        description: error.message || "Ocorreu um erro ao tentar atualizar sua senha",
         variant: "destructive",
       });
     } finally {
-      setUpdating(false);
+      setUpdatingPassword(false);
     }
   };
 

@@ -18,7 +18,7 @@ export const useMatchNotifications = () => {
     }
     
     toast({
-      title: "🏆 Match Finalizado!",
+      title: "🏁 Match Finalizado!",
       description: `${winnerName} é o campeão da ${roundInfo}!`,
       duration: 10000,
     });
@@ -41,6 +41,19 @@ export const useMatchNotifications = () => {
 
     // Play notification sound
     const audio = new Audio('/notification.mp3');
+    audio.play().catch(() => {});
+  }, []);
+
+  const showBettingClosedNotification = useCallback((match: any) => {
+    const eventName = match.event?.name || 'Match';
+    
+    toast({
+      title: "⏰ Apostas Encerradas!",
+      description: `As apostas para ${eventName} foram fechadas pelo organizador.`,
+      duration: 5000,
+    });
+    
+    const audio = new Audio('/sounds/bet-placed.mp3');
     audio.play().catch(() => {});
   }, []);
 
@@ -135,12 +148,37 @@ export const useMatchNotifications = () => {
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'matches'
+        },
+        async (payload) => {
+          // Notificar quando apostas são fechadas
+          if (payload.old.betting_locked === false && payload.new.betting_locked === true) {
+            const { data: match } = await (supabase as any)
+              .from('matches')
+              .select(`
+                *,
+                event:events(id, name)
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (match) {
+              showBettingClosedNotification(match);
+            }
+          }
+        }
+      )
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, showMatchFinishedNotification, showNewMatchNotification]);
+  }, [user, showMatchFinishedNotification, showNewMatchNotification, showBettingClosedNotification]);
 
   return null;
 };
