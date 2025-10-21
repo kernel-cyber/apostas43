@@ -65,48 +65,46 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
   const PilotCard = ({ pilot, side, odds, team }: { pilot: PilotData; side: "left" | "right"; odds: number; team?: string }) => (
     <div className={`
       glass-card p-4 sm:p-6 rounded-2xl transition-all duration-500 hover:shadow-neon
-      ${side === "left" ? "text-left" : "text-right"}
     `}>
       <div className="space-y-3 sm:space-y-4">
-        {/* Avatar & Position - #4: Exibir foto real */}
-        <div className={`flex items-center ${side === "right" ? "flex-row-reverse space-x-reverse" : ""} space-x-3 sm:space-x-4`}>
-          <div className="flex flex-col items-center gap-1">
-            <div className="text-3xl sm:text-4xl">
-              {side === "left" && pilot1.position < pilot2.position && "🛡️"}
-              {side === "left" && pilot1.position > pilot2.position && "⚔️"}
-              {side === "right" && pilot2.position < pilot1.position && "🛡️"}
-              {side === "right" && pilot2.position > pilot1.position && "⚔️"}
-            </div>
-            {side === "left" && pilot1.position < pilot2.position && (
-              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                DEFENDE
-              </Badge>
-            )}
-            {side === "left" && pilot1.position > pilot2.position && (
-              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ATACA
-              </Badge>
-            )}
-            {side === "right" && pilot2.position < pilot1.position && (
-              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                DEFENDE
-              </Badge>
-            )}
-            {side === "right" && pilot2.position > pilot1.position && (
-              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ATACA
-              </Badge>
-            )}
+        {/* Avatar & Position - Centralizado */}
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-3xl sm:text-4xl">
+            {side === "left" && pilot1.position < pilot2.position && "🛡️"}
+            {side === "left" && pilot1.position > pilot2.position && "⚔️"}
+            {side === "right" && pilot2.position < pilot1.position && "🛡️"}
+            {side === "right" && pilot2.position > pilot1.position && "⚔️"}
           </div>
-          <div className={`flex-1 min-w-0 text-center`}>
-            <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 sm:mb-2 text-neonGreen">
-              #{pilot.position} • {pilot.winRate}% WR
+          {side === "left" && pilot1.position < pilot2.position && (
+            <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              DEFENDE
             </Badge>
-            {/* #15: Cores padronizadas */}
-            <h3 className="text-base sm:text-xl font-bold text-white truncate">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-racing-yellow truncate">{pilot.car}</p>
-            {team && <p className="text-xs text-blue-400 truncate">{team}</p>}
-          </div>
+          )}
+          {side === "left" && pilot1.position > pilot2.position && (
+            <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              ATACA
+            </Badge>
+          )}
+          {side === "right" && pilot2.position < pilot1.position && (
+            <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              DEFENDE
+            </Badge>
+          )}
+          {side === "right" && pilot2.position > pilot1.position && (
+            <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              ATACA
+            </Badge>
+          )}
+        </div>
+
+        {/* Informações do Piloto - Centralizadas */}
+        <div className="text-center space-y-1">
+          <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 sm:mb-2 text-neonGreen">
+            #{pilot.position} • {pilot.winRate}% WR
+          </Badge>
+          <h3 className="text-base sm:text-xl font-bold text-white">{pilot.name}</h3>
+          <p className="text-xs sm:text-sm text-racing-yellow">{pilot.car}</p>
+          {team && <p className="text-xs text-blue-400">{team}</p>}
         </div>
 
         {/* Stats Grid */}
@@ -125,8 +123,8 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
           </div>
         </div>
 
-        {/* Recent Form - #14: Label mais clara */}
-        <div className={`flex items-center space-x-2 ${side === "right" ? "flex-row-reverse space-x-reverse" : ""}`}>
+        {/* Recent Form - Centralizado */}
+        <div className="flex flex-col items-center gap-2">
           <span className="text-[10px] sm:text-xs text-muted-foreground" title="Últimas 5 corridas">Forma Recente:</span>
           <FormIndicator form={pilot.recentForm} />
         </div>
