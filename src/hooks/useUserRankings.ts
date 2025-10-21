@@ -19,14 +19,14 @@ export const useUserRankings = (limit: number = 100) => {
   const { data: rankings, isLoading } = useQuery({
     queryKey: ['user-rankings', limit],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('user_points')
         .select(`
           user_id,
           points,
           total_bets,
           total_wins,
-          profile:profiles(username, avatar_url)
+          profiles!user_points_user_id_fkey(username, avatar_url)
         `)
         .order('points', { ascending: false })
         .limit(limit);
@@ -35,14 +35,14 @@ export const useUserRankings = (limit: number = 100) => {
       
       return (data || []).map((item: any, index: number) => {
         const profit = item.points - 1000;
-        const totalWagered = item.total_bets * 100; // Estimativa (100 pts/aposta em média)
+        const totalWagered = item.total_bets * 100;
         const roi = totalWagered > 0 ? parseFloat(((profit / totalWagered) * 100).toFixed(1)) : 0;
         const avg_bet = item.total_bets > 0 ? Math.round(totalWagered / item.total_bets) : 0;
 
         return {
           user_id: item.user_id,
-          username: item.profile?.username || 'Usuário',
-          avatar_url: item.profile?.avatar_url || null,
+          username: item.profiles?.username || 'Usuário',
+          avatar_url: item.profiles?.avatar_url || null,
           points: item.points || 0,
           total_bets: item.total_bets || 0,
           total_wins: item.total_wins || 0,
@@ -61,16 +61,16 @@ export const useUserRankings = (limit: number = 100) => {
   const { data: topWinRate, isLoading: isLoadingWinRate } = useQuery({
     queryKey: ['user-rankings-win-rate', limit],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('user_points')
         .select(`
           user_id,
           points,
           total_bets,
           total_wins,
-          profile:profiles(username, avatar_url)
+          profiles!user_points_user_id_fkey(username, avatar_url)
         `)
-        .gte('total_bets', 5) // Mínimo de 5 apostas para aparecer no ranking de win rate
+        .gte('total_bets', 5)
         .order('total_wins', { ascending: false })
         .limit(limit);
       
@@ -85,8 +85,8 @@ export const useUserRankings = (limit: number = 100) => {
 
           return {
             user_id: item.user_id,
-            username: item.profile?.username || 'Usuário',
-            avatar_url: item.profile?.avatar_url || null,
+            username: item.profiles?.username || 'Usuário',
+            avatar_url: item.profiles?.avatar_url || null,
             points: item.points || 0,
             total_bets: item.total_bets || 0,
             total_wins: item.total_wins || 0,
