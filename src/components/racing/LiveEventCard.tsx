@@ -67,46 +67,44 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
       glass-card p-4 sm:p-6 rounded-2xl transition-all duration-500 hover:shadow-neon
     `}>
       <div className="space-y-3 sm:space-y-4">
-        {/* Emoji, Tag e Nome - Alinhados à esquerda */}
-        <div className="flex items-center gap-3">
-          <div className="flex flex-col items-center gap-1 shrink-0">
-            <div className="text-3xl sm:text-4xl">
-              {side === "left" && pilot1.position < pilot2.position && "🛡️"}
-              {side === "left" && pilot1.position > pilot2.position && "⚔️"}
-              {side === "right" && pilot2.position < pilot1.position && "🛡️"}
-              {side === "right" && pilot2.position > pilot1.position && "⚔️"}
-            </div>
-            {side === "left" && pilot1.position < pilot2.position && (
-              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                DEFENDE
-              </Badge>
-            )}
-            {side === "left" && pilot1.position > pilot2.position && (
-              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ATACA
-              </Badge>
-            )}
-            {side === "right" && pilot2.position < pilot1.position && (
-              <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                DEFENDE
-              </Badge>
-            )}
-            {side === "right" && pilot2.position > pilot1.position && (
-              <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
-                ATACA
-              </Badge>
-            )}
+        {/* Emoji e Tag - Centralizados */}
+        <div className="flex flex-col items-center gap-1">
+          <div className="text-3xl sm:text-4xl">
+            {side === "left" && pilot1.position < pilot2.position && "🛡️"}
+            {side === "left" && pilot1.position > pilot2.position && "⚔️"}
+            {side === "right" && pilot2.position < pilot1.position && "🛡️"}
+            {side === "right" && pilot2.position > pilot1.position && "⚔️"}
           </div>
-
-          {/* Informações do Piloto - Centralizadas */}
-          <div className="text-center space-y-1">
-            <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 text-neonGreen">
-              #{pilot.position} • {pilot.winRate}% WR
+          {side === "left" && pilot1.position < pilot2.position && (
+            <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              DEFENDE
             </Badge>
-            <h3 className="text-base sm:text-xl font-bold text-white">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-racing-yellow">{pilot.car}</p>
-            {team && <p className="text-xs text-blue-400">Equipe: {team}</p>}
-          </div>
+          )}
+          {side === "left" && pilot1.position > pilot2.position && (
+            <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              ATACA
+            </Badge>
+          )}
+          {side === "right" && pilot2.position < pilot1.position && (
+            <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              DEFENDE
+            </Badge>
+          )}
+          {side === "right" && pilot2.position > pilot1.position && (
+            <Badge className="bg-red-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
+              ATACA
+            </Badge>
+          )}
+        </div>
+
+        {/* Informações do Piloto - Centralizadas */}
+        <div className="text-center space-y-1">
+          <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 text-neonGreen">
+            #{pilot.position} • {pilot.winRate}% WR
+          </Badge>
+          <h3 className="text-base sm:text-xl font-bold text-white">{pilot.name}</h3>
+          <p className="text-xs sm:text-sm text-racing-yellow">{pilot.car}</p>
+          {team && <p className="text-xs text-blue-400">Equipe: {team}</p>}
         </div>
 
         {/* Stats Grid */}
