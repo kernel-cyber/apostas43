@@ -62,6 +62,7 @@ export type Database = {
           event_id: string
           final_position: number
           id: string
+          initial_position: number | null
           losses: number | null
           pilot_id: string
           total_points: number | null
@@ -73,6 +74,7 @@ export type Database = {
           event_id: string
           final_position: number
           id?: string
+          initial_position?: number | null
           losses?: number | null
           pilot_id: string
           total_points?: number | null
@@ -84,6 +86,7 @@ export type Database = {
           event_id?: string
           final_position?: number
           id?: string
+          initial_position?: number | null
           losses?: number | null
           pilot_id?: string
           total_points?: number | null

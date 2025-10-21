@@ -333,32 +333,39 @@ export default function RealTournamentBracket() {
 
               <TabsContent value="all" className="space-y-4 mt-4">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {finishedMatches.slice(0, 12).map((match: any) => (
+                  {finishedMatches.map((match: any) => (
                     <MatchCard key={match.id} match={match} showPositions={true} />
                   ))}
                 </div>
+                {finishedMatches.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">Nenhum match finalizado</p>
+                )}
               </TabsContent>
 
               <TabsContent value="odd" className="space-y-4 mt-4">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {finishedMatches
                     .filter((m: any) => m.bracket_type === 'odd')
-                    .slice(0, 12)
                     .map((match: any) => (
                       <MatchCard key={match.id} match={match} showPositions={true} />
                     ))}
                 </div>
+                {finishedMatches.filter((m: any) => m.bracket_type === 'odd').length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">Nenhum match ímpar finalizado</p>
+                )}
               </TabsContent>
 
               <TabsContent value="even" className="space-y-4 mt-4">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {finishedMatches
                     .filter((m: any) => m.bracket_type === 'even')
-                    .slice(0, 12)
                     .map((match: any) => (
                       <MatchCard key={match.id} match={match} showPositions={true} />
                     ))}
                 </div>
+                {finishedMatches.filter((m: any) => m.bracket_type === 'even').length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">Nenhum match par finalizado</p>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>

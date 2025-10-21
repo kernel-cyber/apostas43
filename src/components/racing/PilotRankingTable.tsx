@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Shield, Swords } from 'lucide-react';
+import { Trophy, Shield, Swords, ArrowUp, ArrowDown, Minus } from 'lucide-react';
 import { usePilotRankings } from '@/hooks/usePilotRankings';
 import { useEventStandings } from '@/hooks/useEventStandings';
 import { useEventPilotStats } from '@/hooks/useEventPilotStats';
@@ -21,7 +21,11 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
     team: standing.pilot?.team,
     wins: standing.wins,
     losses: standing.losses,
-    current_position: standing.final_position
+    current_position: standing.final_position,
+    initial_position: standing.initial_position,
+    position_change: standing.initial_position && standing.final_position 
+      ? standing.initial_position - standing.final_position  // positivo = subiu
+      : 0
   })) || [];
 
   const RankingList = ({ pilots, isLoading, showPosition = false, eventId }: any) => {
@@ -86,9 +90,32 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
                           {pilot.name}
                         </p>
                         {showPosition && pilot.current_position && (
-                          <Badge variant="outline" className="text-neonGreen border-neonGreen">
-                            #{pilot.current_position}
-                          </Badge>
+                          <>
+                            <Badge variant="outline" className="text-neonGreen border-neonGreen">
+                              #{pilot.current_position}
+                            </Badge>
+                            {pilot.position_change !== 0 && (
+                              <Badge 
+                                variant="outline" 
+                                className={`flex items-center gap-1 ${
+                                  pilot.position_change > 0 ? 'text-green-500 border-green-500' :
+                                  'text-red-500 border-red-500'
+                                }`}
+                              >
+                                {pilot.position_change > 0 ? (
+                                  <>
+                                    <ArrowUp className="h-3 w-3" />
+                                    +{pilot.position_change}
+                                  </>
+                                ) : (
+                                  <>
+                                    <ArrowDown className="h-3 w-3" />
+                                    {pilot.position_change}
+                                  </>
+                                )}
+                              </Badge>
+                            )}
+                          </>
                         )}
                       </div>
                   <p className="text-xs text-racing-yellow truncate">

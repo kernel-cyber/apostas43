@@ -6,6 +6,7 @@ export interface EventStanding {
   event_id: string;
   pilot_id: string;
   final_position: number;
+  initial_position?: number;
   wins: number;
   losses: number;
   total_points: number;
@@ -26,7 +27,7 @@ export const useEventStandings = (eventId: string | null) => {
       
       const { data, error } = await supabase
         .from('event_standings')
-        .select('*')
+        .select('*, initial_position')
         .eq('event_id', eventId)
         .order('final_position', { ascending: true });
       
