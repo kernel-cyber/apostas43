@@ -334,7 +334,15 @@ const Index = () => {
               </TabsContent>
 
               <TabsContent value="lista43" className="mt-0">
-...
+                <div className="space-y-8">
+                  <div className="text-center space-y-4">
+                    <h2 className="text-4xl font-bold premium-gradient-text">LISTA 43 - TOP 20</h2>
+                    <p className="text-muted-foreground max-w-2xl mx-auto">
+                      Acompanhe o chaveamento e as posições atuais da Lista 43 em tempo real.
+                    </p>
+                  </div>
+                  <RealTournamentBracket />
+                </div>
               </TabsContent>
 
               <TabsContent value="ranking" className="mt-0">
