@@ -18,11 +18,30 @@ export default function MatchList() {
     await deleteMatch.mutateAsync(id);
   };
 
-  const handleStartMatch = async (id: string, lockBetting: boolean = true) => {
+  const handleStartMatch = async (id: string) => {
+    // Verificar se já existe match em progresso
+    const inProgressMatch = matches?.find((m: any) => 
+      m.match_status === 'in_progress' && m.id !== id
+    );
+    
+    if (inProgressMatch) {
+      alert('Já existe um match em andamento! Finalize-o antes de iniciar outro.');
+      return;
+    }
+    
+    // Iniciar sem bloquear apostas
     await updateMatchStatus.mutateAsync({ 
       id, 
       status: 'in_progress',
-      betting_locked: lockBetting 
+      betting_locked: false 
+    });
+  };
+
+  const handleToggleBetting = async (id: string, currentlyLocked: boolean) => {
+    await updateMatchStatus.mutateAsync({
+      id,
+      status: 'in_progress',
+      betting_locked: !currentlyLocked
     });
   };
 
@@ -76,6 +95,7 @@ export default function MatchList() {
                   onDelete={handleDelete}
                   onStart={handleStartMatch}
                   onFinish={handleOpenFinishModal}
+                  onToggleBetting={handleToggleBetting}
                 />
               ))}
             </div>
@@ -94,7 +114,7 @@ export default function MatchList() {
   );
 }
 
-function MatchCard({ match, onDelete, onStart, onFinish }: any) {
+function MatchCard({ match, onDelete, onStart, onFinish, onToggleBetting }: any) {
   const getStatusBadge = () => {
     switch (match.match_status) {
       case 'upcoming':
@@ -162,39 +182,37 @@ function MatchCard({ match, onDelete, onStart, onFinish }: any) {
           </div>
         )}
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {match.match_status === 'upcoming' && (
             <Button
               size="sm"
               className="flex-1"
-              onClick={() => {
-                if (confirm('Deseja bloquear as apostas ao iniciar o match?')) {
-                  onStart(match.id, true);
-                } else {
-                  onStart(match.id, false);
-                }
-              }}
+              onClick={() => onStart(match.id)}
             >
               <Play className="h-4 w-4 mr-2" />
               Iniciar
             </Button>
           )}
-          
-          {match.betting_locked && (
-            <Badge variant="destructive" className="text-xs">
-              Apostas Bloqueadas
-            </Badge>
-          )}
 
           {match.match_status === 'in_progress' && (
-            <Button
-              size="sm"
-              className="flex-1 bg-racing-green hover:bg-racing-green/80"
-              onClick={() => onFinish(match)}
-            >
-              <Trophy className="h-4 w-4 mr-2" />
-              Finalizar
-            </Button>
+            <>
+              <Button
+                size="sm"
+                variant={match.betting_locked ? "default" : "outline"}
+                onClick={() => onToggleBetting(match.id, match.betting_locked)}
+              >
+                {match.betting_locked ? '🔒 Abrir Apostas' : '🔓 Fechar Apostas'}
+              </Button>
+              
+              <Button
+                size="sm"
+                className="flex-1 bg-racing-green hover:bg-racing-green/80"
+                onClick={() => onFinish(match)}
+              >
+                <Trophy className="h-4 w-4 mr-2" />
+                Finalizar
+              </Button>
+            </>
           )}
 
           <Button

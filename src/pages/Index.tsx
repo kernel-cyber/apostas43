@@ -259,14 +259,34 @@ const Index = () => {
             {/* Tab Contents */}
             <div className="container mx-auto px-4 py-8">
               <TabsContent value="live" className="space-y-8 mt-0">
-                {mockRace ? (
-                  <LiveEventCard 
-                    race={mockRace} 
-                    userPoints={points}
-                    userId={user.id}
-                    onBetSuccess={handleBetSuccess}
-                    isNew={isNewMatch}
-                  />
+                {liveMatch ? (
+                  liveMatch.match_status === 'finished' ? (
+                    <Card className="glass-card p-12 text-center animate-fade-in">
+                      <div className="relative mx-auto w-20 h-20 mb-6">
+                        <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse" />
+                        <div className="relative bg-gradient-to-br from-primary to-accent p-4 rounded-full">
+                          <Trophy className="h-12 w-12 text-primary-foreground" />
+                        </div>
+                      </div>
+                      <h3 className="text-3xl font-bold text-foreground mb-3">Match Finalizado!</h3>
+                      <p className="text-lg text-muted-foreground mb-2">
+                        Aguardando início de novo match...
+                      </p>
+                      <div className="flex items-center justify-center gap-2 mt-4">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
+                    </Card>
+                  ) : mockRace ? (
+                    <LiveEventCard 
+                      race={mockRace} 
+                      userPoints={points}
+                      userId={user.id}
+                      onBetSuccess={handleBetSuccess}
+                      isNew={isNewMatch}
+                    />
+                  ) : null
                 ) : (
                   <Card className="glass-card p-8 text-center">
                     <Target className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />

@@ -8,12 +8,10 @@ export const useMatchNotifications = () => {
 
   const showMatchFinishedNotification = useCallback((match: any) => {
     const winnerName = match.winner?.name || 'Vencedor';
-    const pilot1Name = match.pilot1?.name || 'Piloto 1';
-    const pilot2Name = match.pilot2?.name || 'Piloto 2';
     
     toast({
       title: "🏆 Match Finalizado!",
-      description: `${winnerName} venceu! ${pilot1Name} vs ${pilot2Name}`,
+      description: `${winnerName} é o campeão!`,
       duration: 10000,
     });
 
