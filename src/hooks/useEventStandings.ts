@@ -28,8 +28,7 @@ export const useEventStandings = (eventId: string | null) => {
         .from('event_standings')
         .select('*')
         .eq('event_id', eventId)
-        .order('total_points', { ascending: false })
-        .order('wins', { ascending: false });
+        .order('final_position', { ascending: true });
       
       if (error) throw error;
       
