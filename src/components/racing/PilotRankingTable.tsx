@@ -95,16 +95,6 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
                   )}
                 </div>
 
-                {/* Stats */}
-                <div className="flex-shrink-0 text-right">
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className="h-4 w-4 text-racing-green" />
-                    <span className="text-lg font-bold">{pilot.points}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    pontos
-                  </div>
-                </div>
               </div>
             </CardContent>
           </Card>
