@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useEvents } from '@/hooks/useEvents';
-import { Trash2, Calendar, Users, Edit } from 'lucide-react';
+import { Trash2, Calendar, Users, Edit, Target } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useQuery } from '@tanstack/react-query';
@@ -45,6 +45,7 @@ export default function EventList() {
 
 function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, name: string) => void }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
   const { updateEvent } = useEvents();
   
   const { data: matchCount } = useQuery({
@@ -60,6 +61,26 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
 
   const eventTypeLabel = event.event_type === 'shark_tank' ? 'Shark Tank' : 'TOP 20';
   const eventTypeColor = event.event_type === 'shark_tank' ? 'bg-racing-red' : 'bg-racing-blue';
+
+  const handleCapturePositions = async () => {
+    if (!confirm(`Capturar as posições iniciais do TOP 20 para o evento "${event.name}"?\n\nIsso permitirá exibir as mudanças de posição dos pilotos.`)) return;
+    
+    setIsCapturing(true);
+    try {
+      const { error } = await supabase.rpc('capture_initial_positions', {
+        p_event_id: event.id
+      });
+      
+      if (error) throw error;
+      
+      alert('Posições iniciais capturadas com sucesso!');
+    } catch (error) {
+      console.error('Erro ao capturar posições:', error);
+      alert('Erro ao capturar posições. Tente novamente.');
+    } finally {
+      setIsCapturing(false);
+    }
+  };
 
   const handleEndEvent = async () => {
     if (!confirm(`Tem certeza que deseja encerrar o evento "${event.name}"?\n\nIsso irá salvar o ranking TOP 20 atual como resultado final desta edição.`)) return;
@@ -122,37 +143,51 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
           {matchCount || 0} matches cadastrados
         </div>
 
-        <div className="flex gap-2 mt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-1"
-            onClick={() => setEditModalOpen(true)}
-          >
-            <Edit className="h-4 w-4 mr-2" />
-            Editar
-          </Button>
-          {event.is_active && (
+        <div className="flex flex-col gap-2 mt-2">
+          <div className="flex gap-2">
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               className="flex-1"
-              onClick={handleEndEvent}
-              disabled={updateEvent.isPending}
+              onClick={() => setEditModalOpen(true)}
             >
-              <Calendar className="h-4 w-4 mr-2" />
-              Encerrar
+              <Edit className="h-4 w-4 mr-2" />
+              Editar
             </Button>
-          )}
-          <Button
-            variant="destructive"
-            size="sm"
-            className="flex-1"
-            onClick={() => onDelete(event.id, event.name)}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Deletar
-          </Button>
+            {event.is_active && (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="flex-1"
+                onClick={handleEndEvent}
+                disabled={updateEvent.isPending}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Encerrar
+              </Button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 border-racing-yellow text-racing-yellow hover:bg-racing-yellow/10"
+              onClick={handleCapturePositions}
+              disabled={isCapturing}
+            >
+              <Target className="h-4 w-4 mr-2" />
+              {isCapturing ? 'Capturando...' : 'Capturar Posições'}
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="flex-1"
+              onClick={() => onDelete(event.id, event.name)}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Deletar
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
