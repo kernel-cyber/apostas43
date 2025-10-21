@@ -1,9 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Trophy, Shield, Swords } from 'lucide-react';
 import { usePilotRankings } from '@/hooks/usePilotRankings';
 import { useEventStandings } from '@/hooks/useEventStandings';
+import { useEventPilotStats } from '@/hooks/useEventPilotStats';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useState } from 'react';
 
 interface PilotRankingTableProps {
   eventId: string;
@@ -11,6 +14,7 @@ interface PilotRankingTableProps {
 
 export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
   const { data: eventStandings, isLoading } = useEventStandings(eventId);
+  const [showStats, setShowStats] = useState<'wins' | 'defense-attack'>('wins');
   
   const pilots = eventStandings?.map(standing => ({
     id: standing.pilot?.id || standing.pilot_id,
@@ -18,11 +22,12 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
     car_name: standing.pilot?.car_name || 'N/A',
     image_url: standing.pilot?.image_url,
     team: standing.pilot?.team,
-    points: standing.total_points,
+    wins: standing.wins,
+    losses: standing.losses,
     current_position: standing.final_position
   })) || [];
 
-  const RankingList = ({ pilots, isLoading, showPosition = false }: any) => {
+  const RankingList = ({ pilots, isLoading, showPosition = false, showStats, eventId }: any) => {
     if (isLoading) {
       return (
         <div className="space-y-2">
@@ -43,10 +48,14 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
 
     return (
       <div className="space-y-2">
-        {pilots.map((pilot: any, index: number) => (
-          <Card key={pilot.id} className="bg-muted border-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-4">
+        {pilots.map((pilot: any, index: number) => {
+          const PilotCard = () => {
+            const { data: stats } = useEventPilotStats(eventId, pilot.id);
+            
+            return (
+              <Card key={pilot.id} className="bg-muted border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
                 {/* Ranking Position */}
                 <div className="flex-shrink-0 w-10 text-center">
                   {index < 3 ? (
@@ -95,10 +104,54 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
                   )}
                 </div>
 
+                {/* Stats - Vitórias/Derrotas ou Defesas/Ataques */}
+                <div className="flex-shrink-0 text-right min-w-[140px]">
+                  {showStats === 'wins' ? (
+                    <div className="flex items-center gap-3 justify-end">
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground">Vitórias</div>
+                        <div className="text-lg font-bold text-green-500">
+                          {pilot.wins || 0}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-muted-foreground">Derrotas</div>
+                        <div className="text-lg font-bold text-red-500">
+                          {pilot.losses || 0}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 justify-end">
+                      <div className="text-right">
+                        <div className="text-xs text-blue-400 flex items-center gap-1 justify-end">
+                          <Shield className="h-3 w-3" />
+                          Defesas
+                        </div>
+                        <div className="text-lg font-bold text-blue-400">
+                          {stats?.defesasSuccess || 0}/{stats?.defesasTotal || 0}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-orange-400 flex items-center gap-1 justify-end">
+                          <Swords className="h-3 w-3" />
+                          Ataques
+                        </div>
+                        <div className="text-lg font-bold text-orange-400">
+                          {stats?.ataquesSuccess || 0}/{stats?.ataquesTotal || 0}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
-        ))}
+            );
+          };
+          
+          return <PilotCard key={pilot.id} />;
+        })}
       </div>
     );
   };
@@ -112,10 +165,34 @@ export default function PilotRankingTable({ eventId }: PilotRankingTableProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Filtro de Estatísticas */}
+        <div className="flex gap-2 mb-4">
+          <Button 
+            variant={showStats === 'wins' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowStats('wins')}
+            className="flex-1"
+          >
+            <Trophy className="h-4 w-4 mr-1" />
+            Vitórias/Derrotas
+          </Button>
+          <Button 
+            variant={showStats === 'defense-attack' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowStats('defense-attack')}
+            className="flex-1"
+          >
+            <Shield className="h-4 w-4 mr-1" />
+            Defesas/Ataques
+          </Button>
+        </div>
+
         <RankingList 
           pilots={pilots} 
           isLoading={isLoading}
           showPosition={true}
+          showStats={showStats}
+          eventId={eventId}
         />
       </CardContent>
     </Card>
