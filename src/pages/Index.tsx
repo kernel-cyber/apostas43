@@ -338,10 +338,14 @@ const Index = () => {
                           if (a.scheduled_time && b.scheduled_time) {
                             return new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime();
                           }
-                          // Fallback: ordenar por maior posição dos pilotos
-                          const maxPosA = Math.max(a.pilot1?.position || 0, a.pilot2?.position || 0);
-                          const maxPosB = Math.max(b.pilot1?.position || 0, b.pilot2?.position || 0);
-                          return maxPosB - maxPosA;
+                          // Fallback: ordenar por round_number (rodadas menores primeiro)
+                          // Depois por MENOR posição dos pilotos (mais importantes primeiro)
+                          if (a.round_number !== b.round_number) {
+                            return a.round_number - b.round_number;
+                          }
+                          const minPosA = Math.min(a.pilot1?.position || 999, a.pilot2?.position || 999);
+                          const minPosB = Math.min(b.pilot1?.position || 999, b.pilot2?.position || 999);
+                          return minPosA - minPosB;
                         })
                         .map((match, index) => (
                         <Card key={match.id} className={`glass-card hover:shadow-neon transition-all duration-300 ${index === 0 ? 'animate-pulse-border-green' : ''}`}>

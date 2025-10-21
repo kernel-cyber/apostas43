@@ -45,7 +45,7 @@ export default function RealTournamentBracket() {
     match.event?.event_type === 'top_20'
   ) || [];
 
-  // Separar por status com ORDENAÇÃO
+  // Separar por status com ORDENAÇÃO CORRETA
   const upcomingMatches = top20Matches
     .filter((m: any) => m.match_status === 'upcoming')
     .sort((a: any, b: any) => {
@@ -53,10 +53,13 @@ export default function RealTournamentBracket() {
       if (a.scheduled_time && b.scheduled_time) {
         return new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime();
       }
-      // Fallback: ordenar por maior posição
-      const maxPosA = Math.max(a.pilot1?.position || 0, a.pilot2?.position || 0);
-      const maxPosB = Math.max(b.pilot1?.position || 0, b.pilot2?.position || 0);
-      return maxPosB - maxPosA;
+      // Fallback: ordenar por round_number, depois por MENOR posição (mais importante)
+      if (a.round_number !== b.round_number) {
+        return a.round_number - b.round_number;
+      }
+      const minPosA = Math.min(a.pilot1?.position || 999, a.pilot2?.position || 999);
+      const minPosB = Math.min(b.pilot1?.position || 999, b.pilot2?.position || 999);
+      return minPosA - minPosB;
     });
   
   const liveMatches = top20Matches.filter((m: any) => m.match_status === 'in_progress');
