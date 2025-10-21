@@ -71,7 +71,12 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
         {/* Avatar & Position - #4: Exibir foto real */}
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse space-x-reverse" : ""} space-x-3 sm:space-x-4`}>
           <div className="flex flex-col items-center gap-1">
-            <div className="text-3xl sm:text-4xl">{pilot.avatar}</div>
+            <div className="text-3xl sm:text-4xl">
+              {side === "left" && pilot1.position < pilot2.position && "🛡️"}
+              {side === "left" && pilot1.position > pilot2.position && "⚔️"}
+              {side === "right" && pilot2.position < pilot1.position && "🛡️"}
+              {side === "right" && pilot2.position > pilot1.position && "⚔️"}
+            </div>
             {side === "left" && pilot1.position < pilot2.position && (
               <Badge className="bg-blue-500 text-white text-[8px] px-1.5 py-0.5 whitespace-nowrap">
                 DEFENDE
