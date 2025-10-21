@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Coins, TrendingUp, AlertTriangle, Activity, CheckCircle } from "lucide-react";
 import { useBetting } from "@/hooks/useBetting";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
+import { useLiveBettingDistribution } from "@/hooks/useLiveBettingDistribution";
 
 interface BettingPanelProps {
   matchId: string;
@@ -32,6 +33,7 @@ export const BettingPanel = ({
   const [selectedPilot, setSelectedPilot] = useState<string | null>(null);
   const { odds, placeBet, loading, existingBet, checkExistingBet, lastUpdate } = useBetting(matchId);
   const { playBetPlaced } = useSoundEffects();
+  const distribution = useLiveBettingDistribution(matchId, pilot1Id, pilot2Id);
 
   useEffect(() => {
     if (userId && matchId) {
@@ -121,6 +123,26 @@ export const BettingPanel = ({
       </CardHeader>
       
       <CardContent className="space-y-4">
+        {/* Distribuição Atual de Apostas */}
+        {(distribution.pilot1Percentage > 0 || distribution.pilot2Percentage > 0) && (
+          <div className="p-3 bg-gradient-card rounded-lg border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-muted-foreground">Distribuição Atual:</span>
+              <Activity className="w-3 h-3 text-muted-foreground" />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="text-center p-2 bg-background/50 rounded">
+                <div className="text-xs text-muted-foreground truncate">{pilot1Name}</div>
+                <div className="text-lg font-bold text-neonGreen">{distribution.pilot1Percentage.toFixed(1)}%</div>
+              </div>
+              <div className="text-center p-2 bg-background/50 rounded">
+                <div className="text-xs text-muted-foreground truncate">{pilot2Name}</div>
+                <div className="text-lg font-bold text-racing-yellow">{distribution.pilot2Percentage.toFixed(1)}%</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Pilot Selection */}
         <div className="grid grid-cols-2 gap-3">
           <Button

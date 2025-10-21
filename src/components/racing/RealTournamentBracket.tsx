@@ -324,11 +324,43 @@ export default function RealTournamentBracket() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {finishedMatches.slice(0, 6).map((match: any) => (
-                <MatchCard key={match.id} match={match} showPositions={true} />
-              ))}
-            </div>
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-trackDark">
+                <TabsTrigger value="all">Todos</TabsTrigger>
+                <TabsTrigger value="odd">🔵 Rodadas Ímpares</TabsTrigger>
+                <TabsTrigger value="even">🔴 Rodadas Pares</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="all" className="space-y-4 mt-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {finishedMatches.slice(0, 12).map((match: any) => (
+                    <MatchCard key={match.id} match={match} showPositions={true} />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="odd" className="space-y-4 mt-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {finishedMatches
+                    .filter((m: any) => m.bracket_type === 'odd')
+                    .slice(0, 12)
+                    .map((match: any) => (
+                      <MatchCard key={match.id} match={match} showPositions={true} />
+                    ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="even" className="space-y-4 mt-4">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {finishedMatches
+                    .filter((m: any) => m.bracket_type === 'even')
+                    .slice(0, 12)
+                    .map((match: any) => (
+                      <MatchCard key={match.id} match={match} showPositions={true} />
+                    ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
       )}
