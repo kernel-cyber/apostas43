@@ -99,7 +99,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
           </div>
 
           {/* Informações do Piloto - Centralizadas */}
-          <div className="flex-1 text-center space-y-1">
+          <div className="text-center space-y-1">
             <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 text-neonGreen">
               #{pilot.position} • {pilot.winRate}% WR
             </Badge>
