@@ -10,6 +10,7 @@ export interface Match {
   round_number: number;
   scheduled_time: string | null;
   match_status: 'upcoming' | 'in_progress' | 'finished';
+  betting_locked: boolean;
   winner_id: string | null;
   created_at: string;
   updated_at: string;

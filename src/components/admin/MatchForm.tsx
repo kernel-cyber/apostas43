@@ -73,6 +73,7 @@ export default function MatchForm() {
       pilot2_id: formData.pilot2_id,
       round_number: parseInt(formData.round_number),
       scheduled_time: null,
+      betting_locked: false,
     });
 
     setFormData({

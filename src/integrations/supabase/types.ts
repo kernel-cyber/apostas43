@@ -94,6 +94,7 @@ export type Database = {
       }
       matches: {
         Row: {
+          betting_locked: boolean | null
           created_at: string
           event_id: string
           id: string
@@ -106,6 +107,7 @@ export type Database = {
           winner_id: string | null
         }
         Insert: {
+          betting_locked?: boolean | null
           created_at?: string
           event_id: string
           id?: string
@@ -118,6 +120,7 @@ export type Database = {
           winner_id?: string | null
         }
         Update: {
+          betting_locked?: boolean | null
           created_at?: string
           event_id?: string
           id?: string
@@ -165,7 +168,6 @@ export type Database = {
           best_time: string | null
           car_model: string | null
           car_name: string
-          category: string | null
           created_at: string
           current_position: number | null
           id: string
@@ -183,7 +185,6 @@ export type Database = {
           best_time?: string | null
           car_model?: string | null
           car_name: string
-          category?: string | null
           created_at?: string
           current_position?: number | null
           id?: string
@@ -201,7 +202,6 @@ export type Database = {
           best_time?: string | null
           car_model?: string | null
           car_name?: string
-          category?: string | null
           created_at?: string
           current_position?: number | null
           id?: string
@@ -360,10 +360,14 @@ export type Database = {
         Args: { p_match_id: string; p_winner_id: string }
         Returns: undefined
       }
+      swap_top20_positions: {
+        Args: { p_positions: number[] }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
-      event_type: "top_20" | "shark_tank"
+      event_type: "top_20"
       match_status: "upcoming" | "in_progress" | "finished"
     }
     CompositeTypes: {
@@ -493,7 +497,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      event_type: ["top_20", "shark_tank"],
+      event_type: ["top_20"],
       match_status: ["upcoming", "in_progress", "finished"],
     },
   },

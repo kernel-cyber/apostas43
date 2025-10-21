@@ -5,6 +5,8 @@ import { useUserPoints } from "@/hooks/useUserPoints";
 import { useLiveStats } from "@/hooks/useLiveStats";
 import { useActiveMatches } from "@/hooks/useActiveMatches";
 import { useMatchNotifications } from "@/hooks/useMatchNotifications";
+import { useBetting } from "@/hooks/useBetting";
+import { useRecentForm } from "@/hooks/useRecentForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +29,13 @@ const Index = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("live");
   
+  // Get betting odds for live match
+  const { odds: liveOdds } = useBetting(liveMatch?.id || null);
+  
+  // Get recent form for both pilots
+  const { recentForm: pilot1Form } = useRecentForm(liveMatch?.pilot1_id);
+  const { recentForm: pilot2Form } = useRecentForm(liveMatch?.pilot2_id);
+  
   // Enable real-time match notifications
   useMatchNotifications();
 
@@ -36,7 +45,7 @@ const Index = () => {
     }
   }, [user, loading, navigate]);
 
-  // Mock data for features not yet in database
+  // Create race object with dynamic data
   const mockRace = liveMatch ? {
     id: liveMatch.id,
     pilot1Id: liveMatch.pilot1_id,
@@ -48,9 +57,9 @@ const Index = () => {
       wins: liveMatch.pilot1?.wins || 0, 
       losses: liveMatch.pilot1?.losses || 0,
       avatar: "🏎️",
-      winRate: liveMatch.pilot1 ? Math.round((liveMatch.pilot1.wins / (liveMatch.pilot1.wins + liveMatch.pilot1.losses || 1)) * 100) : 0,
-      bestTime: "8.45s",
-      recentForm: ["W", "W", "L", "W", "W"]
+      winRate: liveMatch.pilot1 && (liveMatch.pilot1 as any).total_races ? Math.round((liveMatch.pilot1.wins / (liveMatch.pilot1 as any).total_races) * 100) : 0,
+      bestTime: (liveMatch.pilot1 as any)?.best_time || "N/A",
+      recentForm: pilot1Form.length > 0 ? pilot1Form : ["?", "?", "?", "?", "?"]
     },
     pilot2: { 
       name: liveMatch.pilot2?.name || "TBD", 
@@ -59,17 +68,23 @@ const Index = () => {
       wins: liveMatch.pilot2?.wins || 0, 
       losses: liveMatch.pilot2?.losses || 0,
       avatar: "⚡",
-      winRate: liveMatch.pilot2 ? Math.round((liveMatch.pilot2.wins / (liveMatch.pilot2.wins + liveMatch.pilot2.losses || 1)) * 100) : 0,
-      bestTime: "8.92s",
-      recentForm: ["L", "W", "W", "L", "W"]
+      winRate: liveMatch.pilot2 && (liveMatch.pilot2 as any).total_races ? Math.round((liveMatch.pilot2.wins / (liveMatch.pilot2 as any).total_races) * 100) : 0,
+      bestTime: (liveMatch.pilot2 as any)?.best_time || "N/A",
+      recentForm: pilot2Form.length > 0 ? pilot2Form : ["?", "?", "?", "?", "?"]
     },
     event: liveMatch.event?.name || "ÁREA 43",
     round: `Rodada #${liveMatch.round_number}`,
     status: "live" as const,
-    bets: { pilot1: 68, pilot2: 32 },
-    totalPool: stats.totalPool,
+    bets: { 
+      pilot1: liveOdds?.pilot1_percentage || 50, 
+      pilot2: liveOdds?.pilot2_percentage || 50 
+    },
+    totalPool: liveOdds?.total_pool || stats.totalPool,
     totalBets: stats.totalBets,
-    odds: { pilot1: 1.47, pilot2: 2.85 }
+    odds: { 
+      pilot1: liveOdds?.pilot1_odds || 2.00, 
+      pilot2: liveOdds?.pilot2_odds || 2.00 
+    }
   } : null;
 
   const topPilots = [

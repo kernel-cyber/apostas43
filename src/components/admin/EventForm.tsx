@@ -12,7 +12,7 @@ export default function EventForm() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    event_type: 'shark_tank' as 'top_20' | 'shark_tank',
+    event_type: 'top_20' as 'top_20',
     event_date: '',
     is_active: true,
   });
@@ -23,7 +23,7 @@ export default function EventForm() {
     setFormData({
       name: '',
       description: '',
-      event_type: 'shark_tank',
+      event_type: 'top_20',
       event_date: '',
       is_active: true,
     });
@@ -48,7 +48,7 @@ export default function EventForm() {
           <Label htmlFor="event_type">Tipo de Evento *</Label>
           <Select
             value={formData.event_type}
-            onValueChange={(value: 'top_20' | 'shark_tank') =>
+            onValueChange={(value: 'top_20') =>
               setFormData({ ...formData, event_type: value })
             }
           >
@@ -56,7 +56,6 @@ export default function EventForm() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="shark_tank">Shark Tank 64</SelectItem>
               <SelectItem value="top_20">TOP 20</SelectItem>
             </SelectContent>
           </Select>

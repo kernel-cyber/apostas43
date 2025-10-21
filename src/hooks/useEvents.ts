@@ -6,7 +6,7 @@ export interface Event {
   id: string;
   name: string;
   description: string | null;
-  event_type: 'top_20' | 'shark_tank';
+  event_type: 'top_20';
   event_date: string;
   is_active: boolean;
   bracket_type?: string | null;

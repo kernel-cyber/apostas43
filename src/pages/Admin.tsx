@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Plus, Trash2, Upload, ArrowLeft, Edit } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import EventForm from '@/components/admin/EventForm';
 import EventList from '@/components/admin/EventList';
@@ -18,6 +19,7 @@ import EditPilotModal from '@/components/admin/EditPilotModal';
 import BracketGenerator from '@/components/admin/BracketGenerator';
 import Top20Management from '@/components/admin/Top20Management';
 import AdminStats from '@/components/admin/AdminStats';
+import { useEvents } from '@/hooks/useEvents';
 
 interface Pilot {
   id: string;
@@ -40,6 +42,8 @@ export default function Admin() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedPilot, setSelectedPilot] = useState<Pilot | null>(null);
+  const [selectedEventForBracket, setSelectedEventForBracket] = useState<string>('');
+  const { events } = useEvents();
   
   const [formData, setFormData] = useState({
     name: '',
@@ -457,7 +461,35 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="bracket" className="space-y-6">
-            <BracketGenerator eventId="" />
+            <Card className="bg-card/50 border-border">
+              <CardHeader>
+                <CardTitle>Gerador de Chaveamento</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Selecione o Evento *</Label>
+                  <Select value={selectedEventForBracket} onValueChange={setSelectedEventForBracket}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Escolha um evento ativo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {events?.filter(e => e.is_active && e.event_type === 'top_20').map(event => (
+                        <SelectItem key={event.id} value={event.id}>
+                          {event.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedEventForBracket ? (
+                  <BracketGenerator eventId={selectedEventForBracket} />
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    Selecione um evento para gerar o chaveamento
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
 

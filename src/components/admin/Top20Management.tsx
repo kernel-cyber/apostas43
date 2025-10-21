@@ -5,6 +5,8 @@ import { Loader2, Trophy, AlertCircle, UserPlus } from 'lucide-react';
 import { useTop20Positions } from '@/hooks/useTop20Positions';
 import CompactTop20Card from './CompactTop20Card';
 import Top20PositionModal from './Top20PositionModal';
+import { Top20PositionReorder } from './Top20PositionReorder';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Top20Management() {
   const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
@@ -52,57 +54,70 @@ export default function Top20Management() {
 
   return (
     <div className="space-y-6">
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-racing-yellow" />
-              TOP 20 - Lista 43
-            </CardTitle>
-            {(!top20Positions || top20Positions.length === 0) && (
-              <Button 
-                onClick={() => initializePositions.mutate()}
-                disabled={initializePositions.isPending}
-              >
-                {initializePositions.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Inicializando...
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Inicializar TOP 20
-                  </>
+      <Tabs defaultValue="view" className="w-full">
+        <TabsList>
+          <TabsTrigger value="view">Visualizar</TabsTrigger>
+          <TabsTrigger value="reorder">Reordenar</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="view">
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-racing-yellow" />
+                  TOP 20 - Lista 43
+                </CardTitle>
+                {(!top20Positions || top20Positions.length === 0) && (
+                  <Button 
+                    onClick={() => initializePositions.mutate()}
+                    disabled={initializePositions.isPending}
+                  >
+                    {initializePositions.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Inicializando...
+                      </>
+                    ) : (
+                      <>
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Inicializar TOP 20
+                      </>
+                    )}
+                  </Button>
                 )}
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {(!top20Positions || top20Positions.length === 0) ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <AlertCircle className="h-12 w-12 mx-auto mb-4" />
-              <p>TOP 20 não inicializado.</p>
-              <p className="text-sm mt-2">Clique no botão acima para criar as posições.</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {top20Positions.map((position) => (
-                <CompactTop20Card
-                  key={position.position}
-                  position={position.position}
-                  pilot={position.pilot}
-                  consecutive_absences={position.consecutive_absences}
-                  last_match_date={position.last_match_date}
-                  onEdit={() => handleOpenModal(position.position)}
-                  isSelected={selectedPosition === position.position}
-                />
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {(!top20Positions || top20Positions.length === 0) ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <AlertCircle className="h-12 w-12 mx-auto mb-4" />
+                  <p>TOP 20 não inicializado.</p>
+                  <p className="text-sm mt-2">Clique no botão acima para criar as posições.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {top20Positions.map((position) => (
+                    <CompactTop20Card
+                      key={position.position}
+                      position={position.position}
+                      pilot={position.pilot}
+                      consecutive_absences={position.consecutive_absences}
+                      last_match_date={position.last_match_date}
+                      onEdit={() => handleOpenModal(position.position)}
+                      isSelected={selectedPosition === position.position}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="reorder">
+          <Top20PositionReorder />
+        </TabsContent>
+      </Tabs>
 
       <Top20PositionModal
         open={isModalOpen}

@@ -6,8 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function PilotRankingTable() {
-  const { rankings: top20Rankings, isLoading: isLoadingTop20 } = usePilotRankings('top20');
-  const { rankings: sharkTankRankings, isLoading: isLoadingShark } = usePilotRankings('shark_tank');
+  const { rankings, isLoading } = usePilotRankings();
 
   const RankingList = ({ pilots, isLoading, showPosition = false }: any) => {
     if (isLoading) {
@@ -103,31 +102,15 @@ export default function PilotRankingTable() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-racing-yellow" />
-          Ranking de Pilotos
+          Ranking de Pilotos - TOP 20
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="top20" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="top20">TOP 20 - Lista 43</TabsTrigger>
-            <TabsTrigger value="shark">Shark Tank</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="top20">
-            <RankingList 
-              pilots={top20Rankings} 
-              isLoading={isLoadingTop20}
-              showPosition={true}
-            />
-          </TabsContent>
-          
-          <TabsContent value="shark">
-            <RankingList 
-              pilots={sharkTankRankings?.slice(0, 20)} 
-              isLoading={isLoadingShark}
-            />
-          </TabsContent>
-        </Tabs>
+        <RankingList 
+          pilots={rankings} 
+          isLoading={isLoading}
+          showPosition={true}
+        />
       </CardContent>
     </Card>
   );
