@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RaceCard } from "@/components/racing/RaceCard";
 import RealTournamentBracket from "@/components/racing/RealTournamentBracket";
-import RealSharkTankBracket from "@/components/racing/RealSharkTankBracket";
 import Leaderboard from "@/components/racing/Leaderboard";
 import { LiveEventCard } from "@/components/racing/LiveEventCard";
 import { OnlineUsers } from "@/components/OnlineUsers";
@@ -198,11 +197,10 @@ const Index = () => {
       <nav className="sticky top-[60px] z-40 glass-card backdrop-blur-xl border-b border-border/50">
         <div className="container mx-auto px-2 sm:px-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-transparent h-auto p-0">
+            <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
               {[
                 { id: "live", label: "AO VIVO", icon: Target, badge: "LIVE", shortLabel: "LIVE" },
                 { id: "lista43", label: "LISTA 43", icon: Crown, badge: "TOP 20", shortLabel: "LISTA" },
-                { id: "sharktank", label: "SHARK TANK", icon: Trophy, badge: "64", shortLabel: "SHARK" },
                 { id: "ranking", label: "RANKINGS", icon: Medal, badge: null, shortLabel: "RANK" },
               ].map(({ id, label, icon: Icon, badge, shortLabel }) => (
                 <TabsTrigger 
@@ -281,27 +279,7 @@ const Index = () => {
               </TabsContent>
 
               <TabsContent value="lista43" className="mt-0">
-                <div className="space-y-8">
-                  <div className="text-center space-y-4">
-                    <h2 className="text-4xl font-bold premium-gradient-text">LISTA 43 - TOP 20</h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                      Sistema oficial de ranking com rodadas ímpares e pares. Vencedor assume a posição do perdedor.
-                    </p>
-                  </div>
-                  <RealTournamentBracket />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="sharktank" className="mt-0">
-                <div className="space-y-8">
-                  <div className="text-center space-y-4">
-                    <h2 className="text-4xl font-bold premium-gradient-text">SHARK TANK 64</h2>
-                    <p className="text-muted-foreground max-w-2xl mx-auto">
-                      Torneio eliminatório. 4 finalistas desafiam as últimas posições do TOP 20.
-                    </p>
-                  </div>
-                  <RealSharkTankBracket />
-                </div>
+...
               </TabsContent>
 
               <TabsContent value="ranking" className="mt-0">

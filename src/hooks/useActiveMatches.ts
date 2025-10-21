@@ -33,7 +33,7 @@ export const useActiveMatches = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        // Buscar match ao vivo
+        // Buscar match ao vivo (in_progress)
         const { data: liveData } = await supabase
           .from('matches' as any)
           .select(`
@@ -42,7 +42,7 @@ export const useActiveMatches = () => {
             pilot2:pilots!matches_pilot2_id_fkey(*),
             event:events(*)
           `)
-          .eq('match_status', 'live')
+          .eq('match_status', 'in_progress')
           .maybeSingle();
 
         if (liveData) {
