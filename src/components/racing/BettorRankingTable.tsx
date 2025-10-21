@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, Trophy, Target, TrendingDown, Search, Flame, Snowflake } from "lucide-react";
+import { TrendingUp, Trophy, Target, TrendingDown, Search } from "lucide-react";
 import { useUserRankings } from "@/hooks/useUserRankings";
 import { useUserBadges } from "@/hooks/useUserBadges";
 import { getUserTier } from "@/lib/rankingTiers";
@@ -77,10 +77,10 @@ export default function BettorRankingTable() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="points">🏆 Pontos</SelectItem>
-            <SelectItem value="win_rate">🎯 Win Rate</SelectItem>
-            <SelectItem value="profit">💰 Lucro</SelectItem>
-            <SelectItem value="roi">📈 ROI</SelectItem>
+            <SelectItem value="points">Pontos</SelectItem>
+            <SelectItem value="win_rate">Taxa de Acerto</SelectItem>
+            <SelectItem value="profit">Lucro</SelectItem>
+            <SelectItem value="roi">Retorno</SelectItem>
           </SelectContent>
         </Select>
 
@@ -89,13 +89,13 @@ export default function BettorRankingTable() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Todos Tiers</SelectItem>
-            <SelectItem value="legendary">👑 Legendary</SelectItem>
-            <SelectItem value="diamond">💎 Diamond</SelectItem>
-            <SelectItem value="platinum">⭐ Platinum</SelectItem>
-            <SelectItem value="gold">🏆 Gold</SelectItem>
-            <SelectItem value="silver">🥈 Silver</SelectItem>
-            <SelectItem value="bronze">🥉 Bronze</SelectItem>
+            <SelectItem value="all">Todos os Níveis</SelectItem>
+            <SelectItem value="legendary">Legendary</SelectItem>
+            <SelectItem value="diamond">Diamond</SelectItem>
+            <SelectItem value="platinum">Platinum</SelectItem>
+            <SelectItem value="gold">Gold</SelectItem>
+            <SelectItem value="silver">Silver</SelectItem>
+            <SelectItem value="bronze">Bronze</SelectItem>
           </SelectContent>
         </Select>
         
@@ -134,13 +134,7 @@ const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
     : 0;
   
   const roi = user.roi || 0;
-  const avgBet = user.avg_bet || 0;
-  
-  // Calcular streak (vitórias consecutivas ou derrotas)
   const wins = user.total_wins || 0;
-  const losses = (user.total_bets || 0) - wins;
-  const hasHotStreak = winRate >= 70 && user.total_bets >= 5;
-  const hasColdStreak = winRate <= 30 && user.total_bets >= 5;
 
   // Border especial para top 3
   const getRankBorderClass = () => {
@@ -151,8 +145,8 @@ const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
   };
 
   const getMedalIcon = () => {
-    if (rank === 1) return <Trophy className="h-8 w-8 text-yellow-500" />;
-    if (rank === 2) return <Trophy className="h-7 w-7 text-gray-400" />;
+    if (rank === 1) return <Trophy className="h-6 w-6 text-yellow-500" />;
+    if (rank === 2) return <Trophy className="h-6 w-6 text-gray-400" />;
     if (rank === 3) return <Trophy className="h-6 w-6 text-orange-700" />;
     return null;
   };
@@ -160,104 +154,99 @@ const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
   return (
     <Card 
       className={cn(
-        "glass-card border-2 hover:shadow-neon transition-all duration-300 card-enter",
-        getRankBorderClass(),
-        tier.gradient
+        "glass-card border hover:shadow-neon transition-all duration-300",
+        getRankBorderClass()
       )}
     >
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start gap-3 sm:gap-4">
-          {/* Posição + Tier Icon */}
-          <div className="flex-shrink-0 text-center min-w-[50px] sm:min-w-[60px]">
+          {/* Posição */}
+          <div className="flex flex-col items-center justify-center min-w-[48px]">
             {rank <= 3 ? (
-              <div className="mb-1">
-                {getMedalIcon()}
-              </div>
+              getMedalIcon()
             ) : (
-              <div className="text-3xl sm:text-4xl mb-1">{tier.icon}</div>
+              <span className="text-lg font-bold text-muted-foreground">#{rank}</span>
             )}
-            <span className="text-xs sm:text-sm font-bold text-muted-foreground">#{rank}</span>
           </div>
 
           {/* Avatar */}
-          <Avatar className="h-14 w-14 sm:h-16 sm:w-16 border-2 border-primary/30 flex-shrink-0">
+          <Avatar className="h-12 w-12 border-2 border-border flex-shrink-0">
             <AvatarImage src={user.avatar_url || undefined} />
-            <AvatarFallback className="text-xl">{user.username[0]?.toUpperCase()}</AvatarFallback>
+            <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
           </Avatar>
           
           {/* Info Principal */}
           <div className="flex-1 min-w-0 space-y-2">
             {/* Linha 1: Username + Pontos */}
-            <div className="flex items-start justify-between gap-2 flex-wrap">
+            <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <p className="font-bold text-base sm:text-lg truncate">{user.username}</p>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <Badge variant="outline" className="text-xs">
-                    {tier.icon} {tier.name}
-                  </Badge>
-                  {hasHotStreak && (
-                    <Badge className="text-xs bg-orange-500/20 text-orange-400 border-orange-500/30">
-                      <Flame className="h-3 w-3 mr-1" />
-                      Hot Streak
-                    </Badge>
-                  )}
-                  {hasColdStreak && (
-                    <Badge className="text-xs bg-blue-500/20 text-blue-400 border-blue-500/30">
-                      <Snowflake className="h-3 w-3 mr-1" />
-                      Cold Streak
-                    </Badge>
-                  )}
-                </div>
+                <p className="text-lg font-bold">{user.username}</p>
+                <Badge variant="outline" className="text-xs mt-1">
+                  {tier.name}
+                </Badge>
               </div>
               
               <div className="text-right flex-shrink-0">
-                <div className="text-2xl sm:text-3xl font-bold text-primary">
-                  {user.points.toLocaleString()}
-                </div>
+                <p className="text-xl font-bold text-primary">
+                  {user.points.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">pts</span>
+                </p>
                 <p className={cn(
-                  "text-xs sm:text-sm font-semibold",
+                  "text-sm font-semibold flex items-center justify-end gap-1",
                   user.profit > 0 ? 'text-green-400' : user.profit < 0 ? 'text-red-400' : 'text-muted-foreground'
                 )}>
                   {user.profit > 0 ? (
-                    <TrendingUp className="inline h-3 w-3 mr-1" />
+                    <TrendingUp className="h-3 w-3" />
                   ) : user.profit < 0 ? (
-                    <TrendingDown className="inline h-3 w-3 mr-1" />
+                    <TrendingDown className="h-3 w-3" />
                   ) : null}
-                  {user.profit > 0 ? '+' : ''}{user.profit} lucro
+                  {user.profit > 0 ? '+' : ''}{user.profit}
                 </p>
               </div>
             </div>
 
-            {/* Linha 2: Estatísticas Detalhadas */}
-            <div className="flex flex-wrap gap-3 text-xs sm:text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <Target className="h-3 w-3" />
-                <span className="font-semibold text-foreground">{winRate}%</span> WR
-              </span>
-              <span>
-                📊 <span className="font-semibold text-foreground">{wins}/{user.total_bets}</span>
-              </span>
-              <span className={cn(
-                "font-semibold",
-                roi > 0 ? 'text-green-400' : roi < 0 ? 'text-red-400' : ''
-              )}>
-                📈 ROI: {roi > 0 ? '+' : ''}{roi.toFixed(1)}%
-              </span>
-              <span>
-                💵 Média: <span className="font-semibold text-foreground">{avgBet.toFixed(0)}</span>
-              </span>
+            {/* Divisor */}
+            <div className="border-t border-border/50" />
+
+            {/* Linha 2: Stats Grid 2x2 */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+              <div className="flex items-center gap-1.5">
+                <Target className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Taxa:</span>
+                <span className="font-semibold">{winRate}%</span>
+              </div>
+              
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Apostas:</span>
+                <span className="font-semibold">{wins}/{user.total_bets}</span>
+              </div>
+              
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Retorno:</span>
+                <span className={cn(
+                  "font-semibold",
+                  roi > 0 ? 'text-green-400' : roi < 0 ? 'text-red-400' : ''
+                )}>
+                  {roi > 0 ? '+' : ''}{roi.toFixed(1)}%
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-1.5">
+                <span className="text-muted-foreground">Sequência:</span>
+                <span className="font-semibold">{Math.min(wins, 5)} vitórias</span>
+              </div>
             </div>
 
             {/* Linha 3: Badges/Conquistas */}
             {badges.length > 0 && (
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-1.5 flex-wrap pt-1">
                 {badges.slice(0, 3).map((badge: any) => (
                   <Badge 
                     key={badge.id} 
                     variant="secondary" 
                     className="text-xs"
                   >
-                    {badge.definition?.icon} {badge.definition?.name}
+                    {badge.definition?.name}
                   </Badge>
                 ))}
               </div>
