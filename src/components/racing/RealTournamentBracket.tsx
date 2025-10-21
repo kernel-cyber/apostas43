@@ -204,7 +204,7 @@ export default function RealTournamentBracket() {
         </CardHeader>
         <CardContent>
           {/* Current TOP 20 */}
-          {top20Positions && top20Positions.length > 0 ? <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-3">
+          {top20Positions && top20Positions.length > 0 ? <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {top20Positions.map(position => <div key={position.position} className="bg-muted rounded-lg p-3 border border-border px-0 py-[8px] mx-[5px] my-[12px]">
                   <div className="flex justify-center mb-2">
                     <Badge variant="outline" className="text-racing-yellow">
