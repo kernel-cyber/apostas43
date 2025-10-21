@@ -133,6 +133,8 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         event_id: eventId,
         pilot1_id: match.pilot1_id,
         pilot2_id: match.pilot2_id,
+        pilot1_position: match.pilot1_pos,
+        pilot2_position: match.pilot2_pos,
         round_number: match.round_num,
         bracket_type: bracketSuffix, // Salvar 'odd' ou 'even' no match
         cycle_position: match.cycle_pos, // Adicionar cycle_position

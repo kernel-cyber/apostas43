@@ -23,6 +23,8 @@ export const useEventPilotStats = (eventId: string | null, pilotId: string | nul
           id,
           pilot1_id,
           pilot2_id,
+          pilot1_position,
+          pilot2_position,
           winner_id,
           match_status
         `)
@@ -35,33 +37,15 @@ export const useEventPilotStats = (eventId: string | null, pilotId: string | nul
         return { defesasSuccess: 0, defesasTotal: 0, ataquesSuccess: 0, ataquesTotal: 0 };
       }
 
-      // Buscar posições dos pilotos no TOP 20 para cada match
-      const pilotIds = new Set<string>();
-      matches.forEach(m => {
-        pilotIds.add(m.pilot1_id);
-        pilotIds.add(m.pilot2_id);
-      });
-
-      const { data: positions } = await supabase
-        .from('top20_positions')
-        .select('pilot_id, position')
-        .in('pilot_id', Array.from(pilotIds));
-
-      const positionMap = new Map<string, number>();
-      positions?.forEach(p => {
-        if (p.pilot_id && p.position) {
-          positionMap.set(p.pilot_id, p.position);
-        }
-      });
-
       let defesasSuccess = 0;
       let defesasTotal = 0;
       let ataquesSuccess = 0;
       let ataquesTotal = 0;
 
       matches.forEach(match => {
-        const pilot1Pos = positionMap.get(match.pilot1_id);
-        const pilot2Pos = positionMap.get(match.pilot2_id);
+        // Usar posições históricas salvas no match
+        const pilot1Pos = match.pilot1_position;
+        const pilot2Pos = match.pilot2_position;
 
         if (!pilot1Pos || !pilot2Pos) return;
 

@@ -100,6 +100,8 @@ export default function BracketGenerator({ eventId }: BracketGeneratorProps) {
         event_id: eventId,
         pilot1_id: match.pilot1_id,
         pilot2_id: match.pilot2_id,
+        pilot1_position: match.pilot1_pos,
+        pilot2_position: match.pilot2_pos,
         round_number: match.round_num,
         match_status: 'upcoming',
         bracket_type: bracketType === 'top20_odd' ? 'odd' : 'even'

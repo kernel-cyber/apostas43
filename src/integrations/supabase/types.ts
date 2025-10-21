@@ -141,7 +141,9 @@ export type Database = {
           id: string
           match_status: Database["public"]["Enums"]["match_status"] | null
           pilot1_id: string
+          pilot1_position: number | null
           pilot2_id: string
+          pilot2_position: number | null
           round_number: number
           scheduled_time: string | null
           updated_at: string
@@ -156,7 +158,9 @@ export type Database = {
           id?: string
           match_status?: Database["public"]["Enums"]["match_status"] | null
           pilot1_id: string
+          pilot1_position?: number | null
           pilot2_id: string
+          pilot2_position?: number | null
           round_number: number
           scheduled_time?: string | null
           updated_at?: string
@@ -171,7 +175,9 @@ export type Database = {
           id?: string
           match_status?: Database["public"]["Enums"]["match_status"] | null
           pilot1_id?: string
+          pilot1_position?: number | null
           pilot2_id?: string
+          pilot2_position?: number | null
           round_number?: number
           scheduled_time?: string | null
           updated_at?: string
