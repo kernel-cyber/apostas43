@@ -17,7 +17,6 @@ export default function MatchForm() {
     pilot1_id: '',
     pilot2_id: '',
     round_number: '1',
-    scheduled_time: '',
   });
 
   const { data: pilots } = useQuery({
@@ -32,6 +31,34 @@ export default function MatchForm() {
     },
   });
 
+  // Get pilots already in matches for this event to filter them out
+  const { data: eventMatches } = useQuery({
+    queryKey: ['event-matches', formData.event_id],
+    queryFn: async () => {
+      if (!formData.event_id) return [];
+      const { data, error } = await (supabase as any)
+        .from('matches')
+        .select('pilot1_id, pilot2_id')
+        .eq('event_id', formData.event_id);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!formData.event_id,
+  });
+
+  // Filter out pilots already in matches
+  const usedPilotIds = new Set(
+    eventMatches?.flatMap(m => [m.pilot1_id, m.pilot2_id]) || []
+  );
+  
+  const availablePilotsForPilot1 = pilots?.filter(p => 
+    !usedPilotIds.has(p.id) || p.id === formData.pilot1_id
+  );
+  
+  const availablePilotsForPilot2 = pilots?.filter(p => 
+    !usedPilotIds.has(p.id) || p.id === formData.pilot2_id
+  );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -45,7 +72,7 @@ export default function MatchForm() {
       pilot1_id: formData.pilot1_id,
       pilot2_id: formData.pilot2_id,
       round_number: parseInt(formData.round_number),
-      scheduled_time: formData.scheduled_time || null,
+      scheduled_time: null,
     });
 
     setFormData({
@@ -53,7 +80,6 @@ export default function MatchForm() {
       pilot1_id: '',
       pilot2_id: '',
       round_number: formData.round_number,
-      scheduled_time: '',
     });
   };
 
@@ -106,7 +132,7 @@ export default function MatchForm() {
               <SelectValue placeholder="Selecione o piloto 1" />
             </SelectTrigger>
             <SelectContent>
-              {pilots?.map((pilot) => (
+              {availablePilotsForPilot1?.map((pilot) => (
                 <SelectItem key={pilot.id} value={pilot.id}>
                   {pilot.name} - {pilot.car_name}
                 </SelectItem>
@@ -126,24 +152,13 @@ export default function MatchForm() {
               <SelectValue placeholder="Selecione o piloto 2" />
             </SelectTrigger>
             <SelectContent>
-              {pilots?.map((pilot) => (
+              {availablePilotsForPilot2?.map((pilot) => (
                 <SelectItem key={pilot.id} value={pilot.id}>
                   {pilot.name} - {pilot.car_name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="scheduled_time">Data/Hora Agendada</Label>
-          <Input
-            id="scheduled_time"
-            type="datetime-local"
-            value={formData.scheduled_time}
-            onChange={(e) => setFormData({ ...formData, scheduled_time: e.target.value })}
-            className="bg-racing-dark/50"
-          />
         </div>
       </div>
 

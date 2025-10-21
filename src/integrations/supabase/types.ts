@@ -14,16 +14,354 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bets: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          match_id: string
+          pilot_id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          match_id: string
+          pilot_id: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          match_id?: string
+          pilot_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bets_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bets_pilot_id_fkey"
+            columns: ["pilot_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          bracket_type: string | null
+          created_at: string
+          description: string | null
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          bracket_type?: string | null
+          created_at?: string
+          description?: string | null
+          event_date: string
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          bracket_type?: string | null
+          created_at?: string
+          description?: string | null
+          event_date?: string
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      matches: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          match_status: Database["public"]["Enums"]["match_status"] | null
+          pilot1_id: string
+          pilot2_id: string
+          round_number: number
+          scheduled_time: string | null
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          match_status?: Database["public"]["Enums"]["match_status"] | null
+          pilot1_id: string
+          pilot2_id: string
+          round_number: number
+          scheduled_time?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          match_status?: Database["public"]["Enums"]["match_status"] | null
+          pilot1_id?: string
+          pilot2_id?: string
+          round_number?: number
+          scheduled_time?: string | null
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_pilot1_id_fkey"
+            columns: ["pilot1_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_pilot2_id_fkey"
+            columns: ["pilot2_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pilots: {
+        Row: {
+          best_time: string | null
+          car_model: string | null
+          car_name: string
+          category: string | null
+          created_at: string
+          current_position: number | null
+          id: string
+          image_url: string | null
+          losses: number | null
+          name: string
+          points: number | null
+          position: number | null
+          total_races: number | null
+          updated_at: string
+          wins: number | null
+        }
+        Insert: {
+          best_time?: string | null
+          car_model?: string | null
+          car_name: string
+          category?: string | null
+          created_at?: string
+          current_position?: number | null
+          id?: string
+          image_url?: string | null
+          losses?: number | null
+          name: string
+          points?: number | null
+          position?: number | null
+          total_races?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Update: {
+          best_time?: string | null
+          car_model?: string | null
+          car_name?: string
+          category?: string | null
+          created_at?: string
+          current_position?: number | null
+          id?: string
+          image_url?: string | null
+          losses?: number | null
+          name?: string
+          points?: number | null
+          position?: number | null
+          total_races?: number | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      top20_positions: {
+        Row: {
+          consecutive_absences: number | null
+          created_at: string | null
+          id: string
+          last_match_date: string | null
+          pilot_id: string | null
+          position: number
+          updated_at: string | null
+        }
+        Insert: {
+          consecutive_absences?: number | null
+          created_at?: string | null
+          id?: string
+          last_match_date?: string | null
+          pilot_id?: string | null
+          position: number
+          updated_at?: string | null
+        }
+        Update: {
+          consecutive_absences?: number | null
+          created_at?: string | null
+          id?: string
+          last_match_date?: string | null
+          pilot_id?: string | null
+          position?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "top20_positions_pilot_id_fkey"
+            columns: ["pilot_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_points: {
+        Row: {
+          points: number | null
+          total_bets: number | null
+          total_wins: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          points?: number | null
+          total_bets?: number | null
+          total_wins?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          points?: number | null
+          total_bets?: number | null
+          total_wins?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_match_odds: {
+        Args: { p_match_id: string }
+        Returns: Json
+      }
+      generate_top20_matches: {
+        Args: { p_bracket_type: string; p_event_id: string }
+        Returns: {
+          pilot1_id: string
+          pilot1_pos: number
+          pilot2_id: string
+          pilot2_pos: number
+          round_num: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      place_bet: {
+        Args: {
+          p_amount: number
+          p_match_id: string
+          p_pilot_id: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      settle_match: {
+        Args: { p_match_id: string; p_winner_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      event_type: "top_20" | "shark_tank"
+      match_status: "upcoming" | "in_progress" | "finished"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +488,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      event_type: ["top_20", "shark_tank"],
+      match_status: ["upcoming", "in_progress", "finished"],
+    },
   },
 } as const
