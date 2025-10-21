@@ -45,6 +45,7 @@ export default function EventList() {
 
 function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, name: string) => void }) {
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const { updateEvent } = useEvents();
   
   const { data: matchCount } = useQuery({
     queryKey: ['match-count', event.id],
@@ -59,6 +60,14 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
 
   const eventTypeLabel = event.event_type === 'shark_tank' ? 'Shark Tank' : 'TOP 20';
   const eventTypeColor = event.event_type === 'shark_tank' ? 'bg-racing-red' : 'bg-racing-blue';
+
+  const handleEndEvent = async () => {
+    if (!confirm(`Tem certeza que deseja encerrar o evento "${event.name}"?`)) return;
+    await updateEvent.mutateAsync({
+      id: event.id,
+      is_active: false,
+    });
+  };
 
   return (
     <>
@@ -109,6 +118,18 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
             <Edit className="h-4 w-4 mr-2" />
             Editar
           </Button>
+          {event.is_active && (
+            <Button
+              variant="secondary"
+              size="sm"
+              className="flex-1"
+              onClick={handleEndEvent}
+              disabled={updateEvent.isPending}
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Encerrar
+            </Button>
+          )}
           <Button
             variant="destructive"
             size="sm"
