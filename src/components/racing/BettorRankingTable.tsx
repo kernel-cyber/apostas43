@@ -3,9 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, Trophy, Target, TrendingDown, Search } from "lucide-react";
+import { Trophy, Search } from "lucide-react";
 import { useUserRankings } from "@/hooks/useUserRankings";
-import { useUserBadges } from "@/hooks/useUserBadges";
 import { getUserTier } from "@/lib/rankingTiers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -21,7 +20,7 @@ export default function BettorRankingTable() {
     return (
       <div className="space-y-3">
         {[...Array(10)].map((_, i) => (
-          <Skeleton key={i} className="h-20 w-full" />
+          <Skeleton key={i} className="h-16 w-full" />
         ))}
       </div>
     );
@@ -111,7 +110,7 @@ export default function BettorRankingTable() {
       </div>
 
       {/* Lista Unificada Premium */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         {rankedList.map((user: any) => (
           <BettorRankingCard key={user.user_id} user={user} rank={user.displayRank} />
         ))}
@@ -127,130 +126,72 @@ interface BettorRankingCardProps {
 
 const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
   const tier = getUserTier(user.points);
-  const { data: badges = [] } = useUserBadges(user.user_id);
   
   const winRate = user.total_bets > 0 
     ? Math.round((user.total_wins / user.total_bets) * 100) 
     : 0;
-  
-  const roi = user.roi || 0;
-  const wins = user.total_wins || 0;
-
-  // Border especial para top 3
-  const getRankBorderClass = () => {
-    if (rank === 1) return "border-yellow-500/70 shadow-yellow-500/30 shadow-lg";
-    if (rank === 2) return "border-gray-400/70 shadow-gray-400/30 shadow-lg";
-    if (rank === 3) return "border-orange-700/70 shadow-orange-700/30 shadow-lg";
-    return "";
-  };
-
-  const getMedalIcon = () => {
-    if (rank === 1) return <Trophy className="h-6 w-6 text-yellow-500" />;
-    if (rank === 2) return <Trophy className="h-6 w-6 text-gray-400" />;
-    if (rank === 3) return <Trophy className="h-6 w-6 text-orange-700" />;
-    return null;
-  };
 
   return (
-    <Card 
-      className={cn(
-        "glass-card border hover:shadow-neon transition-all duration-300",
-        getRankBorderClass()
-      )}
-    >
-      <CardContent className="p-4 sm:p-6">
-        <div className="flex items-start gap-3 sm:gap-4">
-          {/* Posição */}
-          <div className="flex flex-col items-center justify-center min-w-[48px]">
+    <Card className="bg-muted border-border">
+      <CardContent className="p-4">
+        <div className="flex items-center gap-4">
+          {/* Rank */}
+          <div className="w-10 text-center shrink-0">
             {rank <= 3 ? (
-              getMedalIcon()
+              <Trophy
+                className={cn(
+                  "h-5 w-5 mx-auto",
+                  rank === 1 && "text-yellow-500",
+                  rank === 2 && "text-gray-400",
+                  rank === 3 && "text-orange-600"
+                )}
+              />
             ) : (
-              <span className="text-lg font-bold text-muted-foreground">#{rank}</span>
+              <span className="text-sm font-bold text-muted-foreground">
+                #{rank}
+              </span>
             )}
           </div>
 
           {/* Avatar */}
-          <Avatar className="h-12 w-12 border-2 border-border flex-shrink-0">
-            <AvatarImage src={user.avatar_url || undefined} />
-            <AvatarFallback>{user.username[0]?.toUpperCase()}</AvatarFallback>
+          <Avatar className="h-12 w-12 shrink-0">
+            <AvatarImage src={user.avatar_url || undefined} alt={user.username} />
+            <AvatarFallback>{user.username.slice(0, 2).toUpperCase()}</AvatarFallback>
           </Avatar>
-          
-          {/* Info Principal */}
-          <div className="flex-1 min-w-0 space-y-2">
+
+          {/* Info */}
+          <div className="flex-1 min-w-0 space-y-1">
             {/* Linha 1: Username + Pontos */}
-            <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-lg font-bold">{user.username}</p>
-                <Badge variant="outline" className="text-xs mt-1">
-                  {tier.name}
-                </Badge>
-              </div>
-              
-              <div className="text-right flex-shrink-0">
-                <p className="text-xl font-bold text-primary">
-                  {user.points.toLocaleString()} <span className="text-sm font-normal text-muted-foreground">pts</span>
-                </p>
-                <p className={cn(
-                  "text-sm font-semibold flex items-center justify-end gap-1",
-                  user.profit > 0 ? 'text-green-400' : user.profit < 0 ? 'text-red-400' : 'text-muted-foreground'
-                )}>
-                  {user.profit > 0 ? (
-                    <TrendingUp className="h-3 w-3" />
-                  ) : user.profit < 0 ? (
-                    <TrendingDown className="h-3 w-3" />
-                  ) : null}
-                  {user.profit > 0 ? '+' : ''}{user.profit}
-                </p>
-              </div>
+            <div className="flex justify-between items-center gap-2">
+              <p className="font-bold text-white truncate">
+                {user.username}
+              </p>
+              <p className="text-lg font-bold text-primary shrink-0">
+                {user.points.toLocaleString()}
+                <span className="text-xs text-muted-foreground ml-1">pts</span>
+              </p>
             </div>
-
-            {/* Divisor */}
-            <div className="border-t border-border/50" />
-
-            {/* Linha 2: Stats Grid 2x2 */}
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-              <div className="flex items-center gap-1.5">
-                <Target className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Taxa:</span>
-                <span className="font-semibold">{winRate}%</span>
-              </div>
-              
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Apostas:</span>
-                <span className="font-semibold">{wins}/{user.total_bets}</span>
-              </div>
-              
-              <div className="flex items-center gap-1.5">
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Retorno:</span>
-                <span className={cn(
-                  "font-semibold",
-                  roi > 0 ? 'text-green-400' : roi < 0 ? 'text-red-400' : ''
-                )}>
-                  {roi > 0 ? '+' : ''}{roi.toFixed(1)}%
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground">Sequência:</span>
-                <span className="font-semibold">{Math.min(wins, 5)} vitórias</span>
-              </div>
+            
+            {/* Linha 2: Tier + Stats inline */}
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <Badge variant="outline" className="text-xs">
+                {tier.name}
+              </Badge>
+              <span className="text-muted-foreground">
+                Taxa: <span className="font-semibold text-foreground">{winRate}%</span>
+              </span>
+              <span className="text-muted-foreground">•</span>
+              <span className="text-muted-foreground">
+                Apostas: <span className="font-semibold text-foreground">{user.total_wins}/{user.total_bets}</span>
+              </span>
+              <span className="text-muted-foreground">•</span>
+              <span className={cn(
+                "font-semibold",
+                user.profit > 0 ? "text-green-400" : user.profit < 0 ? "text-red-400" : "text-muted-foreground"
+              )}>
+                {user.profit > 0 ? "↑" : user.profit < 0 ? "↓" : ""} {user.profit > 0 ? "+" : ""}{user.profit}
+              </span>
             </div>
-
-            {/* Linha 3: Badges/Conquistas */}
-            {badges.length > 0 && (
-              <div className="flex gap-1.5 flex-wrap pt-1">
-                {badges.slice(0, 3).map((badge: any) => (
-                  <Badge 
-                    key={badge.id} 
-                    variant="secondary" 
-                    className="text-xs"
-                  >
-                    {badge.definition?.name}
-                  </Badge>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </CardContent>
