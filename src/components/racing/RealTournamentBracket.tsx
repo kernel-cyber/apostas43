@@ -125,13 +125,14 @@ export default function RealTournamentBracket() {
                   <img src={match.pilot1.image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
                 </div>
               )}
-              {/* #7: Cores padronizadas */}
-              <div className="flex flex-col">
-                <span className="truncate text-white font-semibold">{match.pilot1?.name || 'TBD'}</span>
-                {match.pilot1?.team && (
-                  <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot1.team}</span>
-                )}
-              </div>
+                      {/* #7: Cores padronizadas */}
+                      <div className="flex flex-col">
+                        <span className="truncate text-white font-semibold">{match.pilot1?.name || 'TBD'}</span>
+                        <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot1?.car_name || "N/A"}</span>
+                        {match.pilot1?.team && (
+                          <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot1.team}</span>
+                        )}
+                      </div>
             </div>
             <div className="flex items-center space-x-1">
               {match.winner_id === match.pilot1_id && <Crown className="w-3 h-3 text-neonYellow" />}
@@ -162,13 +163,14 @@ export default function RealTournamentBracket() {
                   <img src={match.pilot2.image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
                 </div>
               )}
-              {/* #7: Cores padronizadas */}
-              <div className="flex flex-col">
-                <span className="truncate text-white font-semibold">{match.pilot2?.name || 'TBD'}</span>
-                {match.pilot2?.team && (
-                  <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot2.team}</span>
-                )}
-              </div>
+                      {/* #7: Cores padronizadas */}
+                      <div className="flex flex-col">
+                        <span className="truncate text-white font-semibold">{match.pilot2?.name || 'TBD'}</span>
+                        <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot2?.car_name || "N/A"}</span>
+                        {match.pilot2?.team && (
+                          <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot2.team}</span>
+                        )}
+                      </div>
             </div>
             <div className="flex items-center space-x-1">
               {match.winner_id === match.pilot2_id && <Crown className="w-3 h-3 text-neonYellow" />}

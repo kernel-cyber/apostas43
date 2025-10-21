@@ -350,34 +350,59 @@ const Index = () => {
                     const minPosA = Math.min(a.pilot1?.position || 999, a.pilot2?.position || 999);
                     const minPosB = Math.min(b.pilot1?.position || 999, b.pilot2?.position || 999);
                     return minPosA - minPosB;
-                  }).map((match, index) => <Card key={match.id} className={`glass-card hover:shadow-neon transition-all duration-300 ${index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}`}>
-                          <CardContent className="p-3 sm:p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <Badge variant="outline" className="text-[10px] sm:text-xs">
-                                {match.bracket_type === 'odd' ? `Rodada Ímpar #${match.round_number}` : match.bracket_type === 'even' ? `Rodada Par #${match.round_number}` : `Rodada #${match.round_number}`} - {match.event?.name || "EVENTO"}
-                              </Badge>
-                              <div className="flex items-center space-x-1 sm:space-x-2 text-[10px] sm:text-xs text-muted-foreground">
-                                <Star className="w-3 h-3" />
-                                <span>Aguardando</span>
+                  }).map((match, index) => <div key={match.id} className={index === 0 ? 'animate-pulse-border-green rounded-lg' : ''}>
+                          <div className="relative bg-gradient-card border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon border-border">
+                            {/* Match Header */}
+                            <div className="px-3 py-1 border-b text-xs text-center flex items-center justify-center gap-2 bg-trackDark border-border">
+                              {match.bracket_type === 'odd' 
+                                ? `Rodada Ímpar #${match.round_number}` 
+                                : match.bracket_type === 'even'
+                                ? `Rodada Par #${match.round_number}`
+                                : `Rodada #${match.round_number}`} - {match.event?.name || "EVENTO"}
+                            </div>
+                            
+                            {/* Pilots */}
+                            <div className="p-3 space-y-2">
+                              {/* Pilot 1 */}
+                              <div className="flex items-center justify-between p-2 rounded text-sm bg-background">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-xs text-neonGreen font-bold">#{match.pilot1?.position || "?"}</span>
+                                  {(match.pilot1 as any)?.image_url && (
+                                    <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                                      <img src={(match.pilot1 as any).image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                  <div className="flex flex-col">
+                                    <span className="truncate text-white font-semibold">{match.pilot1?.name || "TBD"}</span>
+                                    <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot1?.car_name || "N/A"}</span>
+                                    {match.pilot1?.team && (
+                                      <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot1.team}</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Pilot 2 */}
+                              <div className="flex items-center justify-between p-2 rounded text-sm bg-background">
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-xs text-neonGreen font-bold">#{match.pilot2?.position || "?"}</span>
+                                  {(match.pilot2 as any)?.image_url && (
+                                    <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                                      <img src={(match.pilot2 as any).image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
+                                    </div>
+                                  )}
+                                  <div className="flex flex-col">
+                                    <span className="truncate text-white font-semibold">{match.pilot2?.name || "TBD"}</span>
+                                    <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot2?.car_name || "N/A"}</span>
+                                    {match.pilot2?.team && (
+                                      <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot2.team}</span>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                            <div className="text-center space-y-2">
-                              <div className="grid grid-cols-3 gap-2 items-center">
-                                <div className="text-right">
-                                  <div className="font-semibold text-xs sm:text-sm truncate">{match.pilot1?.name || "TBD"}</div>
-                                  <div className="text-[10px] sm:text-xs text-accent">#{match.pilot1?.position || "?"}</div>
-                                  {match.pilot1?.team && <div className="text-[9px] text-muted-foreground truncate">🏁 {match.pilot1.team}</div>}
-                                </div>
-                                <div className="text-[10px] sm:text-xs text-muted-foreground">VS</div>
-                                <div className="text-left">
-                                  <div className="font-semibold text-xs sm:text-sm truncate">{match.pilot2?.name || "TBD"}</div>
-                                  <div className="text-[10px] sm:text-xs text-accent">#{match.pilot2?.position || "?"}</div>
-                                  {match.pilot2?.team && <div className="text-[9px] text-muted-foreground truncate">🏁 {match.pilot2.team}</div>}
-                                </div>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>)}
+                          </div>
+                        </div>)}
                     </div>
                   </div>}
               </TabsContent>
