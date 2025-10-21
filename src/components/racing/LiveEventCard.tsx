@@ -98,14 +98,14 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
               </Badge>
             )}
           </div>
-          <div className={`flex-1 min-w-0 ${side === "right" ? "text-right" : ""}`}>
+          <div className={`flex-1 min-w-0 text-center`}>
             <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 sm:mb-2 text-neonGreen">
               #{pilot.position} • {pilot.winRate}% WR
             </Badge>
             {/* #15: Cores padronizadas */}
             <h3 className="text-base sm:text-xl font-bold text-white truncate">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-racing-yellow truncate">🚗 {pilot.car}</p>
-            {team && <p className="text-xs text-blue-400 truncate">🏁 {team}</p>}
+            <p className="text-xs sm:text-sm text-racing-yellow truncate">{pilot.car}</p>
+            {team && <p className="text-xs text-blue-400 truncate">{team}</p>}
           </div>
         </div>
 
