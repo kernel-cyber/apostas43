@@ -272,10 +272,10 @@ const Index = () => {
             <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0">
               {[{
               id: "live",
-              label: "Rodadas",
+              label: "RODADAS",
               icon: Play,
               badge: "AO VIVO",
-              shortLabel: "Rodadas",
+              shortLabel: "RODADAS",
               color: "text-neonGreen"
             }, {
               id: "lista43",
