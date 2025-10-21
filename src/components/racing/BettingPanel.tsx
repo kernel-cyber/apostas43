@@ -156,7 +156,7 @@ export const BettingPanel = ({
           >
             <div className="flex items-center justify-center gap-2 w-full">
               {pilot1ImageUrl && (
-                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-primary/30">
                   <img src={pilot1ImageUrl} alt={pilot1Name} className="w-full h-full object-cover" />
                 </div>
               )}
@@ -175,7 +175,7 @@ export const BettingPanel = ({
           >
             <div className="flex items-center justify-center gap-2 w-full">
               {pilot2ImageUrl && (
-                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border border-primary/30">
                   <img src={pilot2ImageUrl} alt={pilot2Name} className="w-full h-full object-cover" />
                 </div>
               )}

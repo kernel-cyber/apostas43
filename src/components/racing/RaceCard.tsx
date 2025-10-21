@@ -66,7 +66,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse" : ""} gap-2`}>
           {/* Foto do piloto */}
           {pilot.imageUrl && (
-            <div className="w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary/30">
               <img 
                 src={pilot.imageUrl} 
                 alt={pilot.name} 
