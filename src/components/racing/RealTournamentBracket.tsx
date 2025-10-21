@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Top20RulesDialog } from "./Top20RulesDialog";
+import { getRoundLabel } from "@/lib/roundHelpers";
 
 export default function RealTournamentBracket() {
   const { positions: top20Positions, isLoading: loadingPositions } = useTop20Positions();
@@ -95,11 +96,8 @@ export default function RealTournamentBracket() {
           isLive ? 'bg-racing-yellow text-black' : 'bg-trackDark border-border'
         }`}>
           {isLive && <Play className="w-3 h-3 animate-pulse" />}
-          {match.bracket_type === 'odd' 
-            ? `Rodada Ímpar #${match.round_number}` 
-            : match.bracket_type === 'even'
-            ? `Rodada Par #${match.round_number}`
-            : `Rodada #${match.round_number}`}
+          <span>{getRoundLabel(match.cycle_position, match.round_number).emoji}</span>
+          <span>{getRoundLabel(match.cycle_position, match.round_number).fullLabel}</span>
           {isLive && <span className="font-bold">AO VIVO</span>}
         </div>
         

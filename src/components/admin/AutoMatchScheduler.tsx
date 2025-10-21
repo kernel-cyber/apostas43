@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { getRoundLabel, getCycleStatus, getNextBracketType } from '@/lib/roundHelpers';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface AutoMatchSchedulerProps {
   eventId: string;
@@ -36,13 +38,13 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
     },
   });
 
-  // Buscar o último bracket_type usado para sugerir o próximo
+  // Fetch last match data and round counts
   const { data: lastMatch } = useQuery({
     queryKey: ['last-match', eventId],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('matches')
-        .select('bracket_type, round_number')
+        .select('bracket_type, round_number, cycle_position')
         .eq('event_id', eventId)
         .order('round_number', { ascending: false })
         .limit(1)
@@ -53,14 +55,41 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
     },
   });
 
-  // Sugerir o próximo tipo de rodada baseado no último
+  // Count odd and even rounds
+  const { data: roundCounts } = useQuery({
+    queryKey: ['round-counts', eventId],
+    queryFn: async () => {
+      const { data: oddData } = await supabase
+        .from('matches')
+        .select('round_number', { count: 'exact', head: false })
+        .eq('event_id', eventId)
+        .eq('bracket_type', 'odd');
+
+      const { data: evenData } = await supabase
+        .from('matches')
+        .select('round_number', { count: 'exact', head: false })
+        .eq('event_id', eventId)
+        .eq('bracket_type', 'even');
+
+      // Count unique round numbers
+      const oddCount = oddData ? new Set(oddData.map((m: any) => m.round_number)).size : 0;
+      const evenCount = evenData ? new Set(evenData.map((m: any) => m.round_number)).size : 0;
+
+      return { oddCount, evenCount };
+    },
+  });
+
+  // Auto-suggest next bracket type based on last match and round counts
   useEffect(() => {
-    if (lastMatch?.bracket_type === 'odd') {
-      setBracketType('top20_even');
-    } else if (lastMatch?.bracket_type === 'even') {
-      setBracketType('top20_odd');
+    if (lastMatch && roundCounts) {
+      const nextType = getNextBracketType(
+        lastMatch.bracket_type,
+        roundCounts.oddCount,
+        roundCounts.evenCount
+      );
+      setBracketType(nextType);
     }
-  }, [lastMatch]);
+  }, [lastMatch, roundCounts]);
 
   const generatePreview = useMutation({
     mutationFn: async () => {
@@ -106,6 +135,7 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         pilot2_id: match.pilot2_id,
         round_number: match.round_num,
         bracket_type: bracketSuffix, // Salvar 'odd' ou 'even' no match
+        cycle_position: match.cycle_pos, // Adicionar cycle_position
         scheduled_time: new Date(scheduledDateTime.getTime() + index * 15 * 60000).toISOString(), // 15 min entre matches
         match_status: 'upcoming',
       }));
@@ -144,6 +174,22 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Cycle Status Alert */}
+        {roundCounts && (
+          <Alert className={
+            getCycleStatus(roundCounts.oddCount, roundCounts.evenCount).type === 'success'
+              ? 'border-green-500 bg-green-500/10'
+              : getCycleStatus(roundCounts.oddCount, roundCounts.evenCount).type === 'warning'
+              ? 'border-yellow-500 bg-yellow-500/10'
+              : 'border-blue-500 bg-blue-500/10'
+          }>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              {getCycleStatus(roundCounts.oddCount, roundCounts.evenCount).message}
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Seletor de Tipo de Rodada */}
         <div className="space-y-2">
           <Label>Tipo de Rodada</Label>
@@ -153,10 +199,10 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="top20_odd">
-                Rodada Ímpar (19x18, 17x16, 15x14...)
+                🔵 Rodada Ímpar (19x18, 17x16, 15x14...)
               </SelectItem>
               <SelectItem value="top20_even">
-                Rodada Par (20x19, 18x17, 16x15...)
+                🟢 Rodada Par (20x19, 18x17, 16x15...)
               </SelectItem>
             </SelectContent>
           </Select>
@@ -165,10 +211,15 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
               ? '9 matches: do 19º ao 2º (1º e 20º não correm)'
               : '10 matches: do 20º ao 1º (todos correm)'}
           </p>
-          {lastMatch && (
-            <p className="text-xs text-racing-yellow">
-              ℹ️ Última rodada foi {lastMatch.bracket_type === 'odd' ? 'Ímpar' : 'Par'} (Rodada #{lastMatch.round_number})
-            </p>
+          {lastMatch && roundCounts && (
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                📊 Histórico: {roundCounts.oddCount} rodada{roundCounts.oddCount !== 1 ? 's' : ''} ímpar{roundCounts.oddCount !== 1 ? 'es' : ''}, {roundCounts.evenCount} rodada{roundCounts.evenCount !== 1 ? 's' : ''} par{roundCounts.evenCount !== 1 ? 'es' : ''}
+              </p>
+              <p className="text-xs text-racing-yellow">
+                ℹ️ Última: {getRoundLabel(lastMatch.cycle_position, lastMatch.round_number).cycleLabel}
+              </p>
+            </div>
           )}
         </div>
 
@@ -213,8 +264,15 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         {preview.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Preview dos Matches</h3>
-              <Badge>{preview.length} matches</Badge>
+              <h3 className="font-semibold">📋 Preview dos Matches</h3>
+              <div className="flex items-center gap-2">
+                {preview[0] && (
+                  <Badge variant="outline">
+                    {getRoundLabel(preview[0].cycle_pos, preview[0].round_num).emoji} {getRoundLabel(preview[0].cycle_pos, preview[0].round_num).cycleLabel}
+                  </Badge>
+                )}
+                <Badge>{preview.length} matches</Badge>
+              </div>
             </div>
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {preview.map((match, index) => (

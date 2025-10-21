@@ -133,6 +133,7 @@ export type Database = {
           betting_locked: boolean | null
           bracket_type: string | null
           created_at: string
+          cycle_position: number | null
           event_id: string
           id: string
           match_status: Database["public"]["Enums"]["match_status"] | null
@@ -147,6 +148,7 @@ export type Database = {
           betting_locked?: boolean | null
           bracket_type?: string | null
           created_at?: string
+          cycle_position?: number | null
           event_id: string
           id?: string
           match_status?: Database["public"]["Enums"]["match_status"] | null
@@ -161,6 +163,7 @@ export type Database = {
           betting_locked?: boolean | null
           bracket_type?: string | null
           created_at?: string
+          cycle_position?: number | null
           event_id?: string
           id?: string
           match_status?: Database["public"]["Enums"]["match_status"] | null
@@ -372,6 +375,7 @@ export type Database = {
       generate_top20_matches: {
         Args: { p_bracket_type: string; p_event_id: string }
         Returns: {
+          cycle_pos: number
           pilot1_id: string
           pilot1_pos: number
           pilot2_id: string

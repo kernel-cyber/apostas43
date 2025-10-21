@@ -8,6 +8,7 @@ import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import FinishMatchModal from './FinishMatchModal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getRoundLabel } from '@/lib/roundHelpers';
 
 export default function MatchList() {
   const { matches, isLoading, updateMatchStatus, deleteMatch } = useMatches();
@@ -170,7 +171,7 @@ function MatchCard({ match, onDelete, onStart, onFinish, onToggleBetting, isNext
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <Badge variant="outline" className="text-racing-gray">
-            Rodada {match.round_number}
+            {getRoundLabel(match.cycle_position, match.round_number).emoji} {getRoundLabel(match.cycle_position, match.round_number).fullLabel}
           </Badge>
           {getStatusBadge()}
         </div>
