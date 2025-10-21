@@ -39,7 +39,7 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
 
         <div className="space-y-4 mt-4">
           <Button
-            className="w-full h-auto py-6 bg-primary hover:bg-primary/80"
+            className="w-full h-auto py-6 bg-primary/90 hover:bg-primary border-2 border-primary transition-all"
             onClick={() => handleSelectWinner(match.pilot1.id)}
             disabled={finishMatch.isPending}
           >
@@ -48,21 +48,21 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
                 <img
                   src={match.pilot1.image_url}
                   alt={match.pilot1.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/20"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-racing-yellow/50"
                 />
               )}
               <div className="text-left flex-1">
                 <p className="text-xl font-bold text-white">{match.pilot1.name}</p>
-                <p className="text-sm text-accent">{match.pilot1.car_name}</p>
+                <p className="text-sm text-racing-yellow font-semibold">{match.pilot1.car_name}</p>
               </div>
-              <Trophy className="h-8 w-8 text-accent" />
+              <Trophy className="h-8 w-8 text-racing-yellow" />
             </div>
           </Button>
 
-          <div className="text-center text-destructive font-bold text-lg">VS</div>
+          <div className="text-center text-racing-yellow font-bold text-lg">VS</div>
 
           <Button
-            className="w-full h-auto py-6 bg-primary hover:bg-primary/80"
+            className="w-full h-auto py-6 bg-primary/90 hover:bg-primary border-2 border-primary transition-all"
             onClick={() => handleSelectWinner(match.pilot2.id)}
             disabled={finishMatch.isPending}
           >
@@ -71,14 +71,14 @@ export default function FinishMatchModal({ open, onOpenChange, match }: FinishMa
                 <img
                   src={match.pilot2.image_url}
                   alt={match.pilot2.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/20"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-racing-yellow/50"
                 />
               )}
               <div className="text-left flex-1">
                 <p className="text-xl font-bold text-white">{match.pilot2.name}</p>
-                <p className="text-sm text-accent">{match.pilot2.car_name}</p>
+                <p className="text-sm text-racing-yellow font-semibold">{match.pilot2.car_name}</p>
               </div>
-              <Trophy className="h-8 w-8 text-accent" />
+              <Trophy className="h-8 w-8 text-racing-yellow" />
             </div>
           </Button>
         </div>
