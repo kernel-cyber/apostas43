@@ -370,7 +370,7 @@ const Index = () => {
                                 <div className="flex items-center space-x-2">
                                   <span className="text-xs text-neonGreen font-bold">#{match.pilot1?.position || "?"}</span>
                                   {(match.pilot1 as any)?.image_url && (
-                                    <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary/30">
                                       <img src={(match.pilot1 as any).image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
                                     </div>
                                   )}
@@ -389,7 +389,7 @@ const Index = () => {
                                 <div className="flex items-center space-x-2">
                                   <span className="text-xs text-neonGreen font-bold">#{match.pilot2?.position || "?"}</span>
                                   {(match.pilot2 as any)?.image_url && (
-                                    <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 border-2 border-primary/30">
                                       <img src={(match.pilot2 as any).image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
                                     </div>
                                   )}

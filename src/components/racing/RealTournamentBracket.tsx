@@ -1,13 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Target, Crown, AlertCircle, Play, Maximize2, Minimize2 } from "lucide-react";
+import { Trophy, Target, Crown, AlertCircle, Play } from "lucide-react";
 import { useTop20Positions } from "@/hooks/useTop20Positions";
 import { useMatches } from "@/hooks/useMatches";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Top20RulesDialog } from "./Top20RulesDialog";
 import { getRoundLabel } from "@/lib/roundHelpers";
@@ -16,7 +15,6 @@ export default function RealTournamentBracket() {
   const { positions: top20Positions, isLoading: loadingPositions } = useTop20Positions();
   const { matches, isLoading: loadingMatches } = useMatches();
   const queryClient = useQueryClient();
-  const [isCompactView, setIsCompactView] = useState(false);
 
   // Realtime subscription for updates
   useEffect(() => {
@@ -241,27 +239,7 @@ export default function RealTournamentBracket() {
               <Target className="w-5 h-5" />
               <span>TOP 20 - Sistema de Liga</span>
             </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCompactView(!isCompactView)}
-                className="h-8"
-              >
-                {isCompactView ? (
-                  <>
-                    <Maximize2 className="w-4 h-4 mr-1" />
-                    Expandir
-                  </>
-                ) : (
-                  <>
-                    <Minimize2 className="w-4 h-4 mr-1" />
-                    Encolher
-                  </>
-                )}
-              </Button>
-              <Top20RulesDialog />
-            </div>
+            <Top20RulesDialog />
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Classificação atual. Rodadas alternadas entre posições ímpares e pares.
@@ -271,45 +249,44 @@ export default function RealTournamentBracket() {
         <CardContent>
           {/* Current TOP 20 */}
           {top20Positions && top20Positions.length > 0 ? (
-            <div className={`grid ${isCompactView ? 'grid-cols-3 md:grid-cols-6 lg:grid-cols-10' : 'grid-cols-2 md:grid-cols-4 lg:grid-cols-5'} gap-3`}>
+            <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-3">
               {top20Positions.map((position) => (
                 <div
                   key={position.position}
                   className="bg-muted rounded-lg p-3 border border-border"
                 >
-                  <div className="flex items-start justify-between mb-2">
+                  <div className="flex justify-center mb-2">
                     <Badge variant="outline" className="text-racing-yellow">
                       #{position.position}
                     </Badge>
                   </div>
                   
                   {position.pilot ? (
-                    <div>
-                      {/* #4: Foto do piloto */}
+                    <div className="text-center space-y-1">
+                      {/* Foto do piloto */}
                       {position.pilot.image_url && (
-                    <div className="w-full h-20 rounded-full overflow-hidden mb-2 bg-muted/30 border-2 border-primary/30">
-                      <img
-                        src={position.pilot.image_url}
-                        alt={position.pilot.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                        <div className="w-20 h-20 rounded-full overflow-hidden mb-2 bg-muted/30 border-2 border-primary/30 mx-auto">
+                          <img
+                            src={position.pilot.image_url}
+                            alt={position.pilot.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       )}
-                      {/* #7: Cores padronizadas */}
-                      <p className="font-bold text-white text-sm truncate">
+                      <p className="font-bold text-white text-sm break-words">
                         {position.pilot.name}
                       </p>
-                      <p className="text-xs text-racing-yellow truncate">
+                      <p className="text-xs text-racing-yellow break-words">
                         🚗 {position.pilot.car_name}
                       </p>
                       {position.pilot.team && (
-                        <p className="text-[10px] text-blue-400 truncate">
+                        <p className="text-[10px] text-blue-400 break-words">
                           🏁 {position.pilot.team}
                         </p>
                       )}
                     </div>
                   ) : (
-                    <p className="text-xs text-muted-foreground">Vazio</p>
+                    <p className="text-xs text-muted-foreground text-center">Vazio</p>
                   )}
                 </div>
               ))}
@@ -328,29 +305,9 @@ export default function RealTournamentBracket() {
       {upcomingMatches.length > 0 && (
         <Card className="bg-background border-border shadow-card">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Target className="w-5 h-5 text-accent" />
-                <span>Próximas Rodadas</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCompactView(!isCompactView)}
-                className="h-8"
-              >
-                {isCompactView ? (
-                  <>
-                    <Maximize2 className="w-4 h-4 mr-1" />
-                    Expandir
-                  </>
-                ) : (
-                  <>
-                    <Minimize2 className="w-4 h-4 mr-1" />
-                    Encolher
-                  </>
-                )}
-              </Button>
+            <CardTitle className="flex items-center space-x-2">
+              <Target className="w-5 h-5 text-accent" />
+              <span>Próximas Rodadas</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -360,7 +317,7 @@ export default function RealTournamentBracket() {
                 <TabsTrigger value="even">Rodada Par</TabsTrigger>
               </TabsList>
               <TabsContent value="odd" className="mt-4">
-                <div className={`grid ${isCompactView ? 'md:grid-cols-3 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {upcomingMatches
                     .filter((match: any) => match.bracket_type === 'odd')
                     .map((match: any, index: number) => (
@@ -374,7 +331,7 @@ export default function RealTournamentBracket() {
                 )}
               </TabsContent>
               <TabsContent value="even" className="mt-4">
-                <div className={`grid ${isCompactView ? 'md:grid-cols-3 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {upcomingMatches
                     .filter((match: any) => match.bracket_type === 'even')
                     .map((match: any, index: number) => (
@@ -396,29 +353,9 @@ export default function RealTournamentBracket() {
       {finishedMatches.length > 0 && (
         <Card className="bg-background border-border shadow-card">
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Trophy className="w-5 h-5 text-racing-green" />
-                <span>Matches Finalizados</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsCompactView(!isCompactView)}
-                className="h-8"
-              >
-                {isCompactView ? (
-                  <>
-                    <Maximize2 className="w-4 h-4 mr-1" />
-                    Expandir
-                  </>
-                ) : (
-                  <>
-                    <Minimize2 className="w-4 h-4 mr-1" />
-                    Encolher
-                  </>
-                )}
-              </Button>
+            <CardTitle className="flex items-center space-x-2">
+              <Trophy className="w-5 h-5 text-racing-green" />
+              <span>Matches Finalizados</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -430,7 +367,7 @@ export default function RealTournamentBracket() {
               </TabsList>
 
               <TabsContent value="all" className="space-y-4 mt-4">
-                <div className={`grid ${isCompactView ? 'md:grid-cols-3 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {finishedMatches.map((match: any) => (
                     <MatchCard key={match.id} match={match} showPositions={true} />
                   ))}
@@ -441,7 +378,7 @@ export default function RealTournamentBracket() {
               </TabsContent>
 
               <TabsContent value="odd" className="space-y-4 mt-4">
-                <div className={`grid ${isCompactView ? 'md:grid-cols-3 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {finishedMatches
                     .filter((m: any) => m.bracket_type === 'odd')
                     .map((match: any) => (
@@ -454,7 +391,7 @@ export default function RealTournamentBracket() {
               </TabsContent>
 
               <TabsContent value="even" className="space-y-4 mt-4">
-                <div className={`grid ${isCompactView ? 'md:grid-cols-3 lg:grid-cols-4' : 'md:grid-cols-2 lg:grid-cols-3'} gap-4`}>
+                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {finishedMatches
                     .filter((m: any) => m.bracket_type === 'even')
                     .map((match: any) => (
