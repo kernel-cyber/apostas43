@@ -173,7 +173,8 @@ const Index = () => {
               {/* #5: Foto de perfil no header */}
               <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/profile')}>
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">Perfil</span>
+                <span className="hidden sm:inline">PERFIL
+              </span>
               </Button>
               {isAdmin && <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/admin')}>
                   <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
