@@ -188,4 +188,21 @@ All colors MUST be HSL.
       pointer-events: none;
     }
   }
+
+  /* #19: Animação de pulse verde para próximo match */
+  @keyframes pulse-border-green {
+    0%, 100% { 
+      border-color: hsl(120 100% 50% / 0.3); 
+      box-shadow: 0 0 10px hsl(120 100% 50% / 0.2);
+    }
+    50% { 
+      border-color: hsl(120 100% 50% / 0.8); 
+      box-shadow: 0 0 20px hsl(120 100% 50% / 0.5);
+    }
+  }
+
+  .animate-pulse-border-green {
+    animation: pulse-border-green 2s ease-in-out infinite;
+    border: 2px solid;
+  }
 }

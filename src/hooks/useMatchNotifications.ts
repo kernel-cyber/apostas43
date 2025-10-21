@@ -102,27 +102,31 @@ export const useMatchNotifications = () => {
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: 'UPDATE',
           schema: 'public',
-          table: 'matches'
+          table: 'matches',
+          filter: 'match_status=eq.in_progress'
         },
         async (payload) => {
-          console.log('New match created:', payload);
+          console.log('Match status changed to in_progress:', payload);
           
-          // Fetch complete match data
-          const { data: match } = await (supabase as any)
-            .from('matches')
-            .select(`
-              *,
-              pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name),
-              pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name),
-              event:events(id, name)
-            `)
-            .eq('id', payload.new.id)
-            .single();
+          // #8: Notificar apenas quando o match INICIA (upcoming -> in_progress)
+          if (payload.old.match_status === 'upcoming' && payload.new.match_status === 'in_progress') {
+            const { data: match } = await (supabase as any)
+              .from('matches')
+              .select(`
+                *,
+                pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, team),
+                pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, team),
+                event:events(id, name, event_type)
+              `)
+              .eq('id', payload.new.id)
+              .single();
 
-          if (match && match.match_status === 'upcoming') {
-            showNewMatchNotification(match);
+            // Notificar apenas matches normais (não TOP 20)
+            if (match && match.event?.event_type !== 'top_20') {
+              showNewMatchNotification(match);
+            }
           }
         }
       )

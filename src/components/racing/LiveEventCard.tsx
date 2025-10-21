@@ -25,6 +25,8 @@ interface LiveRace {
   pilot2: PilotData;
   pilot1Id: string;
   pilot2Id: string;
+  pilot1Team?: string;
+  pilot2Team?: string;
   event: string;
   round: string;
   status: "live" | "upcoming" | "finished";
@@ -58,21 +60,23 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
     </div>
   );
 
-  const PilotCard = ({ pilot, side, odds }: { pilot: PilotData; side: "left" | "right"; odds: number }) => (
+  const PilotCard = ({ pilot, side, odds, team }: { pilot: PilotData; side: "left" | "right"; odds: number; team?: string }) => (
     <div className={`
       glass-card p-4 sm:p-6 rounded-2xl transition-all duration-500 hover:shadow-neon
       ${side === "left" ? "text-left" : "text-right"}
     `}>
       <div className="space-y-3 sm:space-y-4">
-        {/* Avatar & Position */}
+        {/* Avatar & Position - #4: Exibir foto real */}
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse space-x-reverse" : ""} space-x-3 sm:space-x-4`}>
           <div className="text-3xl sm:text-4xl">{pilot.avatar}</div>
           <div className={`flex-1 min-w-0 ${side === "right" ? "text-right" : ""}`}>
-            <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 sm:mb-2">
+            <Badge variant="outline" className="text-[10px] sm:text-xs mb-1 sm:mb-2 text-neonGreen">
               #{pilot.position} • {pilot.winRate}% WR
             </Badge>
-            <h3 className="text-base sm:text-xl font-bold text-foreground truncate">{pilot.name}</h3>
-            <p className="text-xs sm:text-sm text-muted-foreground truncate">{pilot.car}</p>
+            {/* #15: Cores padronizadas */}
+            <h3 className="text-base sm:text-xl font-bold text-white truncate">{pilot.name}</h3>
+            <p className="text-xs sm:text-sm text-racing-yellow truncate">🚗 {pilot.car}</p>
+            {team && <p className="text-xs text-blue-400 truncate">🏁 {team}</p>}
           </div>
         </div>
 
@@ -92,9 +96,9 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
           </div>
         </div>
 
-        {/* Recent Form */}
+        {/* Recent Form - #14: Label mais clara */}
         <div className={`flex items-center space-x-2 ${side === "right" ? "flex-row-reverse space-x-reverse" : ""}`}>
-          <span className="text-[10px] sm:text-xs text-muted-foreground">Form:</span>
+          <span className="text-[10px] sm:text-xs text-muted-foreground" title="Últimas 5 corridas">Forma Recente:</span>
           <FormIndicator form={pilot.recentForm} />
         </div>
 
@@ -150,9 +154,9 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
             <div className="relative p-4 sm:p-6 md:p-8">
               <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 items-center">
                 {/* Pilot 1 */}
-                <PilotCard pilot={pilot1} side="left" odds={odds.pilot1} />
+                <PilotCard pilot={pilot1} side="left" odds={odds.pilot1} team={race.pilot1Team} />
                 
-                {/* VS Section */}
+                {/* VS Section - #13: Emoji fogo */}
                 <div className="text-center space-y-4">
                   <div className="relative">
                     <div className="w-24 h-24 mx-auto rounded-full bg-gradient-winner flex items-center justify-center text-4xl font-black text-black shadow-gold">
@@ -164,7 +168,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="text-sm text-muted-foreground">Posição em disputa</div>
+                    <div className="text-sm text-muted-foreground">⚡ Posição em disputa</div>
                     <div className="text-lg font-bold premium-gradient-text">
                       #{Math.min(pilot1.position, pilot2.position)}
                     </div>
@@ -172,15 +176,16 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
                 </div>
 
                 {/* Pilot 2 */}
-                <PilotCard pilot={pilot2} side="right" odds={odds.pilot2} />
+                <PilotCard pilot={pilot2} side="right" odds={odds.pilot2} team={race.pilot2Team} />
               </div>
 
       {/* Betting Heatmap */}
               <div className="mt-8 space-y-3">
                 <div className="flex flex-col sm:flex-row justify-between text-sm gap-2">
                   <span className="text-muted-foreground text-xs sm:text-sm">Distribuição das Apostas</span>
+                  {/* #14: Label mais clara para Pool */}
                   <span className="text-accent font-semibold text-xs sm:text-sm">
-                    Pool: {totalPool.toLocaleString()} pts
+                    💰 Total em Jogo: {totalPool.toLocaleString()} pts
                   </span>
                 </div>
                 
@@ -223,32 +228,7 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
         onBetSuccess={onBetSuccess}
       />
 
-      {/* Race Info */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-        <Card className="glass-card">
-          <CardContent className="p-3 md:p-4 text-center">
-            <Target className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2 text-primary" />
-            <div className="text-base md:text-lg font-bold">NO PREP</div>
-            <div className="text-xs text-muted-foreground">Modalidade</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-card">
-          <CardContent className="p-3 md:p-4 text-center">
-            <Trophy className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2 text-neonGreen" />
-            <div className="text-base md:text-lg font-bold truncate">{event}</div>
-            <div className="text-xs text-muted-foreground">Evento</div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glass-card sm:col-span-2 md:col-span-1">
-          <CardContent className="p-3 md:p-4 text-center">
-            <Star className="w-5 h-5 md:w-6 md:h-6 mx-auto mb-2 text-accent" />
-            <div className="text-base md:text-lg font-bold">{totalBets}</div>
-            <div className="text-xs text-muted-foreground">Apostas Realizadas</div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* #18: Cards redundantes removidos - informações já aparecem no header/status */}
     </div>
   );
 };

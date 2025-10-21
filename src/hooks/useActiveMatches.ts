@@ -38,7 +38,7 @@ export const useActiveMatches = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        // Buscar match ao vivo (in_progress)
+        // #11: Filtrar matches TOP 20 da aba AO VIVO
         const { data: liveData } = await supabase
           .from('matches' as any)
           .select(`
@@ -50,11 +50,15 @@ export const useActiveMatches = () => {
           .eq('match_status', 'in_progress')
           .maybeSingle();
 
-        if (liveData) {
-          setLiveMatch(liveData as any);
+        // Filtrar apenas matches normais (não TOP 20)
+        const liveMatchData = liveData as any;
+        if (liveMatchData && liveMatchData.event?.event_type !== 'top_20') {
+          setLiveMatch(liveMatchData);
+        } else {
+          setLiveMatch(null);
         }
 
-        // Buscar próximas matches
+        // Buscar próximas matches (excluir TOP 20)
         const { data: upcomingData } = await supabase
           .from('matches' as any)
           .select(`
@@ -66,7 +70,9 @@ export const useActiveMatches = () => {
           .eq('match_status', 'upcoming')
           .limit(5);
 
-        setUpcomingMatches((upcomingData || []) as any);
+        // Filtrar apenas matches normais
+        const filteredUpcoming = (upcomingData || []).filter((m: any) => m.event?.event_type !== 'top_20');
+        setUpcomingMatches(filteredUpcoming as any);
       } catch (error) {
         console.error('Error fetching matches:', error);
       } finally {
@@ -113,28 +119,30 @@ export const useActiveMatches = () => {
       setTimeout(() => {
         const fetchMatches = async () => {
           try {
-            const { data: liveData } = await supabase
-              .from('matches' as any)
-              .select(`
-                *,
-                pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
-                pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
-                event:events(*)
-              `)
-              .eq('match_status', 'in_progress')
-              .maybeSingle();
+               const { data: liveData } = await supabase
+                .from('matches' as any)
+                .select(`
+                  *,
+                  pilot1:pilots!matches_pilot1_id_fkey(id, name, car_name, position, wins, losses, team),
+                  pilot2:pilots!matches_pilot2_id_fkey(id, name, car_name, position, wins, losses, team),
+                  event:events(*)
+                `)
+                .eq('match_status', 'in_progress')
+                .maybeSingle();
 
-            if (liveData) {
-              setLiveMatch(liveData as any);
+              // Filtrar apenas matches normais
+              const newLiveData = liveData as any;
+              if (newLiveData && newLiveData.event?.event_type !== 'top_20') {
+                setLiveMatch(newLiveData);
+              }
+            } catch (error) {
+              console.error('Error fetching new live match:', error);
             }
-          } catch (error) {
-            console.error('Error fetching new live match:', error);
-          }
-        };
-        fetchMatches();
-      }, 500);
-    }
-  }, [liveMatch?.match_status, liveMatch?.id]);
+          };
+          fetchMatches();
+        }, 500);
+      }
+    }, [liveMatch?.match_status, liveMatch?.id]);
 
-  return { liveMatch, upcomingMatches, loading };
-};
+    return { liveMatch, upcomingMatches, loading };
+  };

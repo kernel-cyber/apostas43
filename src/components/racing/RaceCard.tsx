@@ -10,6 +10,7 @@ interface Pilot {
   position: number;
   wins: number;
   losses: number;
+  team?: string;
 }
 
 interface RaceCardProps {
@@ -17,6 +18,8 @@ interface RaceCardProps {
     id: number;
     pilot1: Pilot;
     pilot2: Pilot;
+    pilot1Team?: string;
+    pilot2Team?: string;
     round: string;
     status: "live" | "upcoming" | "finished";
     bets: { pilot1: number; pilot2: number };
@@ -52,7 +55,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
     }
   };
 
-  const PilotCard = ({ pilot, side, isWinner }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean }) => (
+  const PilotCard = ({ pilot, side, isWinner, team }: { pilot: Pilot; side: "left" | "right"; isWinner?: boolean; team?: string }) => (
     <div className={`
       relative flex-1 p-6 rounded-lg transition-all duration-500
       ${isWinner ? 'bg-gradient-winner shadow-neon winner-pulse' : 'bg-gradient-card'}
@@ -61,11 +64,13 @@ export const RaceCard = ({ match }: RaceCardProps) => {
       <div className="flex flex-col space-y-3">
         <div className={`flex items-center ${side === "right" ? "flex-row-reverse" : ""} space-x-3`}>
           <div className="w-12 h-12 rounded-full bg-racingGray flex items-center justify-center">
-            <span className="text-lg font-bold">#{pilot.position}</span>
+            <span className="text-lg font-bold text-neonGreen">#{pilot.position}</span>
           </div>
+          {/* #15: Cores padronizadas */}
           <div className={side === "right" ? "text-right" : ""}>
-            <h3 className="text-lg font-bold text-foreground">{pilot.name}</h3>
-            <p className="text-sm text-muted-foreground">{pilot.car}</p>
+            <h3 className="text-lg font-bold text-white">{pilot.name}</h3>
+            <p className="text-sm text-racing-yellow">🚗 {pilot.car}</p>
+            {team && <p className="text-xs text-blue-400">🏁 {team}</p>}
           </div>
         </div>
         
@@ -127,9 +132,10 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               pilot={pilot1} 
               side="left" 
               isWinner={winner === 1}
+              team={match.pilot1Team}
             />
             
-            {/* VS Section */}
+            {/* VS Section - #13: Emojis */}
             <div className="flex flex-col items-center space-y-2 min-w-[120px]">
               <div className={`
                 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold
@@ -142,7 +148,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               {status === "live" && (
                 <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                   <Zap className="w-3 h-3" />
-                  <span>LARGADA!</span>
+                  <span>⚡ LARGADA!</span>
                 </div>
               )}
             </div>
@@ -151,6 +157,7 @@ export const RaceCard = ({ match }: RaceCardProps) => {
               pilot={pilot2} 
               side="right" 
               isWinner={winner === 2}
+              team={match.pilot2Team}
             />
           </div>
 
