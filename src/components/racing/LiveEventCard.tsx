@@ -127,17 +127,9 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
         {/* Live Status */}
         <div className="flex justify-center">
           <div className="glass-card px-4 sm:px-6 py-3 rounded-full">
-            <div className="flex items-center space-x-2 sm:space-x-4 text-xs sm:text-sm">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-neonGreen animate-pulse" />
-                <span className="text-neonGreen font-bold">AO VIVO</span>
-              </div>
-              <div className="w-px h-4 bg-border" />
-              <div className="flex items-center space-x-2">
-                <Star className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                <span className="hidden sm:inline">{totalBets} apostas</span>
-                <span className="sm:hidden">{totalBets}</span>
-              </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-neonGreen animate-pulse" />
+              <span className="text-neonGreen font-bold">AO VIVO</span>
             </div>
           </div>
         </div>
