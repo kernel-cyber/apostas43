@@ -2,16 +2,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMatches } from '@/hooks/useMatches';
-import { Trash2, Play, Trophy, Clock } from 'lucide-react';
+import { Trash2, Play, Trophy, Clock, Filter } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
 import FinishMatchModal from './FinishMatchModal';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function MatchList() {
   const { matches, isLoading, updateMatchStatus, deleteMatch } = useMatches();
   const [finishModalOpen, setFinishModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string>('upcoming'); // Filtro padrão: apenas upcoming
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja deletar este match?')) return;
@@ -54,6 +56,17 @@ export default function MatchList() {
     return <div className="text-center text-racing-gray">Carregando matches...</div>;
   }
 
+  // Filtrar matches por status
+  const filteredMatches = matches?.filter((match: any) => {
+    if (statusFilter === 'all') return true;
+    return match.match_status === statusFilter;
+  }) || [];
+
+  // Encontrar o próximo match (primeiro upcoming ou in_progress)
+  const nextMatch = matches?.find((m: any) => 
+    m.match_status === 'in_progress' || m.match_status === 'upcoming'
+  );
+
   if (!matches || matches.length === 0) {
     return (
       <div className="text-center py-12">
@@ -66,8 +79,8 @@ export default function MatchList() {
     );
   }
 
-  // Group matches by event
-  const matchesByEvent = matches.reduce((acc: any, match: any) => {
+  // Group filtered matches by event
+  const matchesByEvent = filteredMatches.reduce((acc: any, match: any) => {
     const eventId = match.event.id;
     if (!acc[eventId]) {
       acc[eventId] = {
@@ -81,8 +94,32 @@ export default function MatchList() {
 
   return (
     <>
+      {/* Filtro de Status */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-racing-gray" />
+          <span className="text-sm text-racing-gray">Filtrar por:</span>
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="upcoming">Para Iniciar</SelectItem>
+            <SelectItem value="in_progress">Ao Vivo</SelectItem>
+            <SelectItem value="finished">Finalizados</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="space-y-6">
-        {Object.values(matchesByEvent).map((group: any) => (
+        {filteredMatches.length === 0 ? (
+          <div className="text-center py-8 text-racing-gray">
+            Nenhum match encontrado com este filtro.
+          </div>
+        ) : (
+          Object.values(matchesByEvent).map((group: any) => (
           <div key={group.event.id}>
             <h3 className="text-xl font-bold text-white mb-4 font-racing">
               {group.event.name}
@@ -96,11 +133,13 @@ export default function MatchList() {
                   onStart={handleStartMatch}
                   onFinish={handleOpenFinishModal}
                   onToggleBetting={handleToggleBetting}
+                  isNext={match.id === nextMatch?.id}
                 />
               ))}
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
 
       {selectedMatch && (
@@ -114,7 +153,7 @@ export default function MatchList() {
   );
 }
 
-function MatchCard({ match, onDelete, onStart, onFinish, onToggleBetting }: any) {
+function MatchCard({ match, onDelete, onStart, onFinish, onToggleBetting, isNext }: any) {
   const getStatusBadge = () => {
     switch (match.match_status) {
       case 'upcoming':
@@ -127,7 +166,9 @@ function MatchCard({ match, onDelete, onStart, onFinish, onToggleBetting }: any)
   };
 
   return (
-    <Card className="bg-racing-dark border-racing-green/10 hover:border-racing-green/30 transition-colors">
+    <Card className={`bg-racing-dark border-racing-green/10 hover:border-racing-green/30 transition-colors ${
+      isNext ? 'animate-pulse-border-green' : ''
+    }`}>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <Badge variant="outline" className="text-racing-gray">
