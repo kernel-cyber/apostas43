@@ -266,6 +266,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          favorite_pilot_id: string | null
           id: string
           updated_at: string
           username: string
@@ -273,6 +274,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          favorite_pilot_id?: string | null
           id: string
           updated_at?: string
           username: string
@@ -280,11 +282,20 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          favorite_pilot_id?: string | null
           id?: string
           updated_at?: string
           username?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_favorite_pilot_id_fkey"
+            columns: ["favorite_pilot_id"]
+            isOneToOne: false
+            referencedRelation: "pilots"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       top20_positions: {
         Row: {
@@ -323,6 +334,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          category: Database["public"]["Enums"]["badge_category"]
+          created_at: string
+          earned_at: string
+          id: string
+          metadata: Json | null
+          progress: number | null
+          tier: Database["public"]["Enums"]["badge_tier"] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          category: Database["public"]["Enums"]["badge_category"]
+          created_at?: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          progress?: number | null
+          tier?: Database["public"]["Enums"]["badge_tier"] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          category?: Database["public"]["Enums"]["badge_category"]
+          created_at?: string
+          earned_at?: string
+          id?: string
+          metadata?: Json | null
+          progress?: number | null
+          tier?: Database["public"]["Enums"]["badge_tier"] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_points: {
         Row: {
@@ -421,6 +471,19 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      badge_category:
+        | "participation"
+        | "performance"
+        | "volume"
+        | "special"
+        | "social"
+      badge_tier:
+        | "bronze"
+        | "silver"
+        | "gold"
+        | "platinum"
+        | "diamond"
+        | "legendary"
       event_type: "top_20"
       match_status: "upcoming" | "in_progress" | "finished"
     }
@@ -551,6 +614,21 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      badge_category: [
+        "participation",
+        "performance",
+        "volume",
+        "special",
+        "social",
+      ],
+      badge_tier: [
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "diamond",
+        "legendary",
+      ],
       event_type: ["top_20"],
       match_status: ["upcoming", "in_progress", "finished"],
     },
