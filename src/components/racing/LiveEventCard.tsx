@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { BettingPanel } from "./BettingPanel";
+import { useLiveBettingDistribution } from "@/hooks/useLiveBettingDistribution";
 import { 
   Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings
 } from "lucide-react";
@@ -45,7 +46,8 @@ interface LiveEventCardProps {
 }
 
 export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = false }: LiveEventCardProps) => {
-  const { pilot1, pilot2, pilot1Id, pilot2Id, event, round, status, bets, totalPool, totalBets, odds } = race;
+  const { pilot1, pilot2, pilot1Id, pilot2Id, event, round, status, totalPool, totalBets, odds } = race;
+  const liveDistribution = useLiveBettingDistribution(race.id, pilot1Id, pilot2Id);
 
   const FormIndicator = ({ form }: { form: string[] }) => (
     <div className="flex space-x-1">
@@ -187,28 +189,38 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
                     Ao vivo
                   </Badge>
                 </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-neonGreen transition-all duration-700">{bets.pilot1.toFixed(1)}%</div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
-                      <div 
-                        className="bg-neonGreen h-2 rounded-full transition-all duration-700 ease-out"
-                        style={{ width: `${bets.pilot1 || 0}%` }}
-                      />
-                    </div>
-                    <div className="text-xs text-muted-foreground truncate mt-2">{pilot1.name}</div>
+                {liveDistribution.pilot1Percentage === 0 && liveDistribution.pilot2Percentage === 0 ? (
+                  <div className="text-center text-muted-foreground text-sm py-4">
+                    Nenhuma aposta realizada ainda
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-destructive transition-all duration-700">{bets.pilot2.toFixed(1)}%</div>
-                    <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
-                      <div 
-                        className="bg-destructive h-2 rounded-full transition-all duration-700 ease-out"
-                        style={{ width: `${bets.pilot2 || 0}%` }}
-                      />
+                ) : (
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-neonGreen transition-all duration-700">
+                        {liveDistribution.pilot1Percentage.toFixed(1)}%
+                      </div>
+                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
+                        <div 
+                          className="bg-neonGreen h-2 rounded-full transition-all duration-700 ease-out"
+                          style={{ width: `${liveDistribution.pilot1Percentage || 0}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate mt-2">{pilot1.name}</div>
                     </div>
-                    <div className="text-xs text-muted-foreground truncate mt-2">{pilot2.name}</div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-destructive transition-all duration-700">
+                        {liveDistribution.pilot2Percentage.toFixed(1)}%
+                      </div>
+                      <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
+                        <div 
+                          className="bg-destructive h-2 rounded-full transition-all duration-700 ease-out"
+                          style={{ width: `${liveDistribution.pilot2Percentage || 0}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate mt-2">{pilot2.name}</div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

@@ -94,7 +94,7 @@ export const BettingPanel = ({
             </div>
           </div>
 
-          <div className="flex items-start space-x-2 text-xs text-muted-foreground p-2 bg-background rounded border border-border">
+          <div className="flex items-start space-x-2 text-xs text-muted-foreground p-2 bg-background rounded border border-border mt-4">
             <AlertTriangle className="w-3 h-3 mt-0.5" />
             <span>
               Você já possui uma aposta neste match. Aguarde o resultado!
