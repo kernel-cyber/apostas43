@@ -100,12 +100,38 @@ export const useActiveMatches = () => {
     };
   }, [queryClient]);
 
-  // Limpar liveMatch se estiver finalizado
+  // CRITICAL FIX: Clear liveMatch immediately when it finishes
   useEffect(() => {
     if (liveMatch && liveMatch.match_status === 'finished') {
+      console.log('🏁 Match finalizado detectado, limpando liveMatch...');
       setLiveMatch(null);
+      
+      // Buscar novo match após 500ms
+      setTimeout(() => {
+        const fetchMatches = async () => {
+          try {
+            const { data: liveData } = await supabase
+              .from('matches' as any)
+              .select(`
+                *,
+                pilot1:pilots!matches_pilot1_id_fkey(*),
+                pilot2:pilots!matches_pilot2_id_fkey(*),
+                event:events(*)
+              `)
+              .eq('match_status', 'in_progress')
+              .maybeSingle();
+
+            if (liveData) {
+              setLiveMatch(liveData as any);
+            }
+          } catch (error) {
+            console.error('Error fetching new live match:', error);
+          }
+        };
+        fetchMatches();
+      }, 500);
     }
-  }, [liveMatch]);
+  }, [liveMatch?.match_status, liveMatch?.id]);
 
   return { liveMatch, upcomingMatches, loading };
 };

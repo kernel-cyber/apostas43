@@ -150,7 +150,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-primary animate-pulse" />
-              <span className="font-bold text-base sm:text-lg">ÁREA 43</span>
+              <span className="font-bold text-base sm:text-lg">43 ÁREA</span>
             </div>
             
             <div className="flex items-center gap-2 sm:gap-3">

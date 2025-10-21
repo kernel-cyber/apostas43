@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useStandardNotification } from './useStandardNotification';
 
 interface MatchOdds {
   pilot1_odds: number;
@@ -21,11 +21,11 @@ interface ExistingBet {
 }
 
 export const useBetting = (matchId: string | null) => {
+  const notify = useStandardNotification();
   const [odds, setOdds] = useState<MatchOdds | null>(null);
   const [loading, setLoading] = useState(false);
   const [existingBet, setExistingBet] = useState<ExistingBet | null>(null);
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const { toast } = useToast();
 
   const checkExistingBet = async (userId: string) => {
     if (!matchId) return;
@@ -113,27 +113,25 @@ export const useBetting = (matchId: string | null) => {
       const result = data as { success: boolean; error?: string; remaining_points?: number };
 
       if (!result.success) {
-        toast({
-          title: 'Erro ao Realizar Aposta',
-          description: result.error || 'Ocorreu um erro desconhecido. Tente novamente.',
-          variant: 'destructive',
-        });
+        notify.error(
+          'Erro ao Realizar Aposta',
+          result.error || 'Ocorreu um erro desconhecido. Tente novamente.'
+        );
         return result;
       }
 
-      toast({
-        title: '✅ Aposta Realizada com Sucesso!',
-        description: `Você apostou ${amount} pontos. Boa sorte!`,
-      });
+      notify.success(
+        'Aposta Realizada com Sucesso!',
+        `Você apostou ${amount} pontos. Boa sorte! 🍀`
+      );
 
       fetchOdds();
       return result;
     } catch (error: any) {
-      toast({
-        title: 'Erro',
-        description: error.message,
-        variant: 'destructive',
-      });
+      notify.error(
+        'Erro',
+        error.message || 'Ocorreu um erro ao processar sua aposta.'
+      );
       return { success: false, error: error.message };
     } finally {
       setLoading(false);

@@ -1,9 +1,10 @@
 import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useStandardNotification } from './useStandardNotification';
 import { useSoundEffects } from './useSoundEffects';
 
 export const useBetResults = (userId: string | undefined) => {
+  const notify = useStandardNotification();
   const { playWin, playLoss } = useSoundEffects();
 
   const checkBetResult = useCallback(async (matchId: string, winnerId: string) => {
@@ -43,23 +44,19 @@ export const useBetResults = (userId: string | undefined) => {
     const potentialReturn = Math.round(bet.amount * (isOdds || 1));
 
     if (won) {
-      toast({
-        title: "🎉 Parabéns! Você Ganhou!",
-        description: `${bet.pilot?.name} venceu! Você ganhou ${potentialReturn} pontos (${isOdds?.toFixed(2)}x)`,
-        duration: 10000,
-        className: "bg-green-500/10 border-green-500",
-      });
+      notify.success(
+        "Você Ganhou!",
+        `${bet.pilot?.name} venceu! Você ganhou ${potentialReturn} pontos (${isOdds?.toFixed(2)}x retorno). 💰`
+      );
       playWin();
     } else {
-      toast({
-        title: "😔 Que Pena! Você Perdeu",
-        description: `${bet.pilot?.name} não venceu desta vez. Você perdeu ${bet.amount} pontos.`,
-        duration: 8000,
-        className: "bg-red-500/10 border-red-500",
-      });
+      notify.error(
+        "Você Perdeu",
+        `${bet.pilot?.name} não venceu desta vez. Você perdeu ${bet.amount} pontos.`
+      );
       playLoss();
     }
-  }, [userId, playWin, playLoss]);
+  }, [userId, notify, playWin, playLoss]);
 
   useEffect(() => {
     const channel = supabase

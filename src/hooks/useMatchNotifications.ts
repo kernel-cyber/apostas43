@@ -1,61 +1,69 @@
 import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
+import { useStandardNotification } from './useStandardNotification';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const useMatchNotifications = () => {
   const { user } = useAuth();
+  const notify = useStandardNotification();
 
   const showMatchFinishedNotification = useCallback((match: any) => {
     const winnerName = match.winner?.name || 'Vencedor';
     
-    // Determinar tipo de rodada
-    let roundInfo = `Rodada #${match.round_number}`;
-    if (match.bracket_type === 'odd') {
-      roundInfo = `Rodada Ímpar #${match.round_number}`;
-    } else if (match.bracket_type === 'even') {
-      roundInfo = `Rodada Par #${match.round_number}`;
-    }
+    const roundText = match.bracket_type === 'odd' 
+      ? `Rodada Ímpar #${match.round_number}` 
+      : match.bracket_type === 'even'
+      ? `Rodada Par #${match.round_number}`
+      : `Rodada #${match.round_number}`;
     
-    toast({
-      title: "🏁 Match Finalizado!",
-      description: `${winnerName} é o campeão da ${roundInfo}!`,
-      duration: 10000,
-    });
+    notify.success(
+      "Match Finalizado!",
+      `${winnerName} é o campeão da ${roundText}!`
+    );
 
     // Play notification sound
     const audio = new Audio('/sounds/match-finish.mp3');
     audio.play().catch(() => {});
-  }, []);
+  }, [notify]);
 
   const showNewMatchNotification = useCallback((match: any) => {
     const pilot1Name = match.pilot1?.name || 'Piloto 1';
     const pilot2Name = match.pilot2?.name || 'Piloto 2';
-    const eventName = match.event?.name || 'Evento';
     
-    toast({
-      title: "🏁 Novo Match Disponível!",
-      description: `${eventName}: ${pilot1Name} vs ${pilot2Name} - Apostas abertas!`,
-      duration: 10000,
-    });
+    const roundText = match.bracket_type === 'odd' 
+      ? `Rodada Ímpar #${match.round_number}` 
+      : match.bracket_type === 'even'
+      ? `Rodada Par #${match.round_number}`
+      : `Rodada #${match.round_number}`;
+    
+    notify.info(
+      "Novo Match Disponível!",
+      `${roundText} - ${pilot1Name} vs ${pilot2Name} está disponível! Apostas abertas!`
+    );
 
     // Play notification sound
-    const audio = new Audio('/notification.mp3');
+    const audio = new Audio('/sounds/match-start.mp3');
     audio.play().catch(() => {});
-  }, []);
+  }, [notify]);
 
   const showBettingClosedNotification = useCallback((match: any) => {
-    const eventName = match.event?.name || 'Match';
+    const pilot1Name = match.pilot1?.name || 'Piloto 1';
+    const pilot2Name = match.pilot2?.name || 'Piloto 2';
     
-    toast({
-      title: "⏰ Apostas Encerradas!",
-      description: `As apostas para ${eventName} foram fechadas pelo organizador.`,
-      duration: 5000,
-    });
+    const roundText = match.bracket_type === 'odd' 
+      ? `Rodada Ímpar #${match.round_number}` 
+      : match.bracket_type === 'even'
+      ? `Rodada Par #${match.round_number}`
+      : `Rodada #${match.round_number}`;
+    
+    notify.warning(
+      "Apostas Encerradas!",
+      `${roundText} - As apostas para ${pilot1Name} vs ${pilot2Name} foram encerradas.`
+    );
     
     const audio = new Audio('/sounds/bet-placed.mp3');
     audio.play().catch(() => {});
-  }, []);
+  }, [notify]);
 
   useEffect(() => {
     if (!user) return;
@@ -156,12 +164,17 @@ export const useMatchNotifications = () => {
           table: 'matches'
         },
         async (payload) => {
-          // Notificar quando apostas são fechadas
-          if (payload.old.betting_locked === false && payload.new.betting_locked === true) {
+          // CRITICAL FIX: Notificar quando apostas são fechadas (TODOS OS USUÁRIOS)
+          if (payload.old && payload.new && 
+              payload.old.betting_locked === false && 
+              payload.new.betting_locked === true) {
+            
             const { data: match } = await (supabase as any)
               .from('matches')
               .select(`
                 *,
+                pilot1:pilots!matches_pilot1_id_fkey(name, team),
+                pilot2:pilots!matches_pilot2_id_fkey(name, team),
                 event:events(id, name)
               `)
               .eq('id', payload.new.id)

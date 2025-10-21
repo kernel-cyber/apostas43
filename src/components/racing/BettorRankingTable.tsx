@@ -107,20 +107,29 @@ export default function BettorRankingTable() {
                     </div>
                   </div>
 
-                  {/* Stats */}
-                  <div className="flex-shrink-0 text-right">
-                    <div className="flex items-center justify-end gap-1 mb-1">
-                      <TrendingUp className="h-4 w-4 text-racing-green" />
-                      <span className="text-lg font-bold">{user.points.toLocaleString()}</span>
-                    </div>
-                    <div className={`text-xs ${
-                      user.profit > 0 ? 'text-green-500' : 
-                      user.profit < 0 ? 'text-red-500' : 
-                      'text-muted-foreground'
-                    }`}>
-                      {user.profit > 0 ? '+' : ''}{user.profit.toLocaleString()} pts
-                    </div>
-                  </div>
+          {/* ROI Badge */}
+          <div className="flex-shrink-0 text-right">
+            <div className="flex items-center justify-end gap-1 mb-1">
+              <TrendingUp className="h-4 w-4 text-racing-green" />
+              <span className="text-lg font-bold">{user.points.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <div className={`${
+                user.profit > 0 ? 'text-green-500' : 
+                user.profit < 0 ? 'text-red-500' : 
+                'text-muted-foreground'
+              }`}>
+                {user.profit > 0 ? '+' : ''}{user.profit.toLocaleString()} pts
+              </div>
+              <Badge variant="outline" className={`text-[10px] ${
+                user.roi > 0 ? 'border-green-500 text-green-500' : 
+                user.roi < 0 ? 'border-red-500 text-red-500' : 
+                'border-muted text-muted-foreground'
+              }`}>
+                ROI: {user.roi > 0 ? '+' : ''}{user.roi}%
+              </Badge>
+            </div>
+          </div>
                 </div>
               </CardContent>
             </Card>

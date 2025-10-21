@@ -74,6 +74,11 @@ export default function PilotRankingTable() {
                   <p className="text-xs text-racing-yellow truncate">
                     {pilot.car_name}
                   </p>
+                  {pilot.team && (
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      🏁 {pilot.team}
+                    </p>
+                  )}
                 </div>
 
                 {/* Stats */}
