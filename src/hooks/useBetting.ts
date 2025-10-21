@@ -47,7 +47,9 @@ export const useBetting = (matchId: string | null) => {
       if (error) throw error;
       setExistingBet(data);
     } catch (error) {
-      console.error('Error checking existing bet:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error checking existing bet:', error);
+      }
     }
   };
 
@@ -59,7 +61,9 @@ export const useBetting = (matchId: string | null) => {
     });
 
     if (error) {
-      console.error('Error fetching odds:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching odds:', error);
+      }
       return;
     }
 
@@ -160,6 +164,7 @@ export const useBetting = (matchId: string | null) => {
     loading, 
     existingBet, 
     checkExistingBet,
-    lastUpdate 
+    lastUpdate,
+    notify 
   };
 };

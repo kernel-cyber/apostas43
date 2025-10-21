@@ -32,7 +32,9 @@ export const useLiveBettingDistribution = (matchId: string, pilot1Id: string, pi
         });
       }
     } catch (error) {
-      console.error('Error fetching betting distribution:', error);
+      if (import.meta.env.DEV) {
+        console.error('Error fetching betting distribution:', error);
+      }
     }
   };
 

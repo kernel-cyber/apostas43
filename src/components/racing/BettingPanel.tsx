@@ -7,6 +7,7 @@ import { Coins, TrendingUp, AlertTriangle, Activity, CheckCircle } from "lucide-
 import { useBetting } from "@/hooks/useBetting";
 import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useLiveBettingDistribution } from "@/hooks/useLiveBettingDistribution";
+import { z } from "zod";
 
 interface BettingPanelProps {
   matchId: string;
@@ -35,7 +36,7 @@ export const BettingPanel = ({
 }: BettingPanelProps) => {
   const [betAmount, setBetAmount] = useState("");
   const [selectedPilot, setSelectedPilot] = useState<string | null>(null);
-  const { odds, placeBet, loading, existingBet, checkExistingBet, lastUpdate } = useBetting(matchId);
+  const { odds, placeBet, loading, existingBet, checkExistingBet, lastUpdate, notify } = useBetting(matchId);
   const { playBetPlaced } = useSoundEffects();
   const distribution = useLiveBettingDistribution(matchId, pilot1Id, pilot2Id);
 
@@ -47,10 +48,23 @@ export const BettingPanel = ({
 
   const quickBets = [50, 100, 250, 500, 1000];
   
+  // Zod schema for bet validation
+  const betSchema = z.object({
+    amount: z.number().int().positive().max(userPoints),
+    pilotId: z.string().uuid()
+  });
+  
   const handleBet = async () => {
     const amount = parseInt(betAmount);
     
-    if (!selectedPilot || !amount || amount <= 0 || amount > userPoints) {
+    // Validate with Zod schema
+    const validation = betSchema.safeParse({ amount, pilotId: selectedPilot });
+    
+    if (!validation.success) {
+      notify.error(
+        'Valor Inválido',
+        'Por favor, insira um valor válido e selecione um piloto.'
+      );
       return;
     }
 
