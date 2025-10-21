@@ -93,14 +93,18 @@ export default function RealTournamentBracket() {
       `}>
         {/* Match Header */}
         <div className={`px-3 py-1 border-b text-xs text-center flex items-center justify-center gap-2 ${
-          isLive 
-            ? 'bg-racing-yellow text-black' 
-            : match.bracket_type === 'odd' 
-              ? 'bg-blue-600/80 text-white border-blue-500/50' 
-              : 'bg-red-600/80 text-white border-red-500/50'
+          isLive ? 'bg-racing-yellow text-black' : 'bg-trackDark border-border'
         }`}>
           {isLive && <Play className="w-3 h-3 animate-pulse" />}
-          <span>{getRoundLabel(match.cycle_position, match.round_number).emoji}</span>
+          <span className={
+            isLive 
+              ? '' 
+              : match.bracket_type === 'odd' 
+                ? 'text-blue-400' 
+                : 'text-red-400'
+          }>
+            {getRoundLabel(match.cycle_position, match.round_number).emoji}
+          </span>
           <span>{getRoundLabel(match.cycle_position, match.round_number).fullLabel}</span>
           {isLive && <span className="font-bold">AO VIVO</span>}
         </div>
