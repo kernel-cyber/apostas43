@@ -100,46 +100,6 @@ export const BettingPanel = ({
               Você já possui uma aposta neste match. Aguarde o resultado!
             </span>
           </div>
-
-          {/* Live Stats */}
-          {odds && (
-            <>
-              <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
-                <div className="flex items-center gap-2">
-                  <span>Distribuição de apostas</span>
-                  <Badge variant="outline" className="animate-pulse border-racing-green text-racing-green">
-                    <Activity className="w-3 h-3 mr-1" />
-                    Ao vivo
-                  </Badge>
-                </div>
-                <span className="text-[10px]">
-                  {lastUpdate && `${Math.floor((Date.now() - lastUpdate.getTime()) / 1000)}s atrás`}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-base md:text-lg font-bold text-neonGreen transition-all duration-700">{odds.pilot1_percentage.toFixed(1)}%</div>
-                  <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden mt-1">
-                    <div 
-                      className="bg-neonGreen h-1.5 rounded-full transition-all duration-700 ease-out"
-                      style={{ width: `${odds.pilot1_percentage || 0}%` }}
-                    />
-                  </div>
-                  <div className="text-xs text-muted-foreground truncate mt-1">{pilot1Name}</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base md:text-lg font-bold text-destructive transition-all duration-700">{odds.pilot2_percentage.toFixed(1)}%</div>
-                  <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden mt-1">
-                    <div 
-                      className="bg-destructive h-1.5 rounded-full transition-all duration-700 ease-out"
-                      style={{ width: `${odds.pilot2_percentage || 0}%` }}
-                    />
-                  </div>
-                  <div className="text-xs text-muted-foreground truncate mt-1">{pilot2Name}</div>
-                </div>
-              </div>
-            </>
-          )}
         </CardContent>
       </Card>
     );

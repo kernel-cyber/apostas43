@@ -139,6 +139,38 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
             </div>
           </div>
         </div>
+
+        {/* Betting Distribution */}
+        <div className="glass-card p-4 rounded-lg max-w-2xl mx-auto">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-sm text-muted-foreground">Distribuição de apostas</span>
+            <Badge variant="outline" className="animate-pulse border-racing-green text-racing-green text-xs">
+              Ao vivo
+            </Badge>
+          </div>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neonGreen transition-all duration-700">{bets.pilot1.toFixed(1)}%</div>
+              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
+                <div 
+                  className="bg-neonGreen h-2 rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${bets.pilot1 || 0}%` }}
+                />
+              </div>
+              <div className="text-xs text-muted-foreground truncate mt-2">{pilot1.name}</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-destructive transition-all duration-700">{bets.pilot2.toFixed(1)}%</div>
+              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden mt-2">
+                <div 
+                  className="bg-destructive h-2 rounded-full transition-all duration-700 ease-out"
+                  style={{ width: `${bets.pilot2 || 0}%` }}
+                />
+              </div>
+              <div className="text-xs text-muted-foreground truncate mt-2">{pilot2.name}</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Battle Card */}
