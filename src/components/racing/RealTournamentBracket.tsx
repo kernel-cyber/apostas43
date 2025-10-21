@@ -102,80 +102,119 @@ export default function RealTournamentBracket() {
         </div>
         
         {/* Pilots */}
-        <div className="p-3 space-y-2">
+        <div className="p-4 space-y-3">
           {/* Pilot 1 */}
           <div className={`
-            flex items-center justify-between p-2 rounded text-sm
-            ${match.winner_id === match.pilot1_id ? 'bg-gradient-winner text-black font-bold' : 'bg-background'}
+            flex items-center gap-3 p-3 rounded-lg
+            ${match.winner_id === match.pilot1_id ? 'bg-gradient-winner text-black' : 'bg-background'}
           `}>
-            <div className="flex items-center space-x-2">
-              {/* #16: Ícone ataque/defesa */}
+            {/* Ícone ataque/defesa */}
+            <div className="flex-shrink-0">
               {pilot1IsAttacking ? (
-                <span title="Ataca" className="text-red-500">⚔️</span>
+                <span title="Ataca" className="text-red-500 text-xl">⚔️</span>
               ) : pilot2IsAttacking ? (
-                <span title="Defende" className="text-blue-500">🛡️</span>
-              ) : null}
-              {showPositions && pilot1Position && (
-                <span className="text-xs text-neonGreen font-bold">#{pilot1Position}</span>
-              )}
-              {/* #4: Foto do piloto */}
-              {match.pilot1?.image_url && (
-                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
-                  <img src={match.pilot1.image_url} alt={match.pilot1.name} className="w-full h-full object-cover" />
-                </div>
-              )}
-                      {/* #7: Cores padronizadas */}
-                      <div className="flex flex-col">
-                        <span className="truncate text-white font-semibold">{match.pilot1?.name || 'TBD'}</span>
-                        <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot1?.car_name || "N/A"}</span>
-                        {match.pilot1?.team && (
-                          <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot1.team}</span>
-                        )}
-                      </div>
+                <span title="Defende" className="text-blue-500 text-xl">🛡️</span>
+              ) : <div className="w-5"></div>}
             </div>
-            <div className="flex items-center space-x-1">
-              {match.winner_id === match.pilot1_id && <Crown className="w-3 h-3 text-neonYellow" />}
-              <span className="font-bold text-xs">
-                {match.winner_id === match.pilot1_id ? 'W' : match.winner_id ? 'L' : '?'}
-              </span>
+            
+            {/* Posição */}
+            {showPositions && pilot1Position && (
+              <Badge variant="outline" className="text-neonGreen border-neonGreen flex-shrink-0">
+                #{pilot1Position}
+              </Badge>
+            )}
+            
+            {/* Foto do piloto */}
+            {match.pilot1?.image_url && (
+              <img
+                src={match.pilot1.image_url}
+                alt={match.pilot1.name}
+                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+              />
+            )}
+            
+            {/* Info do piloto */}
+            <div className="flex-1 min-w-0">
+              <p className={`font-bold truncate ${match.winner_id === match.pilot1_id ? 'text-black' : 'text-white'}`}>
+                {match.pilot1?.name || 'TBD'}
+              </p>
+              <p className={`text-sm truncate ${match.winner_id === match.pilot1_id ? 'text-black/70' : 'text-racing-yellow'}`}>
+                🚗 {match.pilot1?.car_name || "N/A"}
+              </p>
+              {match.pilot1?.team && (
+                <p className={`text-xs truncate ${match.winner_id === match.pilot1_id ? 'text-black/60' : 'text-blue-400'}`}>
+                  🏁 {match.pilot1.team}
+                </p>
+              )}
+            </div>
+            
+            {/* Status */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {match.winner_id === match.pilot1_id && <Crown className="w-5 h-5 text-neonYellow" />}
+              {isFinished && (
+                <span className="font-bold">
+                  {match.winner_id === match.pilot1_id ? 'W' : 'L'}
+                </span>
+              )}
             </div>
           </div>
           
+          {/* VS */}
+          <div className="text-center text-racing-red font-bold text-lg">VS</div>
+          
           {/* Pilot 2 */}
           <div className={`
-            flex items-center justify-between p-2 rounded text-sm
-            ${match.winner_id === match.pilot2_id ? 'bg-gradient-winner text-black font-bold' : 'bg-background'}
+            flex items-center gap-3 p-3 rounded-lg
+            ${match.winner_id === match.pilot2_id ? 'bg-gradient-winner text-black' : 'bg-background'}
           `}>
-            <div className="flex items-center space-x-2">
-              {/* #16: Ícone ataque/defesa */}
+            {/* Ícone ataque/defesa */}
+            <div className="flex-shrink-0">
               {pilot2IsAttacking ? (
-                <span title="Ataca" className="text-red-500">⚔️</span>
+                <span title="Ataca" className="text-red-500 text-xl">⚔️</span>
               ) : pilot1IsAttacking ? (
-                <span title="Defende" className="text-blue-500">🛡️</span>
-              ) : null}
-              {showPositions && pilot2Position && (
-                <span className="text-xs text-neonGreen font-bold">#{pilot2Position}</span>
-              )}
-              {/* #4: Foto do piloto */}
-              {match.pilot2?.image_url && (
-                <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
-                  <img src={match.pilot2.image_url} alt={match.pilot2.name} className="w-full h-full object-cover" />
-                </div>
-              )}
-                      {/* #7: Cores padronizadas */}
-                      <div className="flex flex-col">
-                        <span className="truncate text-white font-semibold">{match.pilot2?.name || 'TBD'}</span>
-                        <span className="text-[10px] text-racing-yellow truncate">🚗 {match.pilot2?.car_name || "N/A"}</span>
-                        {match.pilot2?.team && (
-                          <span className="text-[10px] text-blue-400 truncate">🏁 {match.pilot2.team}</span>
-                        )}
-                      </div>
+                <span title="Defende" className="text-blue-500 text-xl">🛡️</span>
+              ) : <div className="w-5"></div>}
             </div>
-            <div className="flex items-center space-x-1">
-              {match.winner_id === match.pilot2_id && <Crown className="w-3 h-3 text-neonYellow" />}
-              <span className="font-bold text-xs">
-                {match.winner_id === match.pilot2_id ? 'W' : match.winner_id ? 'L' : '?'}
-              </span>
+            
+            {/* Posição */}
+            {showPositions && pilot2Position && (
+              <Badge variant="outline" className="text-neonGreen border-neonGreen flex-shrink-0">
+                #{pilot2Position}
+              </Badge>
+            )}
+            
+            {/* Foto do piloto */}
+            {match.pilot2?.image_url && (
+              <img
+                src={match.pilot2.image_url}
+                alt={match.pilot2.name}
+                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+              />
+            )}
+            
+            {/* Info do piloto */}
+            <div className="flex-1 min-w-0">
+              <p className={`font-bold truncate ${match.winner_id === match.pilot2_id ? 'text-black' : 'text-white'}`}>
+                {match.pilot2?.name || 'TBD'}
+              </p>
+              <p className={`text-sm truncate ${match.winner_id === match.pilot2_id ? 'text-black/70' : 'text-racing-yellow'}`}>
+                🚗 {match.pilot2?.car_name || "N/A"}
+              </p>
+              {match.pilot2?.team && (
+                <p className={`text-xs truncate ${match.winner_id === match.pilot2_id ? 'text-black/60' : 'text-blue-400'}`}>
+                  🏁 {match.pilot2.team}
+                </p>
+              )}
+            </div>
+            
+            {/* Status */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {match.winner_id === match.pilot2_id && <Crown className="w-5 h-5 text-neonYellow" />}
+              {isFinished && (
+                <span className="font-bold">
+                  {match.winner_id === match.pilot2_id ? 'W' : 'L'}
+                </span>
+              )}
             </div>
           </div>
         </div>
