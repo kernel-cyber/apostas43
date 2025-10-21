@@ -38,7 +38,6 @@ export const useActiveMatches = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        // #11: Filtrar matches TOP 20 da aba AO VIVO
         const { data: liveData } = await supabase
           .from('matches' as any)
           .select(`
@@ -50,15 +49,8 @@ export const useActiveMatches = () => {
           .eq('match_status', 'in_progress')
           .maybeSingle();
 
-        // Filtrar apenas matches normais (não TOP 20)
-        const liveMatchData = liveData as any;
-        if (liveMatchData && liveMatchData.event?.event_type !== 'top_20') {
-          setLiveMatch(liveMatchData);
-        } else {
-          setLiveMatch(null);
-        }
+        setLiveMatch(liveData as any);
 
-        // Buscar próximas matches (excluir TOP 20)
         const { data: upcomingData } = await supabase
           .from('matches' as any)
           .select(`
@@ -70,9 +62,7 @@ export const useActiveMatches = () => {
           .eq('match_status', 'upcoming')
           .limit(5);
 
-        // Filtrar apenas matches normais
-        const filteredUpcoming = (upcomingData || []).filter((m: any) => m.event?.event_type !== 'top_20');
-        setUpcomingMatches(filteredUpcoming as any);
+        setUpcomingMatches(upcomingData as any || []);
       } catch (error) {
         console.error('Error fetching matches:', error);
       } finally {
@@ -118,7 +108,7 @@ export const useActiveMatches = () => {
       // Buscar novo match após 500ms
       setTimeout(() => {
         const fetchMatches = async () => {
-          try {
+        try {
                const { data: liveData } = await supabase
                 .from('matches' as any)
                 .select(`
@@ -130,10 +120,8 @@ export const useActiveMatches = () => {
                 .eq('match_status', 'in_progress')
                 .maybeSingle();
 
-              // Filtrar apenas matches normais
-              const newLiveData = liveData as any;
-              if (newLiveData && newLiveData.event?.event_type !== 'top_20') {
-                setLiveMatch(newLiveData);
+              if (liveData) {
+                setLiveMatch(liveData as any);
               }
             } catch (error) {
               console.error('Error fetching new live match:', error);
