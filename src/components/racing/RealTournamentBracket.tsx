@@ -88,8 +88,8 @@ export default function RealTournamentBracket() {
 
     return (
       <div className={`
-        relative bg-gradient-card border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon
-        ${isLive ? 'border-racing-yellow animate-pulse' : 'border-border'}
+        relative bg-racing-dark border rounded-lg overflow-hidden shadow-card transition-all duration-300 hover:shadow-neon
+        ${isLive ? 'border-racing-yellow animate-pulse' : 'border-racing-green/10 hover:border-racing-green/30'}
       `}>
         {/* Match Header */}
         <div className={`px-3 py-1 border-b text-xs text-center flex items-center justify-center gap-2 ${
