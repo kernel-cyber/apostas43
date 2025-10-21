@@ -223,9 +223,7 @@ const Index = () => {
             <span className="block text-accent">
               </span>
           </h1>
-          <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-            Plataforma oficial de apostas do campeonato de drag racing mais emocionante do Brasil
-          </p>
+          <p className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">Plataforma de apostas do campeonato de drag racing mais emocionante do Brasil.</p>
             </div>
 
             {/* Live Stats */}
