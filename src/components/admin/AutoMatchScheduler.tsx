@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +36,32 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
     },
   });
 
+  // Buscar o último bracket_type usado para sugerir o próximo
+  const { data: lastMatch } = useQuery({
+    queryKey: ['last-match', eventId],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from('matches')
+        .select('bracket_type, round_number')
+        .eq('event_id', eventId)
+        .order('round_number', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Sugerir o próximo tipo de rodada baseado no último
+  useEffect(() => {
+    if (lastMatch?.bracket_type === 'odd') {
+      setBracketType('top20_even');
+    } else if (lastMatch?.bracket_type === 'even') {
+      setBracketType('top20_odd');
+    }
+  }, [lastMatch]);
+
   const generatePreview = useMutation({
     mutationFn: async () => {
       const { data, error } = await (supabase as any)
@@ -70,12 +96,16 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
       }
 
       const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
+      
+      // Extrair apenas 'odd' ou 'even' do bracketType
+      const bracketSuffix = bracketType.includes('odd') ? 'odd' : 'even';
 
       const matchesData = preview.map((match, index) => ({
         event_id: eventId,
         pilot1_id: match.pilot1_id,
         pilot2_id: match.pilot2_id,
         round_number: match.round_num,
+        bracket_type: bracketSuffix, // Salvar 'odd' ou 'even' no match
         scheduled_time: new Date(scheduledDateTime.getTime() + index * 15 * 60000).toISOString(), // 15 min entre matches
         match_status: 'upcoming',
       }));
@@ -85,12 +115,6 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         .insert(matchesData);
       
       if (error) throw error;
-
-      // Atualizar o bracket_type do evento
-      await (supabase as any)
-        .from('events')
-        .update({ bracket_type: bracketType })
-        .eq('id', eventId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matches'] });
@@ -138,9 +162,14 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
           </Select>
           <p className="text-xs text-muted-foreground">
             {bracketType === 'top20_odd' 
-              ? '9 matches: do 19º ao 2º (1º não corre)'
-              : '10 matches: do 20º ao 1º'}
+              ? '9 matches: do 19º ao 2º (1º e 20º não correm)'
+              : '10 matches: do 20º ao 1º (todos correm)'}
           </p>
+          {lastMatch && (
+            <p className="text-xs text-racing-yellow">
+              ℹ️ Última rodada foi {lastMatch.bracket_type === 'odd' ? 'Ímpar' : 'Par'} (Rodada #{lastMatch.round_number})
+            </p>
+          )}
         </div>
 
         {/* Data e Hora */}
