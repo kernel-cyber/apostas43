@@ -5,6 +5,7 @@ import { useUserPoints } from "@/hooks/useUserPoints";
 import { useLiveStats } from "@/hooks/useLiveStats";
 import { useActiveMatches } from "@/hooks/useActiveMatches";
 import { useMatchNotifications } from "@/hooks/useMatchNotifications";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 import { useBetting } from "@/hooks/useBetting";
 import { useRecentForm } from "@/hooks/useRecentForm";
 import { useWinnerNotification } from "@/hooks/useWinnerNotification";
@@ -45,6 +46,9 @@ const Index = () => {
   
   // Enable real-time match notifications
   useMatchNotifications();
+  
+  // Sound effects
+  const { playMatchStart, playMatchFinish } = useSoundEffects();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -52,16 +56,21 @@ const Index = () => {
     }
   }, [user, loading, navigate]);
 
-  // Detect new match for animation
+  // Detect new match for animation and play sound
   useEffect(() => {
     if (liveMatch?.id && liveMatch.id !== previousMatchId) {
       setIsNewMatch(true);
       setPreviousMatchId(liveMatch.id);
       
+      // Play sound for new match
+      if (previousMatchId !== null) {
+        playMatchStart();
+      }
+      
       // Reset animation flag
       setTimeout(() => setIsNewMatch(false), 1500);
     }
-  }, [liveMatch?.id, previousMatchId]);
+  }, [liveMatch?.id, previousMatchId, playMatchStart]);
 
   // Create race object with dynamic data
   const mockRace = liveMatch ? {
@@ -142,6 +151,15 @@ const Index = () => {
             
             <div className="flex items-center gap-2 sm:gap-3">
               <OnlineUsers />
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3"
+                onClick={() => navigate('/profile')}
+              >
+                <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Perfil</span>
+              </Button>
               {isAdmin && (
                 <Button 
                   variant="ghost" 

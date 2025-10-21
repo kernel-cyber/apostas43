@@ -95,6 +95,7 @@ export type Database = {
       matches: {
         Row: {
           betting_locked: boolean | null
+          bracket_type: string | null
           created_at: string
           event_id: string
           id: string
@@ -108,6 +109,7 @@ export type Database = {
         }
         Insert: {
           betting_locked?: boolean | null
+          bracket_type?: string | null
           created_at?: string
           event_id: string
           id?: string
@@ -121,6 +123,7 @@ export type Database = {
         }
         Update: {
           betting_locked?: boolean | null
+          bracket_type?: string | null
           created_at?: string
           event_id?: string
           id?: string

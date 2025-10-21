@@ -12,28 +12,65 @@ interface MatchOdds {
   pilot2_percentage: number;
 }
 
+interface ExistingBet {
+  id: string;
+  amount: number;
+  pilot_id: string;
+  pilot: { name: string };
+  created_at: string;
+}
+
 export const useBetting = (matchId: string | null) => {
   const [odds, setOdds] = useState<MatchOdds | null>(null);
   const [loading, setLoading] = useState(false);
+  const [existingBet, setExistingBet] = useState<ExistingBet | null>(null);
+  const [lastUpdate, setLastUpdate] = useState(new Date());
   const { toast } = useToast();
+
+  const checkExistingBet = async (userId: string) => {
+    if (!matchId) return;
+    
+    try {
+      const { data, error } = await (supabase as any)
+        .from('bets')
+        .select(`
+          id,
+          amount,
+          pilot_id,
+          created_at,
+          pilot:pilots(name)
+        `)
+        .eq('match_id', matchId)
+        .eq('user_id', userId)
+        .maybeSingle();
+      
+      if (error) throw error;
+      setExistingBet(data);
+    } catch (error) {
+      console.error('Error checking existing bet:', error);
+    }
+  };
+
+  const fetchOdds = async () => {
+    if (!matchId) return;
+
+    const { data, error } = await supabase.rpc('calculate_match_odds', {
+      p_match_id: matchId
+    });
+
+    if (error) {
+      console.error('Error fetching odds:', error);
+      return;
+    }
+
+    if (data && typeof data === 'object') {
+      setOdds(data as unknown as MatchOdds);
+      setLastUpdate(new Date());
+    }
+  };
 
   useEffect(() => {
     if (!matchId) return;
-
-    const fetchOdds = async () => {
-      const { data, error } = await supabase.rpc('calculate_match_odds', {
-        p_match_id: matchId
-      });
-
-      if (error) {
-        console.error('Error fetching odds:', error);
-        return;
-      }
-
-      if (data && typeof data === 'object') {
-        setOdds(data as unknown as MatchOdds);
-      }
-    };
 
     fetchOdds();
 
@@ -53,7 +90,7 @@ export const useBetting = (matchId: string | null) => {
         }
       )
       .subscribe();
-
+      
     return () => {
       supabase.removeChannel(channel);
     };
@@ -89,6 +126,7 @@ export const useBetting = (matchId: string | null) => {
         description: `${amount} pontos apostados com sucesso`,
       });
 
+      fetchOdds();
       return result;
     } catch (error: any) {
       toast({
@@ -102,5 +140,13 @@ export const useBetting = (matchId: string | null) => {
     }
   };
 
-  return { odds, placeBet, loading };
+  // Retornar também a função de verificar aposta e o timestamp
+  return { 
+    odds, 
+    placeBet, 
+    loading, 
+    existingBet, 
+    checkExistingBet,
+    lastUpdate 
+  };
 };

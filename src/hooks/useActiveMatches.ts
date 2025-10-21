@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Pilot {
   id: string;
@@ -29,6 +30,7 @@ export const useActiveMatches = () => {
   const [liveMatch, setLiveMatch] = useState<MatchWithPilots | null>(null);
   const [upcomingMatches, setUpcomingMatches] = useState<MatchWithPilots[]>([]);
   const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -71,9 +73,9 @@ export const useActiveMatches = () => {
 
     fetchMatches();
 
-    // Subscribe to realtime updates
+    // Subscribe to realtime updates with query invalidation
     const channel = supabase
-      .channel('active-matches')
+      .channel('active-matches-realtime')
       .on(
         'postgres_changes',
         {
@@ -83,6 +85,9 @@ export const useActiveMatches = () => {
         },
         () => {
           fetchMatches();
+          // Invalidate related queries
+          queryClient.invalidateQueries({ queryKey: ['matches'] });
+          queryClient.invalidateQueries({ queryKey: ['active-matches'] });
         }
       )
       .subscribe();
@@ -90,7 +95,7 @@ export const useActiveMatches = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
   return { liveMatch, upcomingMatches, loading };
 };

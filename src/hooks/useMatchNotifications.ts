@@ -9,14 +9,22 @@ export const useMatchNotifications = () => {
   const showMatchFinishedNotification = useCallback((match: any) => {
     const winnerName = match.winner?.name || 'Vencedor';
     
+    // Determinar tipo de rodada
+    let roundInfo = `Rodada #${match.round_number}`;
+    if (match.bracket_type === 'odd') {
+      roundInfo = `Rodada Ímpar #${match.round_number}`;
+    } else if (match.bracket_type === 'even') {
+      roundInfo = `Rodada Par #${match.round_number}`;
+    }
+    
     toast({
       title: "🏆 Match Finalizado!",
-      description: `${winnerName} é o campeão!`,
+      description: `${winnerName} é o campeão da ${roundInfo}!`,
       duration: 10000,
     });
 
     // Play notification sound
-    const audio = new Audio('/notification.mp3');
+    const audio = new Audio('/sounds/match-finish.mp3');
     audio.play().catch(() => {});
   }, []);
 

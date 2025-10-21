@@ -68,7 +68,11 @@ export default function RealTournamentBracket() {
           isLive ? 'bg-racing-yellow text-black' : 'bg-trackDark border-border'
         }`}>
           {isLive && <Play className="w-3 h-3 animate-pulse" />}
-          Rodada {match.round_number}
+          {match.bracket_type === 'odd' 
+            ? `Rodada Ímpar #${match.round_number}` 
+            : match.bracket_type === 'even'
+            ? `Rodada Par #${match.round_number}`
+            : `Rodada #${match.round_number}`}
           {isLive && <span className="font-bold">AO VIVO</span>}
         </div>
         

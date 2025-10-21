@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Coins, TrendingUp, AlertTriangle } from "lucide-react";
+import { Coins, TrendingUp, AlertTriangle, Activity, CheckCircle } from "lucide-react";
 import { useBetting } from "@/hooks/useBetting";
+import { useSoundEffects } from "@/hooks/useSoundEffects";
 
 interface BettingPanelProps {
   matchId: string;
@@ -29,7 +30,14 @@ export const BettingPanel = ({
 }: BettingPanelProps) => {
   const [betAmount, setBetAmount] = useState("");
   const [selectedPilot, setSelectedPilot] = useState<string | null>(null);
-  const { odds, placeBet, loading } = useBetting(matchId);
+  const { odds, placeBet, loading, existingBet, checkExistingBet, lastUpdate } = useBetting(matchId);
+  const { playBetPlaced } = useSoundEffects();
+
+  useEffect(() => {
+    if (userId && matchId) {
+      checkExistingBet(userId);
+    }
+  }, [userId, matchId, checkExistingBet]);
 
   const quickBets = [50, 100, 250, 500, 1000];
   
@@ -43,11 +51,82 @@ export const BettingPanel = ({
     const result = await placeBet(userId, selectedPilot, amount);
     
     if (result.success) {
+      playBetPlaced();
       setBetAmount("");
       setSelectedPilot(null);
       onBetSuccess();
+      checkExistingBet(userId);
     }
   };
+
+  // Se já apostou, mostrar card informativo
+  if (existingBet) {
+    const pilotName = existingBet.pilot_id === pilot1Id ? pilot1Name : pilot2Name;
+    
+    return (
+      <Card className="bg-trackDark border-racing-green/30 shadow-card mt-4">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-lg">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-racing-green" />
+              <span>Aposta Realizada</span>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        
+        <CardContent className="space-y-4">
+          <div className="p-4 bg-gradient-card rounded-lg border border-racing-green/20">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Piloto escolhido:</span>
+                <span className="font-bold text-racing-green">{pilotName}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Valor apostado:</span>
+                <span className="font-bold text-racing-yellow">{existingBet.amount} pts</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Possível retorno:</span>
+                <span className="font-bold text-neonGreen">
+                  {Math.round(existingBet.amount * (existingBet.pilot_id === pilot1Id ? (odds?.pilot1_odds || 1) : (odds?.pilot2_odds || 1)))} pts
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-2 text-xs text-muted-foreground p-2 bg-background rounded border border-border">
+            <AlertTriangle className="w-3 h-3 mt-0.5" />
+            <span>
+              Você já possui uma aposta neste match. Aguarde o resultado!
+            </span>
+          </div>
+
+          {/* Live Stats */}
+          {odds && (
+            <>
+              <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+                <span>Distribuição de apostas</span>
+                <Badge variant="outline" className="animate-pulse border-racing-green text-racing-green">
+                  <Activity className="w-3 h-3 mr-1" />
+                  Ao vivo
+                </Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div className="text-base md:text-lg font-bold text-neonGreen">{odds.pilot1_percentage}%</div>
+                  <div className="text-xs text-muted-foreground truncate">{pilot1Name}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-base md:text-lg font-bold text-destructive">{odds.pilot2_percentage}%</div>
+                  <div className="text-xs text-muted-foreground truncate">{pilot2Name}</div>
+                </div>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-trackDark border-border shadow-card mt-4">
@@ -164,16 +243,25 @@ export const BettingPanel = ({
 
         {/* Live Stats */}
         {odds && (
-          <div className="grid grid-cols-2 gap-4 pt-2 border-t border-border">
-            <div className="text-center">
-              <div className="text-base md:text-lg font-bold text-neonGreen">{odds.pilot1_percentage}%</div>
-              <div className="text-xs text-muted-foreground truncate">{pilot1Name}</div>
+          <>
+            <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border">
+              <span>Distribuição de apostas</span>
+              <Badge variant="outline" className="animate-pulse border-racing-green text-racing-green">
+                <Activity className="w-3 h-3 mr-1" />
+                Ao vivo
+              </Badge>
             </div>
-            <div className="text-center">
-              <div className="text-base md:text-lg font-bold text-destructive">{odds.pilot2_percentage}%</div>
-              <div className="text-xs text-muted-foreground truncate">{pilot2Name}</div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <div className="text-base md:text-lg font-bold text-neonGreen">{odds.pilot1_percentage}%</div>
+                <div className="text-xs text-muted-foreground truncate">{pilot1Name}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-base md:text-lg font-bold text-destructive">{odds.pilot2_percentage}%</div>
+                <div className="text-xs text-muted-foreground truncate">{pilot2Name}</div>
+              </div>
             </div>
-          </div>
+          </>
         )}
       </CardContent>
     </Card>

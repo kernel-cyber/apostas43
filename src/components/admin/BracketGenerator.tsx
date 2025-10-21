@@ -101,7 +101,8 @@ export default function BracketGenerator({ eventId }: BracketGeneratorProps) {
         pilot1_id: match.pilot1_id,
         pilot2_id: match.pilot2_id,
         round_number: match.round_num,
-        match_status: 'upcoming'
+        match_status: 'upcoming',
+        bracket_type: bracketType === 'top20_odd' ? 'odd' : 'even'
       }));
 
       const { error } = await (supabase as any)
