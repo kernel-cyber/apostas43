@@ -178,39 +178,6 @@ export const LiveEventCard = ({ race, userPoints, userId, onBetSuccess, isNew = 
                 {/* Pilot 2 */}
                 <PilotCard pilot={pilot2} side="right" odds={odds.pilot2} team={race.pilot2Team} />
               </div>
-
-      {/* Betting Heatmap */}
-              <div className="mt-8 space-y-3">
-                <div className="flex flex-col sm:flex-row justify-between text-sm gap-2">
-                  <span className="text-muted-foreground text-xs sm:text-sm">Distribuição das Apostas</span>
-                  {/* #14: Label mais clara para Pool */}
-                  <span className="text-accent font-semibold text-xs sm:text-sm">
-                    💰 Total em Jogo: {totalPool.toLocaleString()} pts
-                  </span>
-                </div>
-                
-                <div className="relative h-4 bg-muted rounded-full overflow-hidden">
-                  <div 
-                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-neonGreen to-accent transition-all duration-1000"
-                    style={{ width: `${bets.pilot1}%` }}
-                  />
-                  <div 
-                    className="absolute right-0 top-0 h-full bg-gradient-to-l from-destructive to-orange-500 transition-all duration-1000"
-                    style={{ width: `${bets.pilot2}%` }}
-                  />
-                </div>
-                
-                <div className="flex flex-col sm:flex-row justify-between text-sm gap-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-neonGreen" />
-                    <span className="text-xs sm:text-sm truncate">{pilot1.name}: {bets.pilot1}%</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-xs sm:text-sm truncate">{pilot2.name}: {bets.pilot2}%</span>
-                    <div className="w-3 h-3 rounded-full bg-destructive" />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </CardContent>
