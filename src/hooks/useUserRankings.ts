@@ -26,7 +26,7 @@ export const useUserRankings = (limit: number = 100) => {
           points,
           total_bets,
           total_wins,
-          profiles!user_points_user_id_fkey(username, avatar_url)
+          profiles (username, avatar_url)
         `)
         .order('points', { ascending: false })
         .limit(limit);
@@ -68,7 +68,7 @@ export const useUserRankings = (limit: number = 100) => {
           points,
           total_bets,
           total_wins,
-          profiles!user_points_user_id_fkey(username, avatar_url)
+          profiles (username, avatar_url)
         `)
         .gte('total_bets', 5)
         .order('total_wins', { ascending: false })
