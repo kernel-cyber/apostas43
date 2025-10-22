@@ -10,6 +10,7 @@ import { useBetting } from "@/hooks/useBetting";
 import { useRecentForm } from "@/hooks/useRecentForm";
 import { useWinnerNotification } from "@/hooks/useWinnerNotification";
 import { useBetResults } from "@/hooks/useBetResults";
+import { useUserBadges } from "@/hooks/useUserBadges";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +21,7 @@ import Leaderboard from "@/components/racing/Leaderboard";
 import { LiveEventCard } from "@/components/racing/LiveEventCard";
 import WinnerCelebration from "@/components/racing/WinnerCelebration";
 import { OnlineUsers } from "@/components/OnlineUsers";
-import { Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings, Play, ListOrdered, User } from "lucide-react";
+import { Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings, Play, ListOrdered, User, Award } from "lucide-react";
 import trackBg from "@/assets/racing-track-bg.jpg";
 const Index = () => {
   const {
@@ -72,6 +73,10 @@ const Index = () => {
 
   // Hook para detectar resultados de apostas
   useBetResults(user?.id);
+
+  // Badge counter for header
+  const { data: userBadges = [] } = useUserBadges(user?.id);
+  const totalBadges = userBadges.length;
 
   // Sound effects
   const {
@@ -172,6 +177,23 @@ const Index = () => {
             
             <div className="flex items-center gap-2 sm:gap-3">
               <OnlineUsers />
+              
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group" 
+                onClick={() => navigate('/achievements')}
+              >
+                <Award className="h-3 w-3 sm:h-4 sm:w-4 text-racing-yellow group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">CONQUISTAS</span>
+                <Badge 
+                  variant="outline" 
+                  className="ml-1 text-[10px] sm:text-xs border-racing-yellow/50 text-racing-yellow"
+                >
+                  {totalBadges}/60
+                </Badge>
+              </Button>
+
               {/* #5: Foto de perfil no header */}
               <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/profile')}>
                 <User className="h-3 w-3 sm:h-4 sm:w-4" />
