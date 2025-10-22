@@ -167,21 +167,27 @@ const Index = () => {
         <div className="container mx-auto px-2 sm:px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* #17: Logo correto igual à tela de login + ícone melhor */}
-              <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-primary animate-pulse" />
-              <div className="flex items-center gap-1">
-                <span className="font-bold text-base sm:text-lg premium-gradient-text">ÁREA</span>
-                <span className="font-bold text-base sm:text-lg text-racing-yellow neon-text">43</span>
+              {/* Logo Premium */}
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 rounded-full blur-md animate-pulse" />
+                  <Trophy className="relative h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="font-bold text-base sm:text-lg premium-gradient-text">ÁREA</span>
+                  <span className="font-bold text-base sm:text-lg text-racing-yellow neon-text">43</span>
+                </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1 sm:gap-2">
               <OnlineUsers />
               
+              {/* Conquistas */}
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-racing-yellow/10" 
                 onClick={() => navigate('/achievements')}
               >
                 <Award className="h-3 w-3 sm:h-4 sm:w-4 text-racing-yellow group-hover:scale-110 transition-transform" />
@@ -194,22 +200,49 @@ const Index = () => {
                 </Badge>
               </Button>
 
-              {/* #5: Foto de perfil no header */}
-              <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/profile')}>
-                <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">PERFIL
-              </span>
+              {/* Perfil */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-primary/10" 
+                onClick={() => navigate('/profile')}
+              >
+                <User className="h-3 w-3 sm:h-4 sm:w-4 text-primary group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">PERFIL</span>
               </Button>
-              <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/my-bets')}>
-                <Target className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline">MINHAS APOSTAS</span>
+
+              {/* Minhas Apostas */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-neonGreen/10" 
+                onClick={() => navigate('/my-bets')}
+              >
+                <Target className="h-3 w-3 sm:h-4 sm:w-4 text-neonGreen group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">APOSTAS</span>
               </Button>
-              {isAdmin && <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={() => navigate('/admin')}>
-                  <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+
+              {/* Admin */}
+              {isAdmin && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-accent/10" 
+                  onClick={() => navigate('/admin')}
+                >
+                  <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-accent group-hover:scale-110 group-hover:rotate-90 transition-all duration-300" />
                   <span className="hidden sm:inline">ADMIN</span>
-                </Button>}
-              <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3" onClick={signOut}>
-                <LogOut className="h-3 w-3 sm:h-4 sm:w-4" />
+                </Button>
+              )}
+
+              {/* Sair */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-destructive/10" 
+                onClick={signOut}
+              >
+                <LogOut className="h-3 w-3 sm:h-4 sm:w-4 text-destructive group-hover:scale-110 group-hover:translate-x-0.5 transition-all" />
                 <span className="hidden sm:inline">SAIR</span>
               </Button>
             </div>
