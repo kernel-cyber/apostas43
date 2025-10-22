@@ -13,11 +13,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useQuery } from '@tanstack/react-query';
 import { AchievementsDisplay } from '@/components/profile/AchievementsDisplay';
 import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
+import { BadgeNotificationModal } from '@/components/profile/BadgeNotificationModal';
 
 export default function Profile() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { modalBadge, clearModal } = useBadgeNotifications(user?.id || null);
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -28,9 +30,6 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
-
-  // Badge notifications hook
-  useBadgeNotifications(user?.id || null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -551,6 +550,15 @@ export default function Profile() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Badge Notification Modal */}
+      {modalBadge && (
+        <BadgeNotificationModal
+          badge={modalBadge.badge}
+          points={modalBadge.points}
+          onClose={clearModal}
+        />
+      )}
     </div>
   );
 }

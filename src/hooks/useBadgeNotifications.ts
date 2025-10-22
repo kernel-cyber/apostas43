@@ -1,18 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { getBadgeById, BadgeDefinition } from '@/lib/badgeDefinitions';
 import { useSoundEffects } from './useSoundEffects';
-import { getBadgeById } from '@/lib/badgeDefinitions';
 
 export const useBadgeNotifications = (userId: string | null) => {
-  const { toast } = useToast();
   const { playWin } = useSoundEffects();
-  const hasShownInitial = useRef(false);
+  const initialBadgesLoaded = useRef(false);
+  const [modalBadge, setModalBadge] = useState<{ badge: BadgeDefinition; points: number } | null>(null);
 
   useEffect(() => {
     if (!userId) return;
 
-    // Subscribe to new badges
     const channel = supabase
       .channel(`user-badges-${userId}`)
       .on(
@@ -24,47 +22,58 @@ export const useBadgeNotifications = (userId: string | null) => {
           filter: `user_id=eq.${userId}`
         },
         (payload: any) => {
-          if (hasShownInitial.current) {
-            const badgeDef = getBadgeById(payload.new.badge_id);
-            
-            if (badgeDef) {
-              // Play victory sound
-              playWin();
-              
-              const rewardPoints = getTierReward(badgeDef.tier);
-              
-              // Show toast notification
-              toast({
-                title: `🏆 Nova Conquista Desbloqueada!`,
-                description: `${badgeDef.icon} ${badgeDef.name}\n${badgeDef.description}\n+${rewardPoints} pontos de recompensa!`,
-                className: 'bg-gradient-to-r from-yellow-500/90 to-orange-500/90 text-white border-yellow-600',
-                duration: 8000,
-              });
-            }
-          }
+          if (!initialBadgesLoaded.current) return;
+
+          const badge = getBadgeById(payload.new.badge_id);
+          if (!badge) return;
+
+          const tierReward = getTierReward(payload.new.tier);
+          
+          playTierSound(payload.new.tier);
+          setModalBadge({ badge, points: tierReward });
         }
       )
       .subscribe();
 
-    // Set flag after initial mount to avoid showing notifications for existing badges
     setTimeout(() => {
-      hasShownInitial.current = true;
+      initialBadgesLoaded.current = true;
     }, 1000);
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [userId, toast, playWin]);
+  }, [userId, playWin]);
+
+  return {
+    modalBadge,
+    clearModal: () => setModalBadge(null)
+  };
 };
 
+function playTierSound(tier: string) {
+  const audio = new Audio('/sounds/win.mp3');
+  
+  const volumeMap: Record<string, number> = {
+    bronze: 0.3,
+    silver: 0.4,
+    gold: 0.5,
+    platinum: 0.6,
+    diamond: 0.7,
+    legendary: 0.9
+  };
+  
+  audio.volume = volumeMap[tier] || 0.5;
+  audio.play().catch(console.error);
+}
+
 function getTierReward(tier: string): number {
-  switch (tier) {
-    case 'bronze': return 50;
-    case 'silver': return 100;
-    case 'gold': return 200;
-    case 'platinum': return 300;
-    case 'diamond': return 500;
-    case 'legendary': return 1000;
-    default: return 50;
-  }
+  const rewards: Record<string, number> = {
+    bronze: 50,
+    silver: 100,
+    gold: 200,
+    platinum: 300,
+    diamond: 500,
+    legendary: 1000
+  };
+  return rewards[tier] || 50;
 }

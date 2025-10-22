@@ -348,6 +348,7 @@ export type Database = {
           created_at: string
           earned_at: string
           id: string
+          is_showcased: boolean | null
           metadata: Json | null
           progress: number | null
           tier: Database["public"]["Enums"]["badge_tier"] | null
@@ -360,6 +361,7 @@ export type Database = {
           created_at?: string
           earned_at?: string
           id?: string
+          is_showcased?: boolean | null
           metadata?: Json | null
           progress?: number | null
           tier?: Database["public"]["Enums"]["badge_tier"] | null
@@ -372,6 +374,7 @@ export type Database = {
           created_at?: string
           earned_at?: string
           id?: string
+          is_showcased?: boolean | null
           metadata?: Json | null
           progress?: number | null
           tier?: Database["public"]["Enums"]["badge_tier"] | null
