@@ -63,10 +63,32 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
   const eventTypeColor = event.event_type === 'shark_tank' ? 'bg-racing-red' : 'bg-racing-blue';
 
   const handleCapturePositions = async () => {
-    if (!confirm(`Capturar as posições iniciais do TOP 20 para o evento "${event.name}"?\n\nIsso permitirá exibir as mudanças de posição dos pilotos.`)) return;
-    
     setIsCapturing(true);
     try {
+      // Verificar se já existe event_standings para este evento
+      const { data: hasStandings } = await supabase.rpc('has_event_standings', {
+        p_event_id: event.id
+      });
+      
+      if (hasStandings) {
+        const shouldReset = confirm(
+          `⚠️ ATENÇÃO: Este evento já possui posições capturadas!\n\n` +
+          `Capturar novamente irá PRESERVAR as vitórias/derrotas atuais e apenas atualizar posições iniciais vazias.\n\n` +
+          `Se você quer ZERAR tudo e recomeçar, clique em CANCELAR e depois em "Resetar Evento".\n\n` +
+          `Deseja continuar com a captura?`
+        );
+        
+        if (!shouldReset) {
+          setIsCapturing(false);
+          return;
+        }
+      } else {
+        if (!confirm(`Capturar as posições iniciais do TOP 20 para o evento "${event.name}"?\n\nIsso criará os registros iniciais com vitórias/derrotas zeradas.`)) {
+          setIsCapturing(false);
+          return;
+        }
+      }
+      
       const { error } = await supabase.rpc('capture_initial_positions', {
         p_event_id: event.id
       });
@@ -79,6 +101,31 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
       alert('Erro ao capturar posições. Tente novamente.');
     } finally {
       setIsCapturing(false);
+    }
+  };
+
+  const handleResetEvent = async () => {
+    if (!confirm(
+      `⚠️ RESETAR EVENTO "${event.name}"?\n\n` +
+      `Isso irá DELETAR TODOS os dados de event_standings deste evento:\n` +
+      `• Posições iniciais\n` +
+      `• Vitórias e derrotas\n` +
+      `• Pontos\n\n` +
+      `Esta ação NÃO PODE SER DESFEITA!\n\n` +
+      `Tem certeza?`
+    )) return;
+    
+    try {
+      const { error } = await supabase.rpc('reset_event_standings', {
+        p_event_id: event.id
+      });
+      
+      if (error) throw error;
+      
+      alert('✅ Evento resetado! Você pode capturar posições novamente.');
+    } catch (error) {
+      console.error('Erro ao resetar evento:', error);
+      alert('Erro ao resetar evento. Tente novamente.');
     }
   };
 
@@ -178,6 +225,16 @@ function EventCard({ event, onDelete }: { event: any; onDelete: (id: string, nam
               <Target className="h-4 w-4 mr-2" />
               {isCapturing ? 'Capturando...' : 'Capturar Posições'}
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 border-orange-500 text-orange-500 hover:bg-orange-500/10"
+              onClick={handleResetEvent}
+            >
+              🔄 Resetar
+            </Button>
+          </div>
+          <div className="flex gap-2">
             <Button
               variant="destructive"
               size="sm"

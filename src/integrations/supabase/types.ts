@@ -458,6 +458,10 @@ export type Database = {
           round_num: number
         }[]
       }
+      has_event_standings: {
+        Args: { p_event_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -473,6 +477,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: Json
+      }
+      reset_event_standings: {
+        Args: { p_event_id: string }
+        Returns: undefined
       }
       settle_match: {
         Args: { p_match_id: string; p_winner_id: string }

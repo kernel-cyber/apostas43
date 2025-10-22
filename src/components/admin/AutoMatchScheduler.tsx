@@ -124,13 +124,21 @@ export default function AutoMatchScheduler({ eventId }: AutoMatchSchedulerProps)
         throw new Error('Data e hora são obrigatórios');
       }
 
-      // 1. Capturar posições iniciais do TOP 20 para o evento
-      const { error: captureError } = await (supabase as any)
-        .rpc('capture_initial_positions', {
+      // 1. Verificar se event_standings já existe
+      const { data: hasStandings } = await (supabase as any)
+        .rpc('has_event_standings', {
           p_event_id: eventId
         });
 
-      if (captureError) throw captureError;
+      // 2. Capturar posições iniciais apenas se ainda não existir
+      if (!hasStandings) {
+        const { error: captureError } = await (supabase as any)
+          .rpc('capture_initial_positions', {
+            p_event_id: eventId
+          });
+
+        if (captureError) throw captureError;
+      }
 
       // 2. Criar matches agendados
       const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}`);
