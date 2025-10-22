@@ -435,13 +435,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      calculate_match_odds: {
-        Args: { p_match_id: string }
-        Returns: Json
-      }
+      calculate_match_odds: { Args: { p_match_id: string }; Returns: Json }
       capture_initial_positions: {
         Args: { p_event_id: string }
         Returns: undefined
+      }
+      check_and_award_badge: {
+        Args: { p_badge_id: string; p_user_id: string }
+        Returns: boolean
       }
       finalize_event_rankings: {
         Args: { p_event_id: string }
@@ -458,10 +459,8 @@ export type Database = {
           round_num: number
         }[]
       }
-      has_event_standings: {
-        Args: { p_event_id: string }
-        Returns: boolean
-      }
+      get_user_badge_stats: { Args: { p_user_id: string }; Returns: Json }
+      has_event_standings: { Args: { p_event_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

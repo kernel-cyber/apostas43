@@ -11,6 +11,8 @@ import { ArrowLeft, Camera, Mail, Lock, Trophy, Target, TrendingUp } from 'lucid
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useQuery } from '@tanstack/react-query';
+import { AchievementsDisplay } from '@/components/profile/AchievementsDisplay';
+import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
 
 export default function Profile() {
   const { user, loading } = useAuth();
@@ -26,6 +28,9 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
+
+  // Badge notifications hook
+  useBadgeNotifications(user?.id || null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -76,6 +81,20 @@ export default function Profile() {
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
         .limit(5);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  // Fetch user badge stats
+  const { data: userBadgeStats } = useQuery({
+    queryKey: ['user-badge-stats', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_user_badge_stats', {
+        p_user_id: user?.id
+      });
       
       if (error) throw error;
       return data;
@@ -500,34 +519,37 @@ export default function Profile() {
                 </Button>
               </CardContent>
             </Card>
-
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Atividade Recente
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {recentBets && recentBets.length > 0 ? (
-                    recentBets.slice(0, 5).map((bet: any) => (
-                      <div key={bet.id} className="flex justify-between items-center text-sm py-2 border-b border-border last:border-0">
-                        <span className="text-muted-foreground truncate">{bet.pilot.name}</span>
-                        <span className="font-bold text-accent">{bet.amount} pts</span>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground text-center py-4">
-                      Nenhuma atividade recente
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
+
+        {/* Achievements Section */}
+        <AchievementsDisplay userId={user?.id || null} userStats={userBadgeStats} />
+
+        {/* Recent Activity - Full Width */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Atividade Recente
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {recentBets && recentBets.length > 0 ? (
+                recentBets.slice(0, 5).map((bet: any) => (
+                  <div key={bet.id} className="flex justify-between items-center text-sm py-2 border-b border-border last:border-0">
+                    <span className="text-muted-foreground truncate">{bet.pilot.name}</span>
+                    <span className="font-bold text-accent">{bet.amount} pts</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Nenhuma atividade recente
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
