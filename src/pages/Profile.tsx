@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Camera, Mail, Lock, Trophy, Target, TrendingUp } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
 import { AchievementsDisplay } from '@/components/profile/AchievementsDisplay';
 import { useBadgeNotifications } from '@/hooks/useBadgeNotifications';
@@ -30,6 +31,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [updatingPassword, setUpdatingPassword] = useState(false);
+  const [favoritePilotId, setFavoritePilotId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -101,10 +103,24 @@ export default function Profile() {
     enabled: !!user,
   });
 
+  // Fetch pilots list for favorite pilot selection
+  const { data: pilots } = useQuery({
+    queryKey: ['pilots'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('pilots')
+        .select('id, name')
+        .order('name');
+      if (error) throw error;
+      return data;
+    }
+  });
+
   useEffect(() => {
     if (profile) {
       setUsername(profile.username || '');
       setAvatarUrl(profile.avatar_url || '');
+      setFavoritePilotId(profile.favorite_pilot_id || null);
     }
   }, [profile]);
 
@@ -301,6 +317,32 @@ export default function Profile() {
     }
   };
 
+  const updateFavoritePilot = async () => {
+    try {
+      setUpdating(true);
+      const { error } = await supabase
+        .from('profiles')
+        .update({ favorite_pilot_id: favoritePilotId })
+        .eq('id', user?.id);
+
+      if (error) throw error;
+      refetchProfile();
+      
+      toast({
+        title: "Piloto favorito atualizado!",
+        description: "Seu piloto favorito foi definido com sucesso.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const winRate = recentBets && recentBets.length > 0
     ? ((recentBets.filter((bet: any) => bet.match.match_status === 'finished' && bet.match.winner_id === bet.pilot_id).length / 
         recentBets.filter((bet: any) => bet.match.match_status === 'finished').length) * 100).toFixed(1)
@@ -377,6 +419,36 @@ export default function Profile() {
                     </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Piloto Favorito */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-racing-yellow" />
+                  Piloto Favorito
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div>
+                  <Label htmlFor="favorite-pilot">Escolha seu piloto favorito</Label>
+                  <Select value={favoritePilotId || ''} onValueChange={setFavoritePilotId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione um piloto..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {pilots?.map(pilot => (
+                        <SelectItem key={pilot.id} value={pilot.id}>
+                          {pilot.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={updateFavoritePilot} disabled={updating || !favoritePilotId}>
+                  Salvar Piloto Favorito
+                </Button>
               </CardContent>
             </Card>
 

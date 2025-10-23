@@ -3,12 +3,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Trophy, Search } from "lucide-react";
 import { useUserRankings } from "@/hooks/useUserRankings";
 import { getUserTier } from "@/lib/rankingTiers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { getBadgeById } from "@/lib/badgeDefinitions";
 
 export default function BettorRankingTable() {
   const { rankingsByPoints, isLoading } = useUserRankings(50);
@@ -124,12 +128,40 @@ interface BettorRankingCardProps {
   rank: number;
 }
 
+const getTierColor = (tier: string) => {
+  const colors = {
+    bronze: 'from-orange-600 via-orange-700 to-orange-900',
+    silver: 'from-gray-300 via-gray-400 to-gray-600',
+    gold: 'from-yellow-400 via-yellow-500 to-yellow-600',
+    platinum: 'from-cyan-300 via-gray-300 to-gray-400',
+    diamond: 'from-cyan-400 via-blue-500 to-blue-600',
+    legendary: 'from-purple-500 via-pink-500 to-red-500'
+  };
+  return colors[tier as keyof typeof colors] || colors.bronze;
+};
+
 const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
   const tier = getUserTier(user.points);
   
   const winRate = user.total_bets > 0 
     ? Math.round((user.total_wins / user.total_bets) * 100) 
     : 0;
+
+  // Fetch showcased badges for this user
+  const { data: showcasedBadges } = useQuery({
+    queryKey: ['showcased-badges', user.user_id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('user_badges')
+        .select('badge_id')
+        .eq('user_id', user.user_id)
+        .eq('is_showcased', true)
+        .limit(3);
+      
+      return (data || []).map(b => getBadgeById(b.badge_id)).filter(Boolean);
+    },
+    enabled: !!user.user_id
+  });
 
   return (
     <Card className="bg-muted border-border">
@@ -161,11 +193,38 @@ const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
 
           {/* Info */}
           <div className="flex-1 min-w-0 space-y-1">
-            {/* Linha 1: Username + Pontos */}
+            {/* Linha 1: Username + Badges + Pontos */}
             <div className="flex justify-between items-center gap-2">
-              <p className="font-bold text-white truncate">
-                {user.username}
-              </p>
+              <div className="flex items-center gap-2 min-w-0">
+                <p className="font-bold text-white truncate">
+                  {user.username}
+                </p>
+                {showcasedBadges && showcasedBadges.length > 0 && (
+                  <div className="flex gap-1">
+                    {showcasedBadges.slice(0, 3).map((badge: any, idx: number) => {
+                      const IconComponent = badge.iconComponent;
+                      return (
+                        <TooltipProvider key={idx}>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className={cn(
+                                "p-1 rounded-md bg-gradient-to-br",
+                                getTierColor(badge.tier)
+                              )}>
+                                <IconComponent className="h-3 w-3 text-white" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="font-bold">{badge.name}</p>
+                              <p className="text-xs">{badge.description}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
               <p className="text-lg font-bold text-primary shrink-0">
                 {user.points.toLocaleString()}
                 <span className="text-xs text-muted-foreground ml-1">pts</span>
