@@ -10,7 +10,7 @@ export interface RankingTier {
 
 export const RANKING_TIERS: RankingTier[] = [
   {
-    name: 'Legendary',
+    name: 'Lendário',
     minPoints: 10000,
     maxPoints: Infinity,
     color: 'from-purple-500 via-pink-500 to-red-500',
@@ -19,7 +19,7 @@ export const RANKING_TIERS: RankingTier[] = [
     badgeLimit: 5
   },
   {
-    name: 'Diamond',
+    name: 'Diamante',
     minPoints: 5000,
     maxPoints: 9999,
     color: 'from-cyan-400 to-blue-500',
@@ -28,7 +28,7 @@ export const RANKING_TIERS: RankingTier[] = [
     badgeLimit: 4
   },
   {
-    name: 'Platinum',
+    name: 'Platina',
     minPoints: 3000,
     maxPoints: 4999,
     color: 'from-gray-300 to-gray-400',
@@ -37,7 +37,7 @@ export const RANKING_TIERS: RankingTier[] = [
     badgeLimit: 3
   },
   {
-    name: 'Gold',
+    name: 'Ouro',
     minPoints: 2000,
     maxPoints: 2999,
     color: 'from-yellow-400 to-yellow-600',
@@ -46,7 +46,7 @@ export const RANKING_TIERS: RankingTier[] = [
     badgeLimit: 3
   },
   {
-    name: 'Silver',
+    name: 'Prata',
     minPoints: 1500,
     maxPoints: 1999,
     color: 'from-gray-400 to-gray-500',
