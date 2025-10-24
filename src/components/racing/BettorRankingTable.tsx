@@ -155,7 +155,7 @@ const BettorRankingCard = ({ user, rank }: BettorRankingCardProps) => {
         .from('user_badges')
         .select('badge_id')
         .eq('user_id', user.user_id)
-        .eq('is_showcased', true)
+        .order('earned_at', { ascending: false })
         .limit(3);
       
       return (data || []).map(b => getBadgeById(b.badge_id)).filter(Boolean);
