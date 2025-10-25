@@ -21,8 +21,11 @@ import Leaderboard from "@/components/racing/Leaderboard";
 import { LiveEventCard } from "@/components/racing/LiveEventCard";
 import WinnerCelebration from "@/components/racing/WinnerCelebration";
 import { OnlineUsers } from "@/components/OnlineUsers";
-import { Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings, Play, ListOrdered, User, Award } from "lucide-react";
+import { Trophy, Zap, Target, TrendingUp, Star, Medal, Crown, Flame, LogOut, Settings, Play, ListOrdered, User, Award, BarChart3 } from "lucide-react";
 import trackBg from "@/assets/racing-track-bg.jpg";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { ThemeSelector } from "@/components/ThemeSelector";
+import { ActivityFeed } from "@/components/ActivityFeed";
 const Index = () => {
   const {
     user,
@@ -182,6 +185,34 @@ const Index = () => {
             
             <div className="flex items-center gap-1 sm:gap-2">
               <OnlineUsers />
+              
+              {/* Notificações */}
+              <NotificationsDropdown userId={user?.id} />
+              
+              {/* Tema */}
+              <ThemeSelector />
+              
+              {/* Analytics */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-blue-500/10" 
+                onClick={() => navigate('/analytics')}
+              >
+                <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">ANALYTICS</span>
+              </Button>
+              
+              {/* Ligas */}
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 relative group hover:bg-purple-500/10" 
+                onClick={() => navigate('/leagues')}
+              >
+                <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline">LIGAS</span>
+              </Button>
               
               {/* Conquistas */}
               <Button 
